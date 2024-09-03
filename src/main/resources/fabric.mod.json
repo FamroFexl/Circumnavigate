@@ -1,0 +1,51 @@
+{
+	"schemaVersion": 1,
+	"id": "circumnavigate",
+	"version": "${mod_version}",
+	"name": "Circumnavigate",
+	"description": "Seamless world wrapping using tileable 4D simplex noise vanilla world generation, premeditated world loading, a plethora of edge-case event handlers, and a dynamic curvature shader!",
+	"authors": [
+		"Famro Fexl"
+	],
+	"contact": {
+		"homepage": "https://curseforge.com/minecraft/mc-mods/circumnavigate",
+		"sources": "https://github.com/FamroFexl/Circumnavigate",
+		"issues": "https://github.com/FamroFexl/Circumnavigate/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/circumnavigate/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+          "com.fexl.circumnavigate.Circumnavigate"
+		],
+		"client": [
+          "com.fexl.circumnavigate.CircumnavigateClient"
+		],
+        "server": [
+          "com.fexl.circumnavigate.CircumnavigateServer"
+        ]
+	},
+    "accessWidener": "circumnavigate.accesswidener",
+    "custom": {
+      "loom:injected_interfaces": {
+        "net/minecraft/class_1937": ["com/fexl/circumnavigate/injected/LevelTransformer"]
+      }
+    },
+	"mixins": [
+		"circumnavigate.mixins.json",
+      {
+        "config": "circumnavigate-client.mixins.json",
+        "environment": "client"
+      }
+	],
+	"depends": {
+		"fabricloader": ">=0.15.7",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

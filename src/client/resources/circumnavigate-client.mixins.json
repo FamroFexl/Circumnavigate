@@ -1,0 +1,33 @@
+{
+	"required": true,
+	"package": "com.fexl.circumnavigate.mixin.client",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+      "worldInit.CreateWorldScreenMixin",
+      "worldInit.WorldTabMixin",
+      "worldInit.ClientLevelMixin",
+      "worldInit.ConnectionMixin",
+
+      "chunkHandle.ClientChunkCacheAccessorMixin",
+      "chunkHandle.ClientChunkCacheMixin",
+      "chunkHandle.SectionOcclusionGraphMixin",
+      "chunkHandle.OptionsAccessorMixin",
+      "chunkHandle.OptionsMixin",
+
+      "debug.ChunkBorderRendererAccessorMixin",
+      "debug.ChunkBorderRendererMixin",
+      "debug.DebugScreenOverlayMixin",
+
+      "packet.ServerboundInteractPacketMixin",
+      "packet.ServerboundMovePlayerPacketMixin",
+      "packet.ServerboundPlayerActionPacketMixin",
+      "packet.ServerboundUseItemOnPacketMixin",
+
+      "ClientPacketListenerAccessorMixin",
+      "ClientPacketListenerMixin",
+      "ClientToServerListener"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

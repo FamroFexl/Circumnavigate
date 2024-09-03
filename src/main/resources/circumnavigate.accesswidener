@@ -1,0 +1,47 @@
+accessWidener	v2	named
+accessible	class	net/minecraft/client/renderer/chunk/RenderChunk
+accessible	field	net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint levelCount I
+accessible	method	net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint checkNeighbor (JJIZ)V
+
+accessible	method	net/minecraft/server/level/ChunkTrackingView$Positioned minX ()I
+accessible	method	net/minecraft/server/level/ChunkTrackingView$Positioned minZ ()I
+accessible	method	net/minecraft/server/level/ChunkTrackingView$Positioned maxX ()I
+accessible	method	net/minecraft/server/level/ChunkTrackingView$Positioned maxZ ()I
+
+accessible	method net/minecraft/client/gui/screens/worldselection/CreateWorldScreen$GameTab <init> (Lnet/minecraft/client/gui/screens/worldselection/CreateWorldScreen;)V
+accessible	class	net/minecraft/client/gui/screens/worldselection/SwitchGrid
+
+accessible field net/minecraft/world/level/chunk/ChunkAccess unsaved Z
+accessible field net/minecraft/world/level/chunk/LevelChunk level Lnet/minecraft/world/level/Level;
+accessible field net/minecraft/world/level/chunk/ChunkAccess heightmaps Ljava/util/Map;
+accessible field net/minecraft/world/level/chunk/ChunkAccess skyLightSources Lnet/minecraft/world/level/lighting/ChunkSkyLightSources;
+
+accessible field net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
+accessible	field	net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl minecraft Lnet/minecraft/client/Minecraft;
+accessible	field	net/minecraft/client/multiplayer/ClientPacketListener level Lnet/minecraft/client/multiplayer/ClientLevel;
+
+accessible class net/minecraft/server/level/ServerChunkCache$MainThreadExecutor
+
+accessible method net/minecraft/client/multiplayer/ClientLevel getBlockStatePredictionHandler ()Lnet/minecraft/client/multiplayer/prediction/BlockStatePredictionHandler;
+#-----------------------------------------------------------
+accessible method net/minecraft/server/network/ServerGamePacketListenerImpl containsInvalidValues (DDDFF)Z
+accessible method net/minecraft/server/network/ServerGamePacketListenerImpl clampHorizontal (D)D
+accessible method net/minecraft/server/network/ServerGamePacketListenerImpl clampVertical (D)D
+accessible method net/minecraft/server/network/ServerCommonPacketListenerImpl isSingleplayerOwner ()Z
+accessible method net/minecraft/server/network/ServerGamePacketListenerImpl isPlayerCollidingWithAnythingNew (Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/world/phys/AABB;DDD)Z
+accessible method net/minecraft/server/network/ServerGamePacketListenerImpl noBlocksAround (Lnet/minecraft/world/entity/Entity;)Z
+
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl tickCount I
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl awaitingPositionFromClient Lnet/minecraft/world/phys/Vec3;
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl awaitingTeleportTime I
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl firstGoodX D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl firstGoodY D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl firstGoodZ D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl receivedMovePacketCount I
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl knownMovePacketCount I
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl clientIsFloating Z
+accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl server Lnet/minecraft/server/MinecraftServer;
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodX D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodY D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodZ D
+

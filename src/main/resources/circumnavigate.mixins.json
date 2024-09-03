@@ -1,0 +1,29 @@
+{
+	"required": true,
+	"package": "com.fexl.circumnavigate.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+      "worldInit.PlayerListAccessorMixin",
+      "worldInit.PlayerListMixin",
+      "worldInit.PrimaryLevelDataMixin",
+      "worldInit.ServerLevelMixin",
+      "worldInit.LevelTransformerInjectorMixin",
+
+      "chunkHandle.ServerChunkCacheMixin",
+      "chunkHandle.ChunkMapMixin",
+      "chunkHandle.PositionedAccessorMixin",
+      "chunkHandle.ChunkTrackingViewMixin",
+      "chunkHandle.PositionedMixin",
+      "chunkHandle.ChunkTrackerMixin",
+      "chunkHandle.SectionTrackerMixin",
+
+      "ServerToClientListener",
+      "ServerPlayerGameModeMixin",
+      "ServerGamePacketListenerImplMixin"
+	],
+    "server": [
+    ],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
