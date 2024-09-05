@@ -12,7 +12,7 @@
 		"sources": "https://github.com/FamroFexl/Circumnavigate",
 		"issues": "https://github.com/FamroFexl/Circumnavigate/issues"
 	},
-	"license": "MIT",
+	"license": "AGPL-3.0",
 	"icon": "assets/circumnavigate/icon.png",
 	"environment": "*",
 	"entrypoints": {

@@ -1,11 +1,7 @@
-/*
- * Copyright (c) 2024 Famro Fexl.
- * SPDX-License-Identifier: MIT
- */
+/* SPDX-License-Identifier: AGPL-3.0-only */
 
 package com.fexl.circumnavigate.mixin;
 
-import com.fexl.circumnavigate.util.ServerTransformer;
 import com.fexl.circumnavigate.util.WorldTransformer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayerGameMode;

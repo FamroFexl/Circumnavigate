@@ -1,12 +1,8 @@
-/*
- * Copyright (c) 2024 Famro Fexl.
- * SPDX-License-Identifier: MIT
- */
+/* SPDX-License-Identifier: AGPL-3.0-only */
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.options.WrappingSettings;
-import com.fexl.circumnavigate.util.ServerTransformer;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.RegistryAccess;

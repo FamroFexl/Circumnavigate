@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+
 package com.fexl.circumnavigate.client.storage;
 
 import com.fexl.circumnavigate.options.WrappingSettings;

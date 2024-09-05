@@ -1,21 +1,14 @@
-/*
- * Copyright (c) 2024 Famro Fexl.
- * SPDX-License-Identifier: MIT
- */
+/* SPDX-License-Identifier: AGPL-3.0-only */
 
 package com.fexl.circumnavigate.mixin;
 
-import com.fexl.circumnavigate.util.ServerTransformer;
 import com.fexl.circumnavigate.util.WorldTransformer;
 import com.mojang.logging.LogUtils;
-import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
@@ -25,9 +18,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;

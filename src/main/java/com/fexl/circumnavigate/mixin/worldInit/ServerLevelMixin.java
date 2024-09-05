@@ -1,7 +1,8 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.options.WrappingSettings;
-import com.fexl.circumnavigate.util.ServerTransformer;
 import com.fexl.circumnavigate.util.WorldTransformer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
