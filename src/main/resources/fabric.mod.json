@@ -3,16 +3,16 @@
 	"id": "circumnavigate",
 	"version": "${mod_version}",
 	"name": "Circumnavigate",
-	"description": "Seamless world wrapping using tileable 4D simplex noise vanilla world generation, premeditated world loading, a plethora of edge-case event handlers, and a dynamic curvature shader!",
+	"description": "Finite, Tiled, Seamless World Wrapping",
 	"authors": [
 		"Famro Fexl"
 	],
 	"contact": {
-		"homepage": "https://curseforge.com/minecraft/mc-mods/circumnavigate",
+		"homepage": "https://modrinth.com/project/circumnavigate",
 		"sources": "https://github.com/FamroFexl/Circumnavigate",
 		"issues": "https://github.com/FamroFexl/Circumnavigate/issues"
 	},
-	"license": "MIT",
+	"license": "AGPL-3.0",
 	"icon": "assets/circumnavigate/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -41,11 +41,8 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.7",
-		"minecraft": "~1.20.4",
+		"minecraft": "1.20.4",
 		"java": ">=17",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }

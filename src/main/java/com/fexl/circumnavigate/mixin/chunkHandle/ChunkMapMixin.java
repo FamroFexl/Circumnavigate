@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+
 package com.fexl.circumnavigate.mixin.chunkHandle;
 
 import com.fexl.circumnavigate.storage.TransformerRequests;
