@@ -8,7 +8,6 @@
 
 ##  Tutorial:<br>
 Watch [this video](https://www.youtube.com/watch?v=bmkUSeLEE7Y) or read the [wiki](https://github.com/FamroFexl/Circumnavigate/wiki) for setup information.
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/bmkUSeLEE7Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Updates:
 **Current Functionality:**
