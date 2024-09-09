@@ -127,7 +127,7 @@ public class CoordinateTransformers {
 	}
 
 	public boolean isCoordOverLimit(double coord) {
-		if(coord > upperChunkBounds * chunkWidth || coord < lowerChunkBounds * chunkWidth)
+		if(coord >= upperChunkBounds * chunkWidth || coord < lowerChunkBounds * chunkWidth)
 			return true;
 		else
 			return false;
@@ -138,7 +138,7 @@ public class CoordinateTransformers {
 	}
 
 	public boolean isChunkOverLimit(int chunkCoord) {
-		if(chunkCoord > upperChunkBounds || chunkCoord < lowerChunkBounds)
+		if(chunkCoord > upperChunkBounds - 1 || chunkCoord < lowerChunkBounds)
 			return true;
 		else
 			return false;
