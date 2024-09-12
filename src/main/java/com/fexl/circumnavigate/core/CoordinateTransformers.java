@@ -1,10 +1,8 @@
 /* SPDX-License-Identifier: AGPL-3.0-only */
 
-package com.fexl.circumnavigate.util;
+package com.fexl.circumnavigate.core;
 
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * Transforms regular coordinates from and to wrapped coordinates.
@@ -17,13 +15,6 @@ public class CoordinateTransformers {
 	private final int chunkWidth = LevelChunkSection.SECTION_WIDTH;
 
 	public CoordinateTransformers(int lowerChunkBounds, int upperChunkBounds) {
-		if (lowerChunkBounds > upperChunkBounds)
-			throw new IllegalArgumentException("The Lower Chunk Bounds cannot be greater than the Upper Chunk Bounds!");
-		//TODO: Determine the minimum bounds achievable. This is likely influenced by viewDistance < domainLength.
-		//if (Math.abs(lowerChunkBounds - upperChunkBounds) < 0)
-			//throw new IllegalArgumentException("The distance between the bounds is less than the required " + 0 + " chunks!");
-
-
 		this.lowerChunkBounds = lowerChunkBounds;
 		this.upperChunkBounds = upperChunkBounds;
 	}

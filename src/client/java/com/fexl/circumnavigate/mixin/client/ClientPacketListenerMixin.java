@@ -2,8 +2,7 @@
 
 package com.fexl.circumnavigate.mixin.client;
 
-import com.fexl.circumnavigate.options.WrappingSettings;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
@@ -101,6 +100,7 @@ public class ClientPacketListenerMixin {
 		thiz.minecraft.level.blockEvent(transformer.translateBlockFromBounds(Minecraft.getInstance().player.blockPosition(), packet.getPos()), packet.getBlock(), packet.getB0(), packet.getB1());
 	}
 
+
 	@Inject(method = "enableChunkLight", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void enableChunkLight(LevelChunk chunk, int x, int z, CallbackInfo ci) {
 		WorldTransformer transformer = thiz.level.getTransformer();
@@ -109,7 +109,7 @@ public class ClientPacketListenerMixin {
 		LevelLightEngine levelLightEngine = thiz.level.getChunkSource().getLightEngine();
 		LevelChunkSection[] levelChunkSections = chunk.getSections();
 		ChunkPos chunkPos = transformer.translateChunkToBounds(chunk.getPos());
-		for (int i = 0; i < levelChunkSections.length; ++i) {
+		for (int i = 0; i < levelChunkSections.length; i++) {
 			LevelChunkSection levelChunkSection = levelChunkSections[i];
 			int j = thiz.level.getSectionYFromSectionIndex(i);
 			levelLightEngine.updateSectionStatus(SectionPos.of((ChunkPos)chunkPos, (int)j), levelChunkSection.hasOnlyAir());
@@ -127,6 +127,7 @@ public class ClientPacketListenerMixin {
 		accessor.queueLightRemovalAM(packet);
 	}
 
+	/**
 	@Inject(method = "queueLightRemoval", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void queueLightRemoval(ClientboundForgetLevelChunkPacket packet, CallbackInfo ci) {
 		WorldTransformer transformer = thiz.level.getTransformer();
@@ -147,7 +148,7 @@ public class ClientPacketListenerMixin {
 				levelLightEngine.updateSectionStatus(SectionPos.of((ChunkPos)chunkPos, (int)i), true);
 			}
 		});
-	}
+	}**/
 
 	@Inject(method = "handleBlockUpdate", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	public void handleBlockUpdate(ClientboundBlockUpdatePacket packet, CallbackInfo ci) {
