@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.mixin.client.packet;
 
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

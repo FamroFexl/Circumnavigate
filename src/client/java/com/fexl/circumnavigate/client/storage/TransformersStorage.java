@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.client.storage;
 
 import com.fexl.circumnavigate.options.WrappingSettings;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 

@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.mixin.chunkHandle;
 
 import com.fexl.circumnavigate.storage.TransformerRequests;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.SectionTracker;
 import org.spongepowered.asm.mixin.Mixin;

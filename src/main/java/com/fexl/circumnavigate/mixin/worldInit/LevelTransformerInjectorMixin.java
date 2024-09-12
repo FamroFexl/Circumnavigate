@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.injected.LevelTransformer;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.mixin.client.worldInit;
 
 import com.fexl.circumnavigate.client.storage.TransformersStorage;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.LevelRenderer;

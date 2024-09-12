@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.mixin;
 
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketUtils;
@@ -144,15 +144,15 @@ public abstract class ServerGamePacketListenerImplMixin {
 			n = 0.0;
 		}
 		//------------------------------------------------------
-
 		p = l * l + m * m + n * n;
 		boolean bl3 = false;
 		if (!thiz.player.isChangingDimension() && p > 0.0625 && !thiz.player.isSleeping() && !thiz.player.gameMode.isCreative() && thiz.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR) {
 			bl3 = true;
 			LOGGER.warn("{} moved wrongly!", (Object)thiz.player.getName().getString());
 		}
+		//Todo find fix isPlayerCollidingWithAnythingNew. Causes blocking at border when teleporting, and fall through ground when not.
 		if (!thiz.player.noPhysics && !thiz.player.isSleeping() && (bl3 && serverLevel.noCollision(thiz.player, aABB) || thiz.isPlayerCollidingWithAnythingNew(serverLevel, aABB, d, e, f))) {
-			//thiz.teleport(i, j, k, g, h);
+			thiz.teleport(i, j, k, g, h);
 			thiz.player.doCheckFallDamage(thiz.player.getX() - i, thiz.player.getY() - j, thiz.player.getZ() - k, packet.isOnGround());
 			return;
 		}

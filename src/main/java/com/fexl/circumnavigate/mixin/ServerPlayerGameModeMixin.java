@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.mixin;
 
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.phys.Vec3;

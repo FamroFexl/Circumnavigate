@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.mixin.client.chunkHandle;
 
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SectionOcclusionGraph;
 import net.minecraft.server.level.ChunkTrackingView;

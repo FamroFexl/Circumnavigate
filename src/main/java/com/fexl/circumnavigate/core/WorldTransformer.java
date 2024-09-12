@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only */
 
-package com.fexl.circumnavigate.util;
+package com.fexl.circumnavigate.core;
 
 import com.fexl.circumnavigate.options.WrappingSettings;
 import net.minecraft.core.BlockPos;
@@ -40,9 +40,6 @@ public class WorldTransformer {
 	public static final WorldTransformer INVALID = new WorldTransformer(WrappingSettings.invalidPos);
 
 	public WorldTransformer(int xChunkBoundMin, int xChunkBoundMax, int zChunkBoundMin, int zChunkBoundMax, int xShift, int zShift) {
-		if (xShift != 0 && zShift != 0)
-			throw new IllegalArgumentException("The X-Shift and Z-Shift cannot both be non-zero!");
-
 		this.xChunkBoundMin = xChunkBoundMin;
 		this.xChunkBoundMax = xChunkBoundMax;
 		this.zChunkBoundMin = zChunkBoundMin;
@@ -119,8 +116,8 @@ public class WorldTransformer {
 	}
 
 	public ChunkPos translateChunkToBounds(ChunkPos chunkPos) {
-		int returnX = xTransformer.wrapChunkToLimit(chunkPos.getRegionX());
-		int returnZ = zTransformer.wrapChunkToLimit(chunkPos.getRegionZ());
+		int returnX = xTransformer.wrapChunkToLimit(chunkPos.x);
+		int returnZ = zTransformer.wrapChunkToLimit(chunkPos.z);
 
 		return new ChunkPos(returnX, returnZ);
 
