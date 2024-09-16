@@ -1,12 +1,18 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 /* SPDX-License-Identifier: AGPL-3.0-only */
 
-package com.fexl.circumnavigate.mixin;
+package com.fexl.circumnavigate.mixin.packetHandle;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -15,30 +21,57 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.slf4j.Logger;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerGamePacketListenerImpl.class)
+//@Mixin(targets = "net.minecraft.server.network.ServerGamePacketListenerImpl$1")
 public abstract class ServerGamePacketListenerImplMixin {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	ServerGamePacketListenerImpl thiz = (ServerGamePacketListenerImpl) (Object) this;
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
-	public double wrapInteractionDistanceCheck(Vec3 instance, Vec3 vec) {
+	public double interactionDistanceWrap1(Vec3 instance, Vec3 vec) {
 		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(instance, vec);
 	}
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;distanceToSqr(DDD)D", ordinal = 0))
-	public double wrapInteractionDistanceCheck2(ServerPlayer instance, double x, double y, double z) {
+	public double playerDistanceWrap1(ServerPlayer instance, double x, double y, double z) {
 		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(instance.getX(), instance.getY(), instance.getZ(), x, y, z);
+	}
+
+	@Redirect(method = "handleInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
+	public double interactionDistanceWrap2(AABB aabb, Vec3 vec) {
+		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
+		return transformer.distanceToSqrWrapped(aabb, vec);
+	}
+
+
+	@ModifyArg(method = "handlePlayerAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;handleBlockBreakAction(Lnet/minecraft/core/BlockPos;Lnet/minecraft/network/protocol/game/ServerboundPlayerActionPacket$Action;Lnet/minecraft/core/Direction;II)V"), index = 0)
+	public BlockPos handlePlayerAction(BlockPos pos) {
+		return thiz.player.serverLevel().getTransformer().translateBlockToBounds(pos);
+	}
+
+
+	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
+	public BlockHitResult handleUseItemOn(ServerboundUseItemOnPacket instance) {
+		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
+		BlockHitResult blockHit = instance.getHitResult();
+		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
 	@Inject(method = "handleMovePlayer", at = @At("HEAD"), cancellable = true)
@@ -54,10 +87,11 @@ public abstract class ServerGamePacketListenerImplMixin {
 		}
 		//------------------------------------------------------
 		//Disconnect the player if they move outside of the border bounds
+		/**
 		if(transformer.xTransformer.isCoordOverLimit(packet.getX(transformer.centerX*16)) || transformer.zTransformer.isCoordOverLimit(packet.getZ(transformer.centerZ*16))) {
 			thiz.disconnect(Component.translatable("multiplayer.disconnect.invalid_player_movement"));
 			return;
-		}
+		}**/
 		//------------------------------------------------------
 		ServerLevel serverLevel = thiz.player.serverLevel();
 		if (thiz.player.wonGame) {
@@ -74,9 +108,15 @@ public abstract class ServerGamePacketListenerImplMixin {
 			return;
 		}
 		thiz.awaitingTeleportTime = thiz.tickCount;
-		double d = ServerGamePacketListenerImpl.clampHorizontal(packet.getX(thiz.player.getX()));
+
+		//Wrap x to bounds
+		double d = ServerGamePacketListenerImpl.clampHorizontal(transformer.xTransformer.wrapCoordToLimit(packet.getX(thiz.player.getX())));
+
 		double e = ServerGamePacketListenerImpl.clampVertical(packet.getY(thiz.player.getY()));
-		double f = ServerGamePacketListenerImpl.clampHorizontal(packet.getZ(thiz.player.getZ()));
+
+		//Wrap z to bounds
+		double f = ServerGamePacketListenerImpl.clampHorizontal(transformer.zTransformer.wrapCoordToLimit(packet.getZ(thiz.player.getZ())));
+
 		float g = Mth.wrapDegrees(packet.getYRot(thiz.player.getYRot()));
 		float h = Mth.wrapDegrees(packet.getXRot(thiz.player.getXRot()));
 		if (thiz.player.isPassenger()) {
@@ -150,8 +190,10 @@ public abstract class ServerGamePacketListenerImplMixin {
 			bl3 = true;
 			LOGGER.warn("{} moved wrongly!", (Object)thiz.player.getName().getString());
 		}
-		//Todo find fix isPlayerCollidingWithAnythingNew. Causes blocking at border when teleporting, and fall through ground when not.
-		if (!thiz.player.noPhysics && !thiz.player.isSleeping() && (bl3 && serverLevel.noCollision(thiz.player, aABB) || thiz.isPlayerCollidingWithAnythingNew(serverLevel, aABB, d, e, f))) {
+		//Todo isPlayerCollidingWithAnythingNew causes fall through world or glitch teleportation. Removing it solves the issue. Perhaps selective execution?
+		//I believe this is because the world is using beyond-bounds chunks to check for collision, which don't apply anymore.
+		if (!thiz.player.noPhysics && !thiz.player.isSleeping() && (bl3 && serverLevel.noCollision(thiz.player, aABB))) {
+			// || thiz.isPlayerCollidingWithAnythingNew(serverLevel, aABB, d, e, f)
 			thiz.teleport(i, j, k, g, h);
 			thiz.player.doCheckFallDamage(thiz.player.getX() - i, thiz.player.getY() - j, thiz.player.getZ() - k, packet.isOnGround());
 			return;

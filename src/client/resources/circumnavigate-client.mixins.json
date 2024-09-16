@@ -18,11 +18,6 @@
       "debug.ChunkBorderRendererMixin",
       "debug.DebugScreenOverlayMixin",
 
-      "packet.ServerboundInteractPacketMixin",
-      "packet.ServerboundMovePlayerPacketMixin",
-      "packet.ServerboundPlayerActionPacketMixin",
-      "packet.ServerboundUseItemOnPacketMixin",
-
       "ClientPacketListenerAccessorMixin",
       "ClientPacketListenerMixin",
       "ClientToServerListener"

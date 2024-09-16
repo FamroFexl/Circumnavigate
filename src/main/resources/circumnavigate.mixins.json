@@ -17,9 +17,12 @@
       "chunkHandle.ChunkTrackerMixin",
       "chunkHandle.SectionTrackerMixin",
 
+      "packetHandle.ServerGamePacketListenerImplMixin",
+      "packetHandle.ServerGamePacketListenerImplMixin_1",
+
       "ServerToClientListener",
       "ServerPlayerGameModeMixin",
-      "ServerGamePacketListenerImplMixin"
+      "EntityMixin"
 	],
     "server": [
     ],
