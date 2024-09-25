@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,6 +42,7 @@ public class DebugScreenOverlayMixin {
 		}
 		//Shows the wrapping info
 		list.add(addPos, String.format(Locale.ROOT, "Wrapping: MinX: %d, MaxX: %d, MinZ: %d, MaxZ: %d" + ((transformer.xShift != 0 || transformer.zShift != 0) ? ", Axis: %s, Shift: %d" : ""), transformer.xChunkBoundMin, transformer.xChunkBoundMax, transformer.zChunkBoundMin, transformer.zChunkBoundMax, (transformer.xShift != 0) ? "X" : "Y", (transformer.xShift != 0) ? transformer.xShift : transformer.zShift));
+
 
 	}
 }

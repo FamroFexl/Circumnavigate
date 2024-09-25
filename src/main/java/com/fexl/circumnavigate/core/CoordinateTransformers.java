@@ -100,20 +100,25 @@ public class CoordinateTransformers {
 	}
 
 	public int unwrapChunkFromLimit(int refChunkCoord, int wrappedChunkCoord) {
+		//Get the width of the bounds
 		int domainLength = upperChunkBounds - lowerChunkBounds;
+
+		//Wrap the reference position
 		int wrappedRefCoord = wrapChunkToLimit(refChunkCoord);
 
+		//Difference between the reference and the chunk coord as wrapped
 		int diff = wrappedChunkCoord - wrappedRefCoord;
+
 
 		int unwrappedCoord = refChunkCoord + diff;
 
-		// Adjust to ensure the unwrapped chunk coordinate is correct
-		while (unwrappedCoord < refChunkCoord - domainLength / 2) {
-			unwrappedCoord += domainLength;
-		}
-		while (unwrappedCoord > refChunkCoord + domainLength / 2) {
-			unwrappedCoord -= domainLength;
-		}
+		 // Adjust to ensure the unwrapped chunk coordinate is correct
+		 if (unwrappedCoord < refChunkCoord - domainLength / 2) {
+		    unwrappedCoord += domainLength;
+		 }
+		 else if (unwrappedCoord > refChunkCoord + domainLength / 2) {
+		    unwrappedCoord -= domainLength;
+		 }
 		return unwrappedCoord;
 	}
 

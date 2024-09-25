@@ -45,3 +45,9 @@ accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastG
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodY D
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodZ D
 
+accessible field net/minecraft/world/level/chunk/LevelChunk postLoad Lnet/minecraft/world/level/chunk/LevelChunk$PostLoadProcessor;
+accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
+accessible class net/minecraft/server/level/ChunkMap$TrackedEntity
+accessible method net/minecraft/server/level/ChunkMap getPlayerViewDistance (Lnet/minecraft/server/level/ServerPlayer;)I
+accessible method net/minecraft/server/level/ChunkMap isChunkTracked (Lnet/minecraft/server/level/ServerPlayer;II)Z
+

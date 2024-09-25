@@ -38,6 +38,12 @@ public class PlayerListMixin {
 		ClientboundWrappingDataPacket.send(player, transformers);
 	}
 
+	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
+	public void placeNewPlayer2(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
+		player.setClientX(player.getX());
+		player.setClientZ(player.getZ());
+	}
+
 	/**
 	 * Modifies the client view distance so it is within world bounds and chunk loading requirements.
 	 */

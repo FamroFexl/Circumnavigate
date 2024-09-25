@@ -16,12 +16,18 @@
       "chunkHandle.PositionedMixin",
       "chunkHandle.ChunkTrackerMixin",
       "chunkHandle.SectionTrackerMixin",
+      "chunkHandle.TrackedEntityMixin",
 
+      "packetHandle.ServerCommonPacketListenerImplMixin",
       "packetHandle.ServerGamePacketListenerImplMixin",
       "packetHandle.ServerGamePacketListenerImplMixin_1",
+      "packetHandle.PlayerChunkSenderMixin",
+
+      "packetHandle.packets.ClientboundLevelChunkWithLightPacketMixin",
 
       "ServerToClientListener",
       "ServerPlayerGameModeMixin",
+      "PlayerClientInjectorMixin",
       "EntityMixin"
 	],
     "server": [

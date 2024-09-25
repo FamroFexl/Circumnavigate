@@ -17,19 +17,10 @@ public class SectionOcclusionGraphMixin {
 	 */
 	@Redirect(method = "isInViewDistance", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ChunkTrackingView;isInViewDistance(IIIII)Z"))
 	public boolean isInViewDistance(int centerX, int centerZ, int viewDistance, int x, int z) {
-		WorldTransformer transformer = Minecraft.getInstance().level.getTransformer();
-
-		if(!transformer.isWrapped())
-			return ChunkTrackingView.isInViewDistance(centerX, centerZ, viewDistance, x, z);
-
-		int unwrappedX = transformer.xTransformer.unwrapChunkFromLimit(centerX, x);
-		int unwrappedZ = transformer.zTransformer.unwrapChunkFromLimit(centerZ, z);
-
-		int i = Math.max(0, Math.abs(unwrappedX - centerX) - 1);
-		int j = Math.max(0, Math.abs(unwrappedZ - centerZ) - 1);
-
-		long l = Math.max(0, Math.max(i, j) - 0);
-		long m = Math.min(i, j);
+		int i = Math.max(0, Math.abs(x - centerX) - 1);
+		int j = Math.max(0, Math.abs(z - centerZ) - 1);
+		long l = (long)Math.max(0, Math.max(i, j) - 0);
+		long m = (long)Math.min(i, j);
 		long n = m * m + l * l;
 		int k = viewDistance * viewDistance;
 		return n < (long)k;

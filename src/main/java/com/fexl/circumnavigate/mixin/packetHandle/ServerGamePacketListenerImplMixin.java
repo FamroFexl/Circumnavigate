@@ -42,42 +42,44 @@ public abstract class ServerGamePacketListenerImplMixin {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	ServerGamePacketListenerImpl thiz = (ServerGamePacketListenerImpl) (Object) this;
 
+	@Shadow ServerPlayer player;
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
 	public double interactionDistanceWrap1(Vec3 instance, Vec3 vec) {
-		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
+		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(instance, vec);
 	}
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;distanceToSqr(DDD)D", ordinal = 0))
 	public double playerDistanceWrap1(ServerPlayer instance, double x, double y, double z) {
-		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
+		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(instance.getX(), instance.getY(), instance.getZ(), x, y, z);
 	}
 
 	@Redirect(method = "handleInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
 	public double interactionDistanceWrap2(AABB aabb, Vec3 vec) {
-		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
+		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(aabb, vec);
 	}
 
 
 	@ModifyArg(method = "handlePlayerAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;handleBlockBreakAction(Lnet/minecraft/core/BlockPos;Lnet/minecraft/network/protocol/game/ServerboundPlayerActionPacket$Action;Lnet/minecraft/core/Direction;II)V"), index = 0)
 	public BlockPos handlePlayerAction(BlockPos pos) {
-		return thiz.player.serverLevel().getTransformer().translateBlockToBounds(pos);
+		return player.serverLevel().getTransformer().translateBlockToBounds(pos);
 	}
 
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
 	public BlockHitResult handleUseItemOn(ServerboundUseItemOnPacket instance) {
-		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
+		WorldTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
 		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
 	@Inject(method = "handleMovePlayer", at = @At("HEAD"), cancellable = true)
-	public void handleMovePlayer2(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
-		PacketUtils.ensureRunningOnSameThread(packet, thiz, thiz.player.serverLevel());
-		WorldTransformer transformer = thiz.player.serverLevel().getTransformer();
+	public void handleMovePlayer(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
+		PacketUtils.ensureRunningOnSameThread(packet, thiz, player.serverLevel());
+
+		WorldTransformer transformer = player.serverLevel().getTransformer();
 		ci.cancel();
 
 		boolean bl;
@@ -93,8 +95,8 @@ public abstract class ServerGamePacketListenerImplMixin {
 			return;
 		}**/
 		//------------------------------------------------------
-		ServerLevel serverLevel = thiz.player.serverLevel();
-		if (thiz.player.wonGame) {
+		ServerLevel serverLevel = player.serverLevel();
+		if (player.wonGame) {
 			return;
 		}
 		if (thiz.tickCount == 0) {
@@ -117,6 +119,10 @@ public abstract class ServerGamePacketListenerImplMixin {
 		//Wrap z to bounds
 		double f = ServerGamePacketListenerImpl.clampHorizontal(transformer.zTransformer.wrapCoordToLimit(packet.getZ(thiz.player.getZ())));
 
+		//Set the client relative position
+		thiz.player.setClientX(ServerGamePacketListenerImpl.clampHorizontal(packet.getX(thiz.player.getClientX())));
+		thiz.player.setClientZ(ServerGamePacketListenerImpl.clampHorizontal(packet.getZ(thiz.player.getClientZ())));
+
 		float g = Mth.wrapDegrees(packet.getYRot(thiz.player.getYRot()));
 		float h = Mth.wrapDegrees(packet.getXRot(thiz.player.getXRot()));
 		if (thiz.player.isPassenger()) {
@@ -125,11 +131,18 @@ public abstract class ServerGamePacketListenerImplMixin {
 			return;
 		}
 		double i = thiz.player.getX();
-		double j = thiz.player.getY();
 		double k = thiz.player.getZ();
+		double j = thiz.player.getY();
 		double l = d - thiz.firstGoodX;
 		double m = e - thiz.firstGoodY;
 		double n = f - thiz.firstGoodZ;
+		if(Math.abs(l) + 0.0625*2 > transformer.xWidth) {
+			l = 0.0;
+		}
+
+		if(Math.abs(n) + 0.0625*2 > transformer.zWidth) {
+			n = 0.0;
+		}
 		double o = thiz.player.getDeltaMovement().lengthSqr();
 		double p = l * l + m * m + n * n;
 		if (thiz.player.isSleeping()) {
@@ -148,7 +161,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 			if (!(thiz.player.isChangingDimension() || thiz.player.level().getGameRules().getBoolean(GameRules.RULE_DISABLE_ELYTRA_MOVEMENT_CHECK) && thiz.player.isFallFlying())) {
 				float r;
 				float f2 = r = thiz.player.isFallFlying() ? 300.0f : 100.0f;
-				if (p - o > (double)(r * (float)q) && !thiz.isSingleplayerOwner()) {
+				if (p - o > (double)(r * (float)q) && !thiz.isSingleplayerOwner()) { //!thiz.isSingleplayerOwner()
 					LOGGER.warn("{} moved too quickly! {},{},{}", thiz.player.getName().getString(), l, m, n);
 					thiz.teleport(thiz.player.getX(), thiz.player.getY(), thiz.player.getZ(), thiz.player.getYRot(), thiz.player.getXRot());
 					return;

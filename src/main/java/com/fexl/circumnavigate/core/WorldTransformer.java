@@ -102,6 +102,13 @@ public class WorldTransformer {
 		return new Vec3(returnX, vec3.y, returnZ);
 	}
 
+	public Vec3 translateVecFromBounds(Vec3 relVec3, Vec3 wrappedVec3) {
+		double returnX = xTransformer.unwrapCoordFromLimit(relVec3.x, wrappedVec3.x);
+		double returnZ = zTransformer.unwrapCoordFromLimit(relVec3.z, wrappedVec3.z);
+
+		return new Vec3(returnX, wrappedVec3.y, returnZ);
+	}
+
 	public BlockPos translateBlockToBounds(BlockPos blockPos) {
 		int returnX = xTransformer.wrapCoordToLimit(blockPos.getX());
 		int returnZ = zTransformer.wrapCoordToLimit(blockPos.getZ());

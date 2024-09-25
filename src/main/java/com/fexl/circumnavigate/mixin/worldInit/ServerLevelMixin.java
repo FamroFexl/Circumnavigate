@@ -4,6 +4,7 @@ package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.options.WrappingSettings;
 import com.fexl.circumnavigate.core.WorldTransformer;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -39,5 +40,10 @@ public class ServerLevelMixin {
 		else {
 			thiz.setTransformer(new WorldTransformer(WrappingSettings.invalidPos));
 		}
+
+		//server.
+		//System.out.println("Level Stem: " + thiz.getServer().registryAccess().registryOrThrow(Registries.LEVEL_STEM).entrySet());
+		//System.out.println("Dimension: " + thiz.getServer().registryAccess().registryOrThrow(Registries.DIMENSION).entrySet());
+		//System.out.println("Dimension Type: " + thiz.getServer().registryAccess().registryOrThrow(Registries.DIMENSION_TYPE).entrySet());
 	}
 }

@@ -4,6 +4,9 @@ package com.fexl.circumnavigate;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.core.Registry;
+
+
 public class Circumnavigate implements ModInitializer {
 	public static final String MOD_ID = "circumnavigate";
 
