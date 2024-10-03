@@ -1,6 +1,10 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 /* SPDX-License-Identifier: AGPL-3.0-only */
 
-package com.fexl.circumnavigate.mixin.worldInit;
+package com.fexl.circumnavigate.mixin.interfaceInjects;
 
 import com.fexl.circumnavigate.injected.LevelTransformerInjector;
 import com.fexl.circumnavigate.core.WorldTransformer;
