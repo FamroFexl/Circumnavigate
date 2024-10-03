@@ -3,11 +3,13 @@
 	"package": "com.fexl.circumnavigate.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
+      "interfaceInjects.PlayerClientInjectorMixin",
+      "interfaceInjects.LevelTransformerInjectorMixin",
+
       "worldInit.PlayerListAccessorMixin",
       "worldInit.PlayerListMixin",
       "worldInit.PrimaryLevelDataMixin",
       "worldInit.ServerLevelMixin",
-      "worldInit.LevelTransformerInjectorMixin",
 
       "chunkHandle.ServerChunkCacheMixin",
       "chunkHandle.ChunkMapMixin",
@@ -23,12 +25,13 @@
       "packetHandle.ServerGamePacketListenerImplMixin_1",
       "packetHandle.PlayerChunkSenderMixin",
 
+      "entityHandle.EntityMixin",
+      "entityHandle.NaturalSpawnerMixin",
+
       "packetHandle.packets.ClientboundLevelChunkWithLightPacketMixin",
 
       "ServerToClientListener",
-      "ServerPlayerGameModeMixin",
-      "PlayerClientInjectorMixin",
-      "EntityMixin"
+      "ServerPlayerGameModeMixin"
 	],
     "server": [
     ],
