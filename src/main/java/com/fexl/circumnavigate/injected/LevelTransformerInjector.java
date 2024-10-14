@@ -2,9 +2,9 @@
 
 package com.fexl.circumnavigate.injected;
 
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 
-public interface LevelTransformer {
+public interface LevelTransformerInjector {
 	default WorldTransformer getTransformer() {
 		return null;
 	}

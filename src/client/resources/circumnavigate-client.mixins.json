@@ -8,8 +8,6 @@
       "worldInit.ClientLevelMixin",
       "worldInit.ConnectionMixin",
 
-      "chunkHandle.ClientChunkCacheAccessorMixin",
-      "chunkHandle.ClientChunkCacheMixin",
       "chunkHandle.SectionOcclusionGraphMixin",
       "chunkHandle.OptionsAccessorMixin",
       "chunkHandle.OptionsMixin",
@@ -18,13 +16,6 @@
       "debug.ChunkBorderRendererMixin",
       "debug.DebugScreenOverlayMixin",
 
-      "packet.ServerboundInteractPacketMixin",
-      "packet.ServerboundMovePlayerPacketMixin",
-      "packet.ServerboundPlayerActionPacketMixin",
-      "packet.ServerboundUseItemOnPacketMixin",
-
-      "ClientPacketListenerAccessorMixin",
-      "ClientPacketListenerMixin",
       "ClientToServerListener"
 	],
 	"injectors": {

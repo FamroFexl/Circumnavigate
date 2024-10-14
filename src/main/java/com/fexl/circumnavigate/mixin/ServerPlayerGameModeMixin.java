@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.mixin;
 
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.phys.Vec3;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerPlayerGameMode.class)
 public class ServerPlayerGameModeMixin {
-	@Shadow ServerLevel level;
+	@Shadow protected ServerLevel level;
 
 	@Redirect(method = "handleBlockBreakAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
 	public double wrapInteractionDistanceCheck(Vec3 instance, Vec3 vec) {

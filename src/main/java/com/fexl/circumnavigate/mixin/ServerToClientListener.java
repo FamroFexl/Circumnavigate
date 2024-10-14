@@ -32,15 +32,10 @@ public class ServerToClientListener {
 	String currentLine;
 	int lineCount = 1;
 
-	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;)V", at = @At("HEAD"))
-	public void send(Packet<?> packet, CallbackInfo ci) {
-		//if(isGamePacket(packet.getClass()))
+	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V", at = @At("HEAD"))
+	public void sendWithListener(Packet<?> packet, @Nullable PacketSendListener listener, CallbackInfo ci) {
 		Class<?> clazz = packet.getClass();
-		if(true)
-			return;
-
-		//if(!isInExceptions(clazz.getSimpleName()))
-			//return;
+		//if(!isInExceptions(clazz.getSimpleName())) return;
 		String log = "S->C: ";
 
 		if(clazz.getEnclosingClass() != null)
@@ -48,16 +43,6 @@ public class ServerToClientListener {
 		else
 			log += clazz.getSimpleName();
 		log += " ";
-
-		if(packet instanceof ClientboundBlockUpdatePacket) {
-			ClientboundBlockUpdatePacket blockUpdate = (ClientboundBlockUpdatePacket) packet;
-			log += blockUpdate.getPos() + " " + blockUpdate.getBlockState().getBlock();
-		}
-
-		if(packet instanceof ClientboundBlockChangedAckPacket) {
-			ClientboundBlockChangedAckPacket blockAck = (ClientboundBlockChangedAckPacket) packet;
-			log += blockAck.sequence();
-		}
 
 		currentLine = log;
 
@@ -68,15 +53,13 @@ public class ServerToClientListener {
 		}
 		//Not equal to the previous line
 		else {
-			if(previousLine == null)
-				return;
 			//LOGGER.info(previousLine + ((lineCount != 1) ? (" {" + lineCount + "}") : ""));
 			lineCount = 1;
 			previousLine = currentLine;
 		}
-
-
 	}
+
+
 	/**
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V", at = @At("HEAD"))
 	public void send(Packet<?> packet, @Nullable PacketSendListener listener, CallbackInfo ci) {

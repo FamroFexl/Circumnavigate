@@ -1,10 +1,8 @@
 /* SPDX-License-Identifier: AGPL-3.0-only */
 
-package com.fexl.circumnavigate.util;
+package com.fexl.circumnavigate.core;
 
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * Transforms regular coordinates from and to wrapped coordinates.
@@ -17,13 +15,6 @@ public class CoordinateTransformers {
 	private final int chunkWidth = LevelChunkSection.SECTION_WIDTH;
 
 	public CoordinateTransformers(int lowerChunkBounds, int upperChunkBounds) {
-		if (lowerChunkBounds > upperChunkBounds)
-			throw new IllegalArgumentException("The Lower Chunk Bounds cannot be greater than the Upper Chunk Bounds!");
-		//TODO: Determine the minimum bounds achievable. This is likely influenced by viewDistance < domainLength.
-		//if (Math.abs(lowerChunkBounds - upperChunkBounds) < 0)
-			//throw new IllegalArgumentException("The distance between the bounds is less than the required " + 0 + " chunks!");
-
-
 		this.lowerChunkBounds = lowerChunkBounds;
 		this.upperChunkBounds = upperChunkBounds;
 	}
@@ -109,25 +100,30 @@ public class CoordinateTransformers {
 	}
 
 	public int unwrapChunkFromLimit(int refChunkCoord, int wrappedChunkCoord) {
+		//Get the width of the bounds
 		int domainLength = upperChunkBounds - lowerChunkBounds;
+
+		//Wrap the reference position
 		int wrappedRefCoord = wrapChunkToLimit(refChunkCoord);
 
+		//Difference between the reference and the chunk coord as wrapped
 		int diff = wrappedChunkCoord - wrappedRefCoord;
+
 
 		int unwrappedCoord = refChunkCoord + diff;
 
-		// Adjust to ensure the unwrapped chunk coordinate is correct
-		while (unwrappedCoord < refChunkCoord - domainLength / 2) {
-			unwrappedCoord += domainLength;
-		}
-		while (unwrappedCoord > refChunkCoord + domainLength / 2) {
-			unwrappedCoord -= domainLength;
-		}
+		 // Adjust to ensure the unwrapped chunk coordinate is correct
+		 if (unwrappedCoord < refChunkCoord - domainLength / 2) {
+		    unwrappedCoord += domainLength;
+		 }
+		 else if (unwrappedCoord > refChunkCoord + domainLength / 2) {
+		    unwrappedCoord -= domainLength;
+		 }
 		return unwrappedCoord;
 	}
 
 	public boolean isCoordOverLimit(double coord) {
-		if(coord > upperChunkBounds * chunkWidth || coord < lowerChunkBounds * chunkWidth)
+		if(coord >= upperChunkBounds * chunkWidth || coord < lowerChunkBounds * chunkWidth)
 			return true;
 		else
 			return false;
@@ -138,7 +134,7 @@ public class CoordinateTransformers {
 	}
 
 	public boolean isChunkOverLimit(int chunkCoord) {
-		if(chunkCoord > upperChunkBounds || chunkCoord < lowerChunkBounds)
+		if(chunkCoord > upperChunkBounds - 1 || chunkCoord < lowerChunkBounds)
 			return true;
 		else
 			return false;

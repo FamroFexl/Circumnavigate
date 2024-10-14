@@ -4,9 +4,10 @@ package com.fexl.circumnavigate;
 
 import com.fexl.circumnavigate.client.storage.TransformersStorage;
 import com.fexl.circumnavigate.network.packet.ClientboundWrappingDataPacket;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;

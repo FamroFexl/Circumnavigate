@@ -5,15 +5,24 @@ package com.fexl.circumnavigate.mixin.chunkHandle;
 import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkTrackingView;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerConnection;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+import java.util.Set;
+
 @Mixin(ChunkMap.class)
-public class ChunkMapMixin {
+public abstract class ChunkMapMixin {
 	/**
 	 * Stores the serverLevel for usage further down the call chain where it was not passed.
 	 */

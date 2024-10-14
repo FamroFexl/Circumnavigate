@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.network.packet;
 
 import com.fexl.circumnavigate.Circumnavigate;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;

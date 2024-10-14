@@ -3,24 +3,21 @@
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.network.packet.ClientboundWrappingDataPacket;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
-import net.minecraft.network.protocol.game.CommonPlayerSpawnInfo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.Level;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import com.llamalad7.mixinextras.sugar.Local;
+
 import java.util.HashMap;
 
 @Mixin(PlayerList.class)
@@ -41,8 +38,14 @@ public class PlayerListMixin {
 		ClientboundWrappingDataPacket.send(player, transformers);
 	}
 
+	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
+	public void placeNewPlayer2(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
+		player.setClientX(player.getX());
+		player.setClientZ(player.getZ());
+	}
+
 	/**
-	 * Modifies the client view distance so it is
+	 * Modifies the client view distance so it is within world bounds and chunk loading requirements.
 	 */
 	@Inject(method = "setViewDistance", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	public void setViewDistance(int viewDistance, CallbackInfo ci) {

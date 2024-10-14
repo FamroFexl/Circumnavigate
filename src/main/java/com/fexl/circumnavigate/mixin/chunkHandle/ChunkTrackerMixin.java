@@ -3,10 +3,9 @@
 package com.fexl.circumnavigate.mixin.chunkHandle;
 
 import com.fexl.circumnavigate.storage.TransformerRequests;
-import com.fexl.circumnavigate.util.WorldTransformer;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.server.level.ChunkTracker;
 import net.minecraft.world.level.ChunkPos;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only */
 
-package com.fexl.circumnavigate.util;
+package com.fexl.circumnavigate.core;
 
 import com.fexl.circumnavigate.options.WrappingSettings;
 
