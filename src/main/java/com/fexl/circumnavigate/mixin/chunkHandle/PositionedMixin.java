@@ -53,6 +53,7 @@ public class PositionedMixin {
 	 */
 	@Inject(method = "squareIntersects(Lnet/minecraft/server/level/ChunkTrackingView$Positioned;)Z", at = @At("HEAD"), cancellable = true)
 	protected void squareIntersects(Positioned other, CallbackInfoReturnable<Boolean> cir) {
+		cir.cancel();
 		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
 		boolean xIntersects = (thiz.minX() <= other.maxX() && thiz.maxX() >= other.minX()) ||
 			(thiz.minX() + transformer.xWidth <= other.maxX() && thiz.maxX() + transformer.xWidth >= other.minX()) ||

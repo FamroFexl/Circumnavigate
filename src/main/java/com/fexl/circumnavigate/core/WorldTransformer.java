@@ -146,6 +146,10 @@ public class WorldTransformer {
 		return new Distance(z1, z2, this.zChunkBoundMin, this.zChunkBoundMax, zTransformer);
 	}
 
+	public boolean isChunkOverBounds(ChunkPos chunkPos) {
+		return !xTransformer.isChunkOverLimit(chunkPos.x) && !zTransformer.isChunkOverLimit(chunkPos.z);
+	}
+
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "[xMin: " + this.xChunkBoundMin + ", xMax: " + this.xChunkBoundMax + ", zMin: " + this.zChunkBoundMin + ", zMax: " + this.zChunkBoundMax + ", xShift: " + this.xShift + ", zShift: " + this.zShift + "]";
@@ -154,6 +158,14 @@ public class WorldTransformer {
 	public boolean isWrapped() {
 		int invalidPos = WrappingSettings.invalidPos;
 		return !(xChunkBoundMin == -invalidPos || xChunkBoundMax == invalidPos || zChunkBoundMin == -invalidPos || zChunkBoundMax == invalidPos);
+	}
+
+	public int distanceToSqrWrapped(long chunkPos1, long chunkPos2) {
+		return (int) distanceToSqrWrapped(ChunkPos.getX(chunkPos1), 0, ChunkPos.getZ(chunkPos1), ChunkPos.getX(chunkPos2), 0, ChunkPos.getZ(chunkPos2));
+	}
+
+	public int distanceToSqrWrapped(ChunkPos chunkPos1, ChunkPos chunkPos2) {
+		return (int) distanceToSqrWrapped(chunkPos1.x, 0, chunkPos1.z, chunkPos2.x, 0, chunkPos2.z);
 	}
 
 	public double distanceToSqrWrapped(Vec3 from, Vec3 to) {
@@ -205,9 +217,6 @@ public class WorldTransformer {
 	 */
 	public int limitViewDistance(int viewDistance) {
 		int min = Math.min(this.xWidth / 2, this.zWidth / 2) - 2;
-		if(viewDistance > min) {
-			return min;
-		}
-		return viewDistance;
+		return Math.min(viewDistance, min);
 	}
 }

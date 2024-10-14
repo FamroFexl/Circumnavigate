@@ -27,6 +27,7 @@
 
       "entityHandle.EntityMixin",
       "entityHandle.NaturalSpawnerMixin",
+      "entityHandle.ServerEntityMixin",
 
       "packetHandle.packets.ClientboundLevelChunkWithLightPacketMixin",
 

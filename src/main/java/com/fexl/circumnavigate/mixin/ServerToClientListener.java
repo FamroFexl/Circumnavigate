@@ -32,46 +32,6 @@ public class ServerToClientListener {
 	String currentLine;
 	int lineCount = 1;
 
-	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;)V", at = @At("HEAD"))
-	public void send(Packet<?> packet, CallbackInfo ci) {
-		//if(isGamePacket(packet.getClass()))
-		Class<?> clazz = packet.getClass();
-
-		//if(!isInExceptions(clazz.getSimpleName()))
-			//return;
-		String log = "S->C: ";
-
-		if(clazz.getEnclosingClass() != null)
-			log += clazz.getEnclosingClass().getSimpleName() + "." + clazz.getSimpleName();
-		else
-			log += clazz.getSimpleName();
-		log += " ";
-		//LOGGER.info(log);
-		/**
-
-		currentLine = log;
-
-		//If the current line equals the previous line
-		if(currentLine.equals(previousLine)) {
-			//Increment the line count
-			lineCount++;
-		}
-		//Not equal to the previous line
-		else {
-			LOGGER.info(previousLine + ((lineCount != 1) ? (" {" + lineCount + "}") : ""));
-			lineCount = 1;
-			previousLine = currentLine;
-		}**/
-
-
-	}
-	/**
-	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V", at = @At("HEAD"))
-	public void send(Packet<?> packet, @Nullable PacketSendListener listener, CallbackInfo ci) {
-		//if(isGamePacket(packet.getClass()))
-			System.out.println("S->C (2): " + packet.getClass().getSimpleName());
-	}**/
-
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V", at = @At("HEAD"))
 	public void sendWithListener(Packet<?> packet, @Nullable PacketSendListener listener, CallbackInfo ci) {
 		Class<?> clazz = packet.getClass();
@@ -93,11 +53,19 @@ public class ServerToClientListener {
 		}
 		//Not equal to the previous line
 		else {
-			LOGGER.info(previousLine + ((lineCount != 1) ? (" {" + lineCount + "}") : ""));
+			//LOGGER.info(previousLine + ((lineCount != 1) ? (" {" + lineCount + "}") : ""));
 			lineCount = 1;
 			previousLine = currentLine;
 		}
 	}
+
+
+	/**
+	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V", at = @At("HEAD"))
+	public void send(Packet<?> packet, @Nullable PacketSendListener listener, CallbackInfo ci) {
+		//if(isGamePacket(packet.getClass()))
+			System.out.println("S->C (2): " + packet.getClass().getSimpleName());
+	}**/
 
 	public boolean isGamePacket(Class<?> clazz) {
 		Type[] interfaces = clazz.getGenericInterfaces();
@@ -121,7 +89,7 @@ public class ServerToClientListener {
 	}
 
 	public boolean isInExceptions(String name) {
-		List<String> stringList = Arrays.asList("ClientboundRemoveEntitiesPacket", "ClientboundAddEntityPacket");
+		List<String> stringList = Arrays.asList("ClientboundBlockUpdatePacket", "ClientboundBlockChangedAckPacket");
 		return stringList.contains(name);
 	}
 }

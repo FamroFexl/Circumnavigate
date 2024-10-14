@@ -51,3 +51,7 @@ accessible class net/minecraft/server/level/ChunkMap$TrackedEntity
 accessible method net/minecraft/server/level/ChunkMap getPlayerViewDistance (Lnet/minecraft/server/level/ServerPlayer;)I
 accessible method net/minecraft/server/level/ChunkMap isChunkTracked (Lnet/minecraft/server/level/ServerPlayer;II)Z
 
+accessible field net/minecraft/server/level/ServerEntity entity Lnet/minecraft/world/entity/Entity;
+accessible field net/minecraft/server/level/ChunkMap level Lnet/minecraft/server/level/ServerLevel;
+accessible field net/minecraft/network/protocol/game/VecDeltaCodec base Lnet/minecraft/world/phys/Vec3;
+
