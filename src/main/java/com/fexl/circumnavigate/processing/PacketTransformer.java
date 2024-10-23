@@ -36,6 +36,7 @@ public class PacketTransformer {
 
 	static Logger LOGGER = LogUtils.getLogger();
 
+	//Optimization to cache reflection requests.
 	static {
 		Method[] methods = PacketTransformer.class.getDeclaredMethods();
 
@@ -51,6 +52,9 @@ public class PacketTransformer {
 		}
 	}
 
+	/**
+	 * Uses reflection to determine which packet goes to which transformPacket method.
+	 */
 	public static Packet<?> process(Packet<?> packet, ServerPlayer player){
 		Method transformedPacket = methodCache.get(packet.getClass());
 

@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +27,7 @@ public abstract class ChunkMapMixin {
 	/**
 	 * Stores the serverLevel for usage further down the call chain where it was not passed.
 	 */
-	@Inject(method = "isChunkTracked", at = @At("HEAD"))
+	@Inject(method = "isChunkTracked", at = @At("HEAD"), cancellable = true)
 	public void isChunkTracked(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
 		TransformerRequests.chunkMapLevel = player.serverLevel();
 	}

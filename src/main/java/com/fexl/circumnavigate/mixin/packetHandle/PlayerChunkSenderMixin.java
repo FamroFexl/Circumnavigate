@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-@SuppressWarnings("deprecated")
+@SuppressWarnings({"unused", "unchecked", "deprecation"})
 @Mixin(PlayerChunkSender.class)
 public class PlayerChunkSenderMixin {
 	@Shadow
@@ -52,6 +52,9 @@ public class PlayerChunkSenderMixin {
 		return send;
 	}
 
+	/**
+	 * Collect chunks to send, prioritizing closer chunks first. Modified to include wrapped chunks as closer.
+	 */
 	@Inject(method = "collectChunksToSend", at = @At("HEAD"), cancellable = true)
 	private void collectChunksToSend(ChunkMap chunkMap, ChunkPos chunkPos, CallbackInfoReturnable<List<LevelChunk>> cir) {
 		WorldTransformer transformer = chunkMap.level.getTransformer();

@@ -16,7 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class SectionTrackerMixin {
 	SectionTracker thiz = (SectionTracker) (Object) this;
 
-	//ModifyArgs and ModifyArg do not work for this. They remove a return statement in the original method.
+	/**
+	 * Updates loading levels of adjacent chunk sections so they are ready when needed. Modified to include wrapped sections.
+	 */
 	@Inject(method = "checkNeighborsAfterUpdate", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	public void checkNeighbors(long pos, int level, boolean isDecreasing, CallbackInfo ci) {
 		//TODO: Stop sub-chunk access after bounds.
@@ -26,11 +28,10 @@ public class SectionTrackerMixin {
 		if (isDecreasing && level >= thiz.levelCount - 2) {
 			return;
 		}
-		for (int i = -1; i <= 1; ++i) {
-			for (int j = -1; j <= 1; ++j) {
-				for (int k = -1; k <= 1; ++k) {
-					long l = SectionPos.offset(pos, transformer.xTransformer.wrapChunkToLimit(i), j, transformer.zTransformer.wrapChunkToLimit(j));
-					//long l = SectionPos.offset(pos, i, j, k);
+		for (int x = -1; x <= 1; ++x) {
+			for (int y = -1; y <= 1; ++y) {
+				for (int z = -1; z <= 1; ++z) {
+					long l = SectionPos.offset(pos, transformer.xTransformer.wrapChunkToLimit(x), y, transformer.zTransformer.wrapChunkToLimit(y));
 					if (l == pos) continue;
 					thiz.checkNeighbor(pos, l, level, isDecreasing);
 				}

@@ -40,10 +40,5 @@ public class ServerLevelMixin {
 		else {
 			thiz.setTransformer(new WorldTransformer(WrappingSettings.invalidPos));
 		}
-
-		//server.
-		//System.out.println("Level Stem: " + thiz.getServer().registryAccess().registryOrThrow(Registries.LEVEL_STEM).entrySet());
-		//System.out.println("Dimension: " + thiz.getServer().registryAccess().registryOrThrow(Registries.DIMENSION).entrySet());
-		//System.out.println("Dimension Type: " + thiz.getServer().registryAccess().registryOrThrow(Registries.DIMENSION_TYPE).entrySet());
 	}
 }
