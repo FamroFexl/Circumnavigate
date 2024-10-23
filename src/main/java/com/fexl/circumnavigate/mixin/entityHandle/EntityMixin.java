@@ -8,22 +8,19 @@
 
 package com.fexl.circumnavigate.mixin.entityHandle;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
-import net.minecraft.util.Mth;
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.entity.EntityInLevelCallback;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -59,5 +56,18 @@ public abstract class EntityMixin {
 		}
 
 		return this.level.getTransformer().zTransformer.wrapCoordToLimit(z);
+	}
+
+	/**
+	 * Checks if an entity is colliding with a block. Modified to support wrapped worlds.
+	 */
+	@Redirect(method = "isColliding", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/shapes/Shapes;joinIsNotEmpty(Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/BooleanOp;)Z"))
+	public boolean create(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator) {
+		if (level.isClientSide()) return Shapes.joinIsNotEmpty(shape1, shape2, resultOperator);
+
+		WorldTransformer transformer = this.level.getTransformer();
+		VoxelShape result = Shapes.create(transformer.translateAABBFromBounds(shape1.bounds(), shape2.bounds()));
+
+		return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 	}
 }

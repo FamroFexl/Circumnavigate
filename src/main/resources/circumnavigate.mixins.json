@@ -1,42 +1,42 @@
 {
-	"required": true,
-	"package": "com.fexl.circumnavigate.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-      "interfaceInjects.PlayerClientInjectorMixin",
-      "interfaceInjects.LevelTransformerInjectorMixin",
-
-      "worldInit.PlayerListAccessorMixin",
-      "worldInit.PlayerListMixin",
-      "worldInit.PrimaryLevelDataMixin",
-      "worldInit.ServerLevelMixin",
-
-      "chunkHandle.ServerChunkCacheMixin",
-      "chunkHandle.ChunkMapMixin",
-      "chunkHandle.PositionedAccessorMixin",
-      "chunkHandle.ChunkTrackingViewMixin",
-      "chunkHandle.PositionedMixin",
-      "chunkHandle.ChunkTrackerMixin",
-      "chunkHandle.SectionTrackerMixin",
-      "chunkHandle.TrackedEntityMixin",
-
-      "packetHandle.ServerCommonPacketListenerImplMixin",
-      "packetHandle.ServerGamePacketListenerImplMixin",
-      "packetHandle.ServerGamePacketListenerImplMixin_1",
-      "packetHandle.PlayerChunkSenderMixin",
-
-      "entityHandle.EntityMixin",
-      "entityHandle.NaturalSpawnerMixin",
-      "entityHandle.ServerEntityMixin",
-
-      "packetHandle.packets.ClientboundLevelChunkWithLightPacketMixin",
-
-      "ServerToClientListener",
-      "ServerPlayerGameModeMixin"
-	],
-    "server": [
-    ],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "com.fexl.circumnavigate.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ServerPlayerGameModeMixin",
+    "ServerToClientListener",
+    "chunkHandle.ChunkMapMixin",
+    "chunkHandle.ChunkTrackerMixin",
+    "chunkHandle.ChunkTrackingViewMixin",
+    "chunkHandle.PositionedAccessorMixin",
+    "chunkHandle.PositionedMixin",
+    "chunkHandle.SectionTrackerMixin",
+    "chunkHandle.ServerChunkCacheMixin",
+    "chunkHandle.TrackedEntityMixin",
+    "entityHandle.EntityMixin",
+    "entityHandle.NaturalSpawnerMixin",
+    "entityHandle.ServerEntityMixin",
+    "entityHandle.collisions.BlockCollisionsMixin",
+    "entityHandle.collisions.EntityGetterMixin",
+    "entityHandle.collisions.LevelMixin",
+    "interfaceInjects.LevelTransformerInjectorMixin",
+    "interfaceInjects.PathNavigationRegionInjectorMixin",
+    "interfaceInjects.PlayerClientInjectorMixin",
+    "interfaceInjects.WorldGenRegionInjectorMixin",
+    "packetHandle.PlayerChunkSenderMixin",
+    "packetHandle.ServerCommonPacketListenerImplMixin",
+    "packetHandle.ServerGamePacketListenerImplMixin",
+    "packetHandle.ServerGamePacketListenerImplMixin_1",
+    "packetHandle.packets.ClientboundLevelChunkWithLightPacketMixin",
+    "worldInit.PathNavigationRegionMixin",
+    "worldInit.PlayerListMixin",
+    "worldInit.PrimaryLevelDataMixin",
+    "worldInit.ServerLevelMixin",
+    "worldInit.WorldGenRegionMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }
