@@ -5,6 +5,7 @@
   "mixins": [
     "ServerPlayerGameModeMixin",
     "ServerToClientListener",
+    "blockHandle.NeighborUpdatorMixin",
     "chunkHandle.ChunkMapMixin",
     "chunkHandle.ChunkTrackerMixin",
     "chunkHandle.ChunkTrackingViewMixin",

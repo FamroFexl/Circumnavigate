@@ -54,3 +54,11 @@ accessible field net/minecraft/server/level/ServerEntity entity Lnet/minecraft/w
 accessible field net/minecraft/server/level/ChunkMap level Lnet/minecraft/server/level/ServerLevel;
 accessible field net/minecraft/network/protocol/game/VecDeltaCodec base Lnet/minecraft/world/phys/Vec3;
 
+accessible method net/minecraft/world/level/levelgen/synth/SimplexNoise getCornerNoise3D (IDDDD)D
+accessible method net/minecraft/world/level/levelgen/synth/SimplexNoise p (I)I
+
+#SectionBlocks packet necessary
+accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket sectionPos Lnet/minecraft/core/SectionPos;
+accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket positions [S
+accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket states [Lnet/minecraft/world/level/block/state/BlockState;
+
