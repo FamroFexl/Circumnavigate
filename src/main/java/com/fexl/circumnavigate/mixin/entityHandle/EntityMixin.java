@@ -9,22 +9,29 @@
 package com.fexl.circumnavigate.mixin.entityHandle;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 	@Shadow private Level level;
+
+	@Shadow public abstract double getX();
+
+	Entity thiz = (Entity) (Object) this;
 
 	/**
 	 * Modifies the inputted X position of the entity to be within the wrapping bounds
@@ -39,7 +46,7 @@ public abstract class EntityMixin {
 			return x;
 		}
 
-		return this.level.getTransformer().xTransformer.wrapCoordToLimit(x);
+		return level.getTransformer().xTransformer.wrapCoordToLimit(x);
 	}
 
 	/**
@@ -55,7 +62,7 @@ public abstract class EntityMixin {
 			return z;
 		}
 
-		return this.level.getTransformer().zTransformer.wrapCoordToLimit(z);
+		return level.getTransformer().zTransformer.wrapCoordToLimit(z);
 	}
 
 	/**
@@ -70,4 +77,27 @@ public abstract class EntityMixin {
 
 		return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 	}
+
+	@Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
+	public void distanceTo(Entity entity, CallbackInfoReturnable<Float> cir) {
+		if(level.isClientSide) return;
+		cir.cancel();
+		cir.setReturnValue(Mth.sqrt((float)level.getTransformer().distanceToSqrWrapped(entity.getX(), entity.getY(), entity.getZ(), thiz.getX(), thiz.getY(), thiz.getZ())));
+	}
+
+	@Inject(method = "distanceToSqr(DDD)D", at = @At("HEAD"), cancellable = true)
+	public void distanceToSqr_Double(double x, double y, double z, CallbackInfoReturnable<Double> cir) {
+		if(level.isClientSide) return;
+		cir.cancel();
+		cir.setReturnValue(level.getTransformer().distanceToSqrWrapped(x, y, z, thiz.getX(), thiz.getY(), thiz.getZ()));
+	}
+
+	@Inject(method = "distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", at = @At("HEAD"), cancellable = true)
+	public void distanceToSqr_Vec3(Vec3 vec, CallbackInfoReturnable<Double> cir) {
+		if(level.isClientSide) return;
+		cir.cancel();
+		cir.setReturnValue(level.getTransformer().distanceToSqrWrapped(vec, new Vec3(thiz.getX(), thiz.getY(), thiz.getZ())));
+	}
+
+
 }

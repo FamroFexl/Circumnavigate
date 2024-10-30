@@ -49,20 +49,23 @@ public interface EntityGetterMixin {
 		return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 	}
 
+	/**
 	@Redirect(method = "getNearestPlayer(DDDDLjava/util/function/Predicate;)Lnet/minecraft/world/entity/player/Player;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;distanceToSqr(DDD)D"))
 	default double nearestPlayerDistanceWrap(Player player, double x, double y, double z) {
 		return wrapDistance(player, x, y, z);
-	}
+	}**/
 
+	/**
 	@Redirect(method = "hasNearbyAlivePlayer(DDDD)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;distanceToSqr(DDD)D"))
 	default double hasNearbyAlivePlayerDistanceWrap(Player player, double x, double y, double z) {
 		return wrapDistance(player, x, y, z);
-	}
+	}**/
 
+	/**
 	@Redirect(method = "getNearestEntity(Ljava/util/List;Lnet/minecraft/world/entity/ai/targeting/TargetingConditions;Lnet/minecraft/world/entity/LivingEntity;DDD)Lnet/minecraft/world/entity/LivingEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;distanceToSqr(DDD)D"))
 	default double nearestEntityDistanceWrap(LivingEntity livingEntity, double x, double y, double z) {
 		return wrapDistance(livingEntity, x, y, z);
-	}
+	}**/
 
 	@Inject(method = "getNearbyPlayers", at = @At("HEAD"), cancellable = true)
 	default void getNearbyPlayers(TargetingConditions predicate, LivingEntity target, AABB area, CallbackInfoReturnable<List<Player>> cir) {
