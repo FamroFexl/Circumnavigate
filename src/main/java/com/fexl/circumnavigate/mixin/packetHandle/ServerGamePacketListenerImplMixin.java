@@ -11,13 +11,17 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketUtils;
+import net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.network.protocol.game.ServerboundMoveVehiclePacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
@@ -77,6 +81,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
+	// TODO: dont override the whole method, just the part that needs to be changed
 	@Inject(method = "handleMovePlayer", at = @At("HEAD"), cancellable = true)
 	public void handleMovePlayer(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
 		PacketUtils.ensureRunningOnSameThread(packet, thiz, player.serverLevel());
@@ -223,5 +228,88 @@ public abstract class ServerGamePacketListenerImplMixin {
 		thiz.lastGoodX = thiz.player.getX();
 		thiz.lastGoodY = thiz.player.getY();
 		thiz.lastGoodZ = thiz.player.getZ();
+	}
+
+	@Inject(method = "handleMoveVehicle", at = @At("HEAD"), cancellable = true)
+	public void handleMoveVehicle(ServerboundMoveVehiclePacket packet, CallbackInfo ci) {
+		PacketUtils.ensureRunningOnSameThread(packet, thiz, player.serverLevel());
+		WorldTransformer transformer = player.serverLevel().getTransformer();
+		ci.cancel();
+
+		if (ServerGamePacketListenerImpl.containsInvalidValues(packet.getX(), packet.getY(), packet.getZ(), packet.getYRot(), packet.getXRot())) {
+			thiz.disconnect(Component.translatable("multiplayer.disconnect.invalid_vehicle_movement"));
+			return;
+		}
+
+		Entity entity = thiz.player.getRootVehicle();
+		if (entity != thiz.player && entity.getControllingPassenger() == thiz.player && entity == thiz.lastVehicle) {
+			ServerLevel serverLevel = thiz.player.serverLevel();
+			double d = entity.getX();
+			double e = entity.getY();
+			double f = entity.getZ();
+			// Warp x and z to bounds
+			double g = ServerGamePacketListenerImpl.clampHorizontal(transformer.xTransformer.wrapCoordToLimit(packet.getX()));
+			double h = ServerGamePacketListenerImpl.clampVertical(packet.getY());
+			double i = ServerGamePacketListenerImpl.clampHorizontal(transformer.zTransformer.wrapCoordToLimit(packet.getZ()));
+			float j = Mth.wrapDegrees(packet.getYRot());
+			float k = Mth.wrapDegrees(packet.getXRot());
+			double l = g - thiz.vehicleFirstGoodX;
+			double m = h - thiz.vehicleFirstGoodY;
+			double n = i - thiz.vehicleFirstGoodZ;
+			double o = entity.getDeltaMovement().lengthSqr();
+			double p = l * l + m * m + n * n;
+			if (p - o > 100.0 && !thiz.isSingleplayerOwner()) {
+				LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), thiz.player.getName().getString(), l, m, n);
+				thiz.send(new ClientboundMoveVehiclePacket(entity));
+				return;
+			}
+			boolean bl = serverLevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
+			l = g - thiz.vehicleLastGoodX;
+			m = h - thiz.vehicleLastGoodY - 1.0E-6;
+			n = i - thiz.vehicleLastGoodZ;
+			boolean bl2 = entity.verticalCollisionBelow;
+			if (entity instanceof LivingEntity livingEntity && livingEntity.onClimbable()) {
+				livingEntity.resetFallDistance();
+			}
+
+			entity.move(MoverType.PLAYER, new Vec3(l, m, n));
+			l = g - entity.getX();
+			m = h - entity.getY();
+			if (m > -0.5 || m < 0.5) {
+				m = 0.0;
+			}
+			n = i - entity.getZ();
+
+			// TODO doesn't work in worlds where the min and max bounds aren't opposites (i.g. -32 -> 32)
+			// Don't invalidate the vehicle movement if it moved across the world border
+			//------------------------------------------------------
+			if(Math.abs(l) + 0.0625*2 > transformer.xWidth) {
+				l = 0.0;
+			}
+
+			if(Math.abs(n) + 0.0625*2 > transformer.zWidth) {
+				n = 0.0;
+			}
+			//------------------------------------------------------
+			p = l * l + m * m + n * n;
+			boolean bl3 = false;
+			if (p > 0.0625) {
+				bl3 = true;
+				LOGGER.warn("{} (vehicle of {}) moved wrongly! {}", entity.getName().getString(), thiz.player.getName().getString(), Math.sqrt(p));
+			}
+			entity.absMoveTo(g, h, i, j, k);
+			boolean bl4 = serverLevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
+			if (bl && (bl3 || !bl4)) {
+				entity.absMoveTo(d, e, f, j, k);
+				thiz.send(new ClientboundMoveVehiclePacket(entity));
+				return;
+			}
+			thiz.player.serverLevel().getChunkSource().move(thiz.player);
+			thiz.player.checkMovementStatistics(thiz.player.getX() - d, thiz.player.getY() - e, thiz.player.getZ() - f);
+			thiz.clientVehicleIsFloating = m >= -0.03125 && !bl2 && !thiz.server.isFlightAllowed() && !entity.isNoGravity() && thiz.noBlocksAround(entity);
+			thiz.vehicleLastGoodX = entity.getX();
+			thiz.vehicleLastGoodY = entity.getY();
+			thiz.vehicleLastGoodZ = entity.getZ();
+		}
 	}
 }

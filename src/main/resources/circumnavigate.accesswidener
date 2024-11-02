@@ -43,6 +43,14 @@ accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl ser
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodX D
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodY D
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastGoodZ D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleFirstGoodX D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleFirstGoodY D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleFirstGoodZ D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl lastVehicle Lnet/minecraft/world/entity/Entity;
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleLastGoodX D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleLastGoodY D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleLastGoodZ D
+accessible field net/minecraft/server/network/ServerGamePacketListenerImpl clientVehicleIsFloating Z
 
 accessible field net/minecraft/world/level/chunk/LevelChunk postLoad Lnet/minecraft/world/level/chunk/LevelChunk$PostLoadProcessor;
 accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
