@@ -37,10 +37,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin {
-	@Unique private static final Logger LOGGER = LogUtils.getLogger();
-	@Unique ServerGamePacketListenerImpl thiz = (ServerGamePacketListenerImpl) (Object) this;
+	@Unique
+	private static final Logger LOGGER = LogUtils.getLogger();
+	@Unique
+	ServerGamePacketListenerImpl thiz = (ServerGamePacketListenerImpl) (Object) this;
 
-	@Shadow public ServerPlayer player;
+	@Shadow
+	public ServerPlayer player;
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
 	public double interactionDistanceWrap1(Vec3 instance, Vec3 vec) {
@@ -49,11 +52,12 @@ public abstract class ServerGamePacketListenerImplMixin {
 	}
 
 	/**
-	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;distanceToSqr(DDD)D", ordinal = 0))
-	public double playerDistanceWrap1(ServerPlayer instance, double x, double y, double z) {
-		WorldTransformer transformer = player.serverLevel().getTransformer();
-		return transformer.distanceToSqrWrapped(instance.getX(), instance.getY(), instance.getZ(), x, y, z);
-	}**/
+	 * @Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;distanceToSqr(DDD)D", ordinal = 0))
+	 * public double playerDistanceWrap1(ServerPlayer instance, double x, double y, double z) {
+	 * WorldTransformer transformer = player.serverLevel().getTransformer();
+	 * return transformer.distanceToSqrWrapped(instance.getX(), instance.getY(), instance.getZ(), x, y, z);
+	 * }
+	 **/
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;", ordinal = 0))
 	public Vec3 plyaerDistanceWrap2(Vec3 instance, Vec3 vec) {
@@ -97,10 +101,10 @@ public abstract class ServerGamePacketListenerImplMixin {
 		//------------------------------------------------------
 		//Disconnect the player if they move outside of the border bounds
 		/**
-		if(transformer.xTransformer.isCoordOverLimit(packet.getX(transformer.centerX*16)) || transformer.zTransformer.isCoordOverLimit(packet.getZ(transformer.centerZ*16))) {
-			thiz.disconnect(Component.translatable("multiplayer.disconnect.invalid_player_movement"));
-			return;
-		}**/
+		 if(transformer.xTransformer.isCoordOverLimit(packet.getX(transformer.centerX*16)) || transformer.zTransformer.isCoordOverLimit(packet.getZ(transformer.centerZ*16))) {
+		 thiz.disconnect(Component.translatable("multiplayer.disconnect.invalid_player_movement"));
+		 return;
+		 }**/
 		//------------------------------------------------------
 		ServerLevel serverLevel = player.serverLevel();
 		if (player.wonGame) {
@@ -143,11 +147,11 @@ public abstract class ServerGamePacketListenerImplMixin {
 		double l = d - thiz.firstGoodX;
 		double m = e - thiz.firstGoodY;
 		double n = f - thiz.firstGoodZ;
-		if(Math.abs(l) + 0.0625*2 > transformer.xWidth) {
+		if (Math.abs(l) + 0.0625 * 2 > transformer.xWidth) {
 			l = 0.0;
 		}
 
-		if(Math.abs(n) + 0.0625*2 > transformer.zWidth) {
+		if (Math.abs(n) + 0.0625 * 2 > transformer.zWidth) {
 			n = 0.0;
 		}
 		double o = thiz.player.getDeltaMovement().lengthSqr();
@@ -162,13 +166,13 @@ public abstract class ServerGamePacketListenerImplMixin {
 			++thiz.receivedMovePacketCount;
 			int q = thiz.receivedMovePacketCount - thiz.knownMovePacketCount;
 			if (q > 5) {
-				LOGGER.debug("{} is sending move packets too frequently ({} packets since last tick)", (Object)thiz.player.getName().getString(), (Object)q);
+				LOGGER.debug("{} is sending move packets too frequently ({} packets since last tick)", (Object) thiz.player.getName().getString(), (Object) q);
 				q = 1;
 			}
 			if (!(thiz.player.isChangingDimension() || thiz.player.level().getGameRules().getBoolean(GameRules.RULE_DISABLE_ELYTRA_MOVEMENT_CHECK) && thiz.player.isFallFlying())) {
 				float r;
 				float f2 = r = thiz.player.isFallFlying() ? 300.0f : 100.0f;
-				if (p - o > (double)(r * (float)q) && !thiz.isSingleplayerOwner()) { //!thiz.isSingleplayerOwner()
+				if (p - o > (double) (r * (float) q) && !thiz.isSingleplayerOwner()) { //!thiz.isSingleplayerOwner()
 					LOGGER.warn("{} moved too quickly! {},{},{}", thiz.player.getName().getString(), l, m, n);
 					thiz.teleport(thiz.player.getX(), thiz.player.getY(), thiz.player.getZ(), thiz.player.getYRot(), thiz.player.getXRot());
 					return;
@@ -196,11 +200,11 @@ public abstract class ServerGamePacketListenerImplMixin {
 		//TODO doesn't work in worlds where the min and max bounds aren't opposites (i.g. -32 -> 32)
 		//------------------------------------------------------
 		//Don't invalidate the player movement if they moved across the world border
-		if(Math.abs(l) + 0.0625*2 > transformer.xWidth) {
+		if (Math.abs(l) + 0.0625 * 2 > transformer.xWidth) {
 			l = 0.0;
 		}
 
-		if(Math.abs(n) + 0.0625*2 > transformer.zWidth) {
+		if (Math.abs(n) + 0.0625 * 2 > transformer.zWidth) {
 			n = 0.0;
 		}
 		//------------------------------------------------------
@@ -208,7 +212,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		boolean bl3 = false;
 		if (!thiz.player.isChangingDimension() && p > 0.0625 && !thiz.player.isSleeping() && !thiz.player.gameMode.isCreative() && thiz.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR) {
 			bl3 = true;
-			LOGGER.warn("{} moved wrongly!", (Object)thiz.player.getName().getString());
+			LOGGER.warn("{} moved wrongly!", (Object) thiz.player.getName().getString());
 		}
 
 		if (!thiz.player.noPhysics && !thiz.player.isSleeping() && (bl3 && serverLevel.noCollision(thiz.player, aABB)) || thiz.isPlayerCollidingWithAnythingNew(serverLevel, aABB, d, e, f)) {
@@ -229,6 +233,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		thiz.lastGoodY = thiz.player.getY();
 		thiz.lastGoodZ = thiz.player.getZ();
 	}
+
 
 	@Inject(method = "handleMoveVehicle", at = @At("HEAD"), cancellable = true)
 	public void handleMoveVehicle(ServerboundMoveVehiclePacket packet, CallbackInfo ci) {
@@ -256,6 +261,13 @@ public abstract class ServerGamePacketListenerImplMixin {
 			double l = g - thiz.vehicleFirstGoodX;
 			double m = h - thiz.vehicleFirstGoodY;
 			double n = i - thiz.vehicleFirstGoodZ;
+			if (Math.abs(l) + 0.0625 * 2 > transformer.xWidth) {
+				l = 0.0;
+			}
+
+			if (Math.abs(n) + 0.0625 * 2 > transformer.zWidth) {
+				n = 0.0;
+			}
 			double o = entity.getDeltaMovement().lengthSqr();
 			double p = l * l + m * m + n * n;
 			if (p - o > 100.0 && !thiz.isSingleplayerOwner()) {
@@ -283,11 +295,11 @@ public abstract class ServerGamePacketListenerImplMixin {
 			// TODO doesn't work in worlds where the min and max bounds aren't opposites (i.g. -32 -> 32)
 			// Don't invalidate the vehicle movement if it moved across the world border
 			//------------------------------------------------------
-			if(Math.abs(l) + 0.0625*2 > transformer.xWidth) {
+			if (Math.abs(l) + 0.0625 * 2 > transformer.xWidth) {
 				l = 0.0;
 			}
 
-			if(Math.abs(n) + 0.0625*2 > transformer.zWidth) {
+			if (Math.abs(n) + 0.0625 * 2 > transformer.zWidth) {
 				n = 0.0;
 			}
 			//------------------------------------------------------
