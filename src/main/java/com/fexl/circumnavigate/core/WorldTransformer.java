@@ -216,7 +216,7 @@ public class WorldTransformer {
 	}
 
 	public boolean isChunkOverBounds(ChunkPos chunkPos) {
-		return !xTransformer.isChunkOverLimit(chunkPos.x) && !zTransformer.isChunkOverLimit(chunkPos.z);
+		return xTransformer.isChunkOverLimit(chunkPos.x) || zTransformer.isChunkOverLimit(chunkPos.z);
 	}
 
 	@Override
