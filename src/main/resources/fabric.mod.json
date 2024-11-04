@@ -5,7 +5,8 @@
 	"name": "Circumnavigate",
 	"description": "Finite, Tiled, Seamless World Wrapping",
 	"authors": [
-		"Famro Fexl"
+		"Famro Fexl",
+        "Skidam"
 	],
 	"contact": {
 		"homepage": "https://modrinth.com/project/circumnavigate",
