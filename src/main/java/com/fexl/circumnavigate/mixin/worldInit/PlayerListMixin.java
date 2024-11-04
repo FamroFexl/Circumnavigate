@@ -4,6 +4,7 @@ package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.network.packet.ClientboundWrappingDataPacket;
 import com.fexl.circumnavigate.core.WorldTransformer;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
 import net.minecraft.resources.ResourceKey;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -71,5 +73,21 @@ public abstract class PlayerListMixin {
 
 			}
 		}
+	}
+
+	/**
+	 * Wraps the X for the ServerPlayer so it can apply to them
+	 */
+	@Redirect(method = "broadcast", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getX()D"))
+	public double broadcast_X(ServerPlayer instance, @Local(ordinal = 0, argsOnly = true) double x) {
+		return instance.serverLevel().getTransformer().xTransformer.unwrapCoordFromLimit(x, instance.getX());
+	}
+
+	/**
+	 * Wraps the Z for the ServerPlayer so it can apply to them
+	 */
+	@Redirect(method = "broadcast", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getZ()D"))
+	public double broadcast_Z(ServerPlayer instance, @Local(ordinal = 2, argsOnly = true) double z) {
+		return instance.serverLevel().getTransformer().zTransformer.unwrapCoordFromLimit(z, instance.getZ());
 	}
 }
