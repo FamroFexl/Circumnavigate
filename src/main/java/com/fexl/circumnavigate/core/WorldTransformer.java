@@ -8,7 +8,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class WorldTransformer {
 
 	public final int zCoordBoundMin;
 	public final int zCoordBoundMax;
-
+  
 	//Only one can be set (non-zero) at a time.
 	//TODO: Implement chunk border shifting.
 	public final int xShift;
@@ -60,7 +59,7 @@ public class WorldTransformer {
 		this.xChunkBoundMax = xChunkBoundMax;
 		this.zChunkBoundMin = zChunkBoundMin;
 		this.zChunkBoundMax = zChunkBoundMax;
-
+    
 		this.xBlockBoundMin = this.xChunkBoundMin*chunkWidth;
 		this.xBlockBoundMax = this.xChunkBoundMax*chunkWidth;
 		this.zBlockBoundMin = this.zChunkBoundMin*chunkWidth;
@@ -162,7 +161,7 @@ public class WorldTransformer {
 
 		return new ChunkPos(returnX, returnZ);
 	}
-
+  
 	public AABB translateAABBFromBounds(AABB relBox, AABB wrappedBox) {
 		double minX = xTransformer.unwrapCoordFromLimit(relBox.minX , wrappedBox.minX);
 		double maxX = xTransformer.unwrapCoordFromLimit(relBox.maxX , wrappedBox.maxX);
@@ -212,8 +211,8 @@ public class WorldTransformer {
 			list.add(original);
 		}
 
-		return list;
-	}
+    return list;
+  }
 
 	public boolean isChunkOverBounds(ChunkPos chunkPos) {
 		return !xTransformer.isChunkOverLimit(chunkPos.x) && !zTransformer.isChunkOverLimit(chunkPos.z);

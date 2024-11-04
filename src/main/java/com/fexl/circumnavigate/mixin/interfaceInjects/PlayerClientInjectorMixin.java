@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Unique;
 public class PlayerClientInjectorMixin implements ServerPlayerInjector {
 	@Unique
 	private double clientX = ((ServerPlayer)(Object)this).getX();
+  
 	@Unique
 	private double clientZ = ((ServerPlayer)(Object)this).getZ();
 

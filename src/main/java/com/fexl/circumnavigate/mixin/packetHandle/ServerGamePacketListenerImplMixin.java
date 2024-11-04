@@ -50,7 +50,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(instance, vec);
 	}
-
+  
 	/**
 	 * @Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;distanceToSqr(DDD)D", ordinal = 0))
 	 * public double playerDistanceWrap1(ServerPlayer instance, double x, double y, double z) {
@@ -147,6 +147,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		double l = d - thiz.firstGoodX;
 		double m = e - thiz.firstGoodY;
 		double n = f - thiz.firstGoodZ;
+  
 		if (Math.abs(l) + 0.0625 * 2 > transformer.xWidth) {
 			l = 0.0;
 		}
@@ -211,7 +212,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		p = l * l + m * m + n * n;
 		boolean bl3 = false;
 		if (!thiz.player.isChangingDimension() && p > 0.0625 && !thiz.player.isSleeping() && !thiz.player.gameMode.isCreative() && thiz.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR) {
-			bl3 = true;
+      bl3 = true;
 			LOGGER.warn("{} moved wrongly!", (Object) thiz.player.getName().getString());
 		}
 
@@ -232,9 +233,8 @@ public abstract class ServerGamePacketListenerImplMixin {
 		thiz.lastGoodX = thiz.player.getX();
 		thiz.lastGoodY = thiz.player.getY();
 		thiz.lastGoodZ = thiz.player.getZ();
-	}
-
-
+    }
+  
 	@Inject(method = "handleMoveVehicle", at = @At("HEAD"), cancellable = true)
 	public void handleMoveVehicle(ServerboundMoveVehiclePacket packet, CallbackInfo ci) {
 		PacketUtils.ensureRunningOnSameThread(packet, thiz, player.serverLevel());

@@ -42,6 +42,12 @@ public abstract class PlayerListMixin {
 		ClientboundWrappingDataPacket.send(player, transformers);
 	}
 
+	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
+	public void placeNewPlayer2(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
+		player.setClientX(player.getX());
+		player.setClientZ(player.getZ());
+	}
+
 	/**
 	 * Initializes the player's client-side positioning so they can be used for unwrapping operations.
 	 */

@@ -17,8 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
  */
 @Mixin(Level.class)
 public class LevelTransformerInjectorMixin implements LevelTransformerInjector {
-	@Unique
-	private WorldTransformer transformer = null;
+	@Unique private WorldTransformer transformer = null;
 
 	@Override
 	public WorldTransformer getTransformer() {

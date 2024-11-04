@@ -30,7 +30,6 @@ public abstract class TrackedEntityMixin {
 
 	@Shadow ServerEntity serverEntity;
 
-
 	/**
 	 * Updates an entity's player tracking based on the player's distance. Modified to support wrapped distances.
 	 */
@@ -39,6 +38,8 @@ public abstract class TrackedEntityMixin {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		ci.cancel();
 		if (player != this.entity) {
+			//Vec3 vec3 = player.position().subtract(this.entity.position());
+			//Needs both the player and the entity position unwrapped relative to the client
 			Vec3 vec3 = player.position().subtract(transformer.translateVecFromBounds(player.position(), this.entity.position()));
 			int i = player.serverLevel().getChunkSource().chunkMap.getPlayerViewDistance(player);
 			double d = (double)Math.min(this.getEffectiveRange(), i * 16);

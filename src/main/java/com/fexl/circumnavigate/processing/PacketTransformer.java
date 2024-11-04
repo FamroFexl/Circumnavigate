@@ -22,7 +22,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -212,7 +211,7 @@ public class PacketTransformer {
 
 
 	private static ClientboundBlockEventPacket transformPacket(ClientboundBlockEventPacket packet, ServerPlayer player) {
-		FriendlyByteBuf buffer = PacketByteBufs.create();
+    FriendlyByteBuf buffer = PacketByteBufs.create();
 		buffer.writeBlockPos(getClientBlockPos(player, packet.getPos()));
 		buffer.writeByte(packet.getB0());
 		buffer.writeByte(packet.getB1());
@@ -232,7 +231,7 @@ public class PacketTransformer {
 		buffer.writeId(Block.BLOCK_STATE_REGISTRY, packet.getBlockState());
 		return new ClientboundBlockUpdatePacket(buffer);
 	}
-
+  
 	private static ClientboundBlockDestructionPacket transformPacket(ClientboundBlockDestructionPacket packet, ServerPlayer player) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 		buffer.writeVarInt(packet.getId());
@@ -318,7 +317,7 @@ public class PacketTransformer {
 		buffer.writeShort((int) packet.getZa() / 8000);
 		return new ClientboundAddEntityPacket(buffer);
 	}
-
+  
 	private static ClientboundMoveVehiclePacket transformPacket(ClientboundMoveVehiclePacket packet, ServerPlayer player) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 		buffer.writeDouble(getClientX(player, packet.getX()));

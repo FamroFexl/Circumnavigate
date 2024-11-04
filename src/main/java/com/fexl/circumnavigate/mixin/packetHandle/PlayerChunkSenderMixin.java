@@ -51,7 +51,7 @@ public class PlayerChunkSenderMixin {
 		LevelChunk send = new LevelChunk(chunk.level, unwrapped, chunk.getUpgradeData(), (LevelChunkTicks<Block>) chunk.getBlockTicks(), (LevelChunkTicks<Fluid>) chunk.getFluidTicks(), chunk.getInhabitedTime(), chunk.getSections(), chunk.postLoad, chunk.getBlendingData());
 		return send;
 	}
-
+  
 	/**
 	 * Collect chunks to send, prioritizing closer chunks first. Modified to include wrapped chunks as closer.
 	 */
