@@ -15,10 +15,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ServerPlayer.class)
 public class PlayerClientInjectorMixin implements ServerPlayerInjector {
+	@Unique
 	private double clientX = ((ServerPlayer)(Object)this).getX();
+  
+	@Unique
 	private double clientZ = ((ServerPlayer)(Object)this).getZ();
 
 	@Override

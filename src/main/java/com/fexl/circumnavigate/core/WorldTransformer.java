@@ -8,6 +8,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stores wrapping constants and provides world-wrapping operations.
@@ -20,6 +22,18 @@ public class WorldTransformer {
 	public final int zChunkBoundMin;
 	public final int zChunkBoundMax;
 
+	public final int xBlockBoundMin;
+	public final int xBlockBoundMax;
+
+	public final int zBlockBoundMin;
+	public final int zBlockBoundMax;
+
+	public final int xCoordBoundMin;
+	public final int xCoordBoundMax;
+
+	public final int zCoordBoundMin;
+	public final int zCoordBoundMax;
+  
 	//Only one can be set (non-zero) at a time.
 	//TODO: Implement chunk border shifting.
 	public final int xShift;
@@ -45,6 +59,16 @@ public class WorldTransformer {
 		this.xChunkBoundMax = xChunkBoundMax;
 		this.zChunkBoundMin = zChunkBoundMin;
 		this.zChunkBoundMax = zChunkBoundMax;
+    
+		this.xBlockBoundMin = this.xChunkBoundMin*chunkWidth;
+		this.xBlockBoundMax = this.xChunkBoundMax*chunkWidth;
+		this.zBlockBoundMin = this.zChunkBoundMin*chunkWidth;
+		this.zBlockBoundMax = this.zChunkBoundMax*chunkWidth;
+
+		this.xCoordBoundMin = this.xBlockBoundMin;
+		this.xCoordBoundMax = this.xBlockBoundMax+1;
+		this.zCoordBoundMin = this.zBlockBoundMin;
+		this.zCoordBoundMax = this.zBlockBoundMax+1;
 
 		this.xShift = xShift;
 		this.zShift = zShift;
@@ -137,14 +161,58 @@ public class WorldTransformer {
 
 		return new ChunkPos(returnX, returnZ);
 	}
+  
+	public AABB translateAABBFromBounds(AABB relBox, AABB wrappedBox) {
+		double minX = xTransformer.unwrapCoordFromLimit(relBox.minX , wrappedBox.minX);
+		double maxX = xTransformer.unwrapCoordFromLimit(relBox.maxX , wrappedBox.maxX);
+		double minZ = zTransformer.unwrapCoordFromLimit(relBox.minZ , wrappedBox.minZ);
+		double maxZ = zTransformer.unwrapCoordFromLimit(relBox.maxZ , wrappedBox.maxZ);
 
-	public Distance getDistanceCalcForX(int x1, int x2) {
-		return new Distance(x1, x2, this.xChunkBoundMin, this.xChunkBoundMax, xTransformer);
+		return new AABB(minX, wrappedBox.minY, minZ, maxX, wrappedBox.maxY, maxZ);
 	}
 
-	public Distance getDistanceCalcForZ(int z1, int z2) {
-		return new Distance(z1, z2, this.zChunkBoundMin, this.zChunkBoundMax, zTransformer);
-	}
+	/**
+	 * Splits an AABB into up to 4 separate AABB depending on bounds overlap.
+	 */
+	public List<AABB> splitAcrossBounds(AABB original) {
+		double minX = original.minX;
+		double maxX = original.maxX;
+		double minZ = original.minZ;
+		double maxZ = original.maxZ;
+
+		//Guard clause
+		if(!(xTransformer.isCoordOverLimit(minX) || xTransformer.isCoordOverLimit(maxX) || zTransformer.isCoordOverLimit(minZ) || zTransformer.isCoordOverLimit(maxZ))) return List.of(original);
+
+		double minXWrapped = xTransformer.wrapCoordToLimit(minX);
+		double maxXWrapped = xTransformer.wrapCoordToLimit(maxX);
+		double minZWrapped = zTransformer.wrapCoordToLimit(minZ);
+		double maxZWrapped = zTransformer.wrapCoordToLimit(maxZ);
+
+		List<AABB> list = new ArrayList<>();
+
+		double minY = original.minY;
+		double maxY = original.maxY;
+
+		if((minX != minXWrapped || maxX != maxXWrapped) && (minZ != minZWrapped || maxZ != maxZWrapped)) {
+			list.add(new AABB(xCoordBoundMin,   minY,   minZWrapped,    maxXWrapped,    maxY,   zCoordBoundMax));
+			list.add(new AABB(xCoordBoundMin,   minY,   zCoordBoundMin, maxXWrapped,    maxY,   maxZWrapped));
+			list.add(new AABB(minXWrapped,      minY,   zCoordBoundMin, xCoordBoundMax, maxY,   maxZWrapped));
+			list.add(new AABB(minXWrapped,      minY,   minZWrapped,    xCoordBoundMax, maxY,   zCoordBoundMax));
+		}
+		else if(minX != minXWrapped || maxX != maxXWrapped) {
+			list.add(new AABB(xCoordBoundMin,   minY,   minZ,           maxXWrapped,    maxY,   maxZ));
+			list.add(new AABB(minXWrapped,      minY,   minZ,           xCoordBoundMax, maxY,   maxZ));
+		}
+		else if(minZ != minZWrapped || maxZ != maxZWrapped) {
+			list.add(new AABB(minX,             minY,   minZWrapped,    maxX,           maxY,   xCoordBoundMax));
+			list.add(new AABB(minX,             minY,   xCoordBoundMin, maxX,           maxY,   maxZWrapped));
+		}
+		else {
+			list.add(original);
+		}
+
+    return list;
+  }
 
 	public boolean isChunkOverBounds(ChunkPos chunkPos) {
 		return !xTransformer.isChunkOverLimit(chunkPos.x) && !zTransformer.isChunkOverLimit(chunkPos.z);

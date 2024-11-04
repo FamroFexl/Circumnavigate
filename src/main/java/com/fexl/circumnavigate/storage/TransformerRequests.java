@@ -2,7 +2,9 @@
 
 package com.fexl.circumnavigate.storage;
 
+import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 
 /**
  * Storage for context propagation down call stacks.

@@ -11,11 +11,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
 import java.util.function.Consumer;
 
 @Mixin(ChunkTrackingView.class)
 public interface ChunkTrackingViewMixin extends ChunkTrackingView {
+	/**
+	 * Checks if a chunk is within a distance. Modified to support wrapping.
+	 */
 	@Inject(method = "isWithinDistance", at = @At("HEAD"), cancellable = true)
 	private static void isWithinDistance(int centerX, int centerZ, int viewDistance, int x, int z, boolean serachAllChunks, CallbackInfoReturnable<Boolean> cir) {
 		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
@@ -37,6 +40,9 @@ public interface ChunkTrackingViewMixin extends ChunkTrackingView {
 
 	}
 
+	/**
+	 * Functional method which outputs chunks to remove and chunks to add. Modified to support wrapping.
+	 */
 	@Inject(method = "difference", at = @At("HEAD"), cancellable = true)
 	private static void difference(ChunkTrackingView oldChunkTrackingView, ChunkTrackingView newChunkTrackingView, Consumer<ChunkPos> chunkDropper, Consumer<ChunkPos> chunkMarker, CallbackInfo ci) {
 		ci.cancel();
@@ -55,17 +61,21 @@ public interface ChunkTrackingViewMixin extends ChunkTrackingView {
 			int k = Math.max(positioned.maxX(), transformer.xTransformer.unwrapChunkFromLimit(positioned.maxX(), positioned2.maxX()));
 			int l = Math.max(positioned.maxZ(), transformer.zTransformer.unwrapChunkFromLimit(positioned.maxZ(), positioned2.maxZ()));
 
-			for (int m = i; m <= k; m++) {
-				for (int n = j; n <= l; n++) {
-					boolean bl = positioned.contains(transformer.xTransformer.wrapChunkToLimit(m), transformer.zTransformer.wrapChunkToLimit(n));
-					boolean bl2 = positioned2.contains(transformer.xTransformer.wrapChunkToLimit(m), transformer.zTransformer.wrapChunkToLimit(n));
+			for (int x = i; x <= k; x++) {
+				for (int z = j; z <= l; z++) {
+
+					int wrappedX = transformer.xTransformer.wrapChunkToLimit(x);
+					int wrappedZ = transformer.zTransformer.wrapChunkToLimit(z);
+
+					boolean bl = positioned.contains(wrappedX, wrappedZ);
+					boolean bl2 = positioned2.contains(wrappedX, wrappedZ);
 					if (bl != bl2) {
 						if (bl2) {
 							//Chunk exists in new
-							chunkDropper.accept(new ChunkPos(transformer.xTransformer.wrapChunkToLimit(m), transformer.zTransformer.wrapChunkToLimit(n)));
+							chunkDropper.accept(new ChunkPos(wrappedX, wrappedZ));
 						} else {
 							//Chunk exists in old
-							chunkMarker.accept(new ChunkPos(transformer.xTransformer.wrapChunkToLimit(m), transformer.zTransformer.wrapChunkToLimit(n)));
+							chunkMarker.accept(new ChunkPos(wrappedX, wrappedZ));
 						}
 					}
 				}

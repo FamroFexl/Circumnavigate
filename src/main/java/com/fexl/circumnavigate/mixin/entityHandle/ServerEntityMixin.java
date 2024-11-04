@@ -62,8 +62,10 @@ public abstract class ServerEntityMixin {
 	protected abstract void sendDirtyEntityData();
 	@Shadow
 	protected abstract void broadcastAndSend(Packet<?> packet);
-
-
+  
+	/**
+	 * Determines entity movement and returns it in packets.
+	 */
 	@Inject(method = "sendChanges", at = @At("HEAD"), cancellable = true)
 	public void sendChanges(CallbackInfo ci) {
 		WorldTransformer transformer = level.getTransformer();

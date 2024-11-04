@@ -30,7 +30,7 @@ public class ClientLevelMixin {
 		thiz.setTransformer(TransformersStorage.getTransformer(dimension));
 	}
 
-	@ModifyVariable(method = "<init>", at = @At("HEAD"), index = 5)
+	@ModifyVariable(method = "<init>", at = @At("HEAD"), index = 5, argsOnly = true)
 	private static int changeViewDistance(int viewDistance, @Local ResourceKey dimension) {
 		WorldTransformer transformer = TransformersStorage.getTransformer(dimension);
 		return transformer.limitViewDistance(viewDistance);

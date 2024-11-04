@@ -9,5 +9,4 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Positioned.class)
 public abstract interface PositionedAccessorMixin {
 	@Invoker("squareIntersects") abstract boolean squareIntersectsAM(Positioned other);
-
 }
