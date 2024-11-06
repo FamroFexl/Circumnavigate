@@ -151,5 +151,21 @@ public class CoordinateTransformers {
 		return isCoordWithinLimitDistance(chunkCoord * chunkWidth, chunkDistance * chunkWidth);
 	}
 
+	public double getActualDistanceTo(double coord1, double coord2) {
+		double domainLength = upperChunkBounds * chunkWidth - lowerChunkBounds * chunkWidth;
+		double wrappedCoord1 = wrapCoordToLimit(coord1);
+		double wrappedCoord2 = wrapCoordToLimit(coord2);
 
+		double diff = wrappedCoord2 - wrappedCoord1;
+
+		// Adjust to ensure the unwrapped coordinate is correct
+		while (diff < -domainLength / 2) {
+			diff += domainLength;
+		}
+		while (diff > domainLength / 2) {
+			diff -= domainLength;
+		}
+
+		return diff;
+	}
 }
