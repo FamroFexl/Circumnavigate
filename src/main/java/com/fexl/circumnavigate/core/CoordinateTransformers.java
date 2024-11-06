@@ -122,6 +122,13 @@ public class CoordinateTransformers {
 		return unwrappedCoord;
 	}
 
+
+	public double getDeltaBetween(double fromCoord, double toCoord) {
+		double toCoordUnwrapped = unwrapCoordFromLimit(fromCoord, toCoord);
+
+		return toCoordUnwrapped - fromCoord;
+	}
+
 	public boolean isCoordOverLimit(double coord) {
 		if(coord >= upperChunkBounds * chunkWidth || coord < lowerChunkBounds * chunkWidth)
 			return true;
@@ -150,6 +157,4 @@ public class CoordinateTransformers {
 	public boolean isChunkWithinLimitDistance(int chunkCoord, int chunkDistance) {
 		return isCoordWithinLimitDistance(chunkCoord * chunkWidth, chunkDistance * chunkWidth);
 	}
-
-
 }

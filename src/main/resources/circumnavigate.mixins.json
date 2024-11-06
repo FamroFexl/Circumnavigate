@@ -20,6 +20,8 @@
     "chunkHandle.generation.ConfiguredWorldCarverMixin",
     "chunkHandle.generation.NoiseBasedChunkGeneratorMixin",
     "entityHandle.EntityMixin",
+    "entityHandle.FishingHookMixin",
+    "entityHandle.LivingEntityMixin",
     "entityHandle.NaturalSpawnerMixin",
     "entityHandle.ServerEntityMixin",
     "entityHandle.collisions.BlockCollisionsMixin",
