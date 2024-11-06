@@ -163,11 +163,19 @@ public class WorldTransformer {
 
 	}
 
+	public long translateChunkToBounds(long chunkPos) {
+		return translateChunkToBounds(new ChunkPos(ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos))).toLong();
+	}
+
 	public ChunkPos translateChunkFromBounds(ChunkPos relChunkPos, ChunkPos wrappedChunkPos) {
 		int returnX = xTransformer.unwrapChunkFromLimit(relChunkPos.x, wrappedChunkPos.x);
 		int returnZ = zTransformer.unwrapChunkFromLimit(relChunkPos.z, wrappedChunkPos.z);
 
 		return new ChunkPos(returnX, returnZ);
+	}
+
+	public long translateChunkFromBounds(long relChunkPos, long wrappedChunkPos) {
+		return translateChunkFromBounds(new ChunkPos(ChunkPos.getX(relChunkPos), ChunkPos.getZ(relChunkPos)), new ChunkPos(ChunkPos.getX(wrappedChunkPos), ChunkPos.getZ(wrappedChunkPos))).toLong();
 	}
 
 	public AABB translateAABBFromBounds(AABB relBox, AABB wrappedBox) {
