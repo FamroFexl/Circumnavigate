@@ -141,6 +141,13 @@ public class WorldTransformer {
 		return new BlockPos(returnX, blockPos.getY(), returnZ);
 	}
 
+	public long translateBlockToBounds(long blockPos) {
+		int returnX = xTransformer.wrapCoordToLimit(BlockPos.getX(blockPos));
+		int returnZ = zTransformer.wrapCoordToLimit(BlockPos.getZ(blockPos));
+
+		return new BlockPos(returnX, BlockPos.getY(blockPos), returnZ).asLong();
+	}
+
 	public BlockPos translateBlockFromBounds(BlockPos relBlockPos, BlockPos wrappedBlockPos) {
 		int returnX = xTransformer.unwrapCoordFromLimit(relBlockPos.getX(), wrappedBlockPos.getX());
 		int returnZ = zTransformer.unwrapCoordFromLimit(relBlockPos.getZ(), wrappedBlockPos.getZ());

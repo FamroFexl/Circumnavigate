@@ -44,5 +44,12 @@ public abstract class ChunkMapMixin {
 		TransformerRequests.chunkMapLevel = player.serverLevel();
 	}
 
+	@Inject(method = "euclideanDistanceSquared", at = @At("HEAD"), cancellable = true)
+    private static void euclideanDistanceSquared(ChunkPos chunkPos, Entity entity, CallbackInfoReturnable<Double> cir) {
+		double d = (double)SectionPos.sectionToBlockCoord(chunkPos.x, 8);
+		double e = (double)SectionPos.sectionToBlockCoord(chunkPos.z, 8);
+		cir.setReturnValue(entity.level().getTransformer().distanceToSqrWrapped(entity.getX(), 0, entity.getY(), d, 0, e));
+	}
+
 
 }
