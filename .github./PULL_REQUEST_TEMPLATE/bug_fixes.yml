@@ -1,0 +1,34 @@
+name: Bug Fixes
+description: Fix problems with Circumnavigate
+title: "[Bug]: "
+labels: "bug"
+body:
+  - type: input
+  attributes:
+    label: Describe the bug fixed
+    description: What fixes were implemented?
+    placeholder: "Entity coordinates weren't being wrapped correctly, so I modified several methods in `Entity.class` to get it working."
+  validations:
+    required: true
+  - type: input
+    attributes:
+      label: Related Issues
+      description: What existing issues does this bug fix resolve/affect?
+      placeholder: "This issue resolves some issues with #6."
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Testing
+      description: How has the fixed been tested and validated?
+      placeholder: "I checked the entities' position by printing out their coordinates server-side whenever they moved, and made sure their position changed to the wrapped bounds."
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Additional Information
+      description: What additional context or data surrounding this issue would you consider useful to add? How did you overcome problems that might present themselves in the future?
+    validations:
+      required: false
+      
+  
