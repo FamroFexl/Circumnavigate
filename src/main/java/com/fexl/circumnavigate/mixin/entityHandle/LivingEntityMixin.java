@@ -24,8 +24,8 @@ public abstract class LivingEntityMixin {
     public void hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, @Local(name = "entity2") Entity enemy) {
         Entity thiz = (Entity) (Object) this;
         WorldTransformer transformer = enemy.level().getTransformer();
-        deltaX = transformer.xTransformer.getMinimumDistBetween(thiz.getX(), enemy.getX());
-        deltaZ = transformer.zTransformer.getMinimumDistBetween(thiz.getZ(), enemy.getZ());
+        deltaX = transformer.xTransformer.getDeltaBetween(thiz.getX(), enemy.getX());
+        deltaZ = transformer.zTransformer.getDeltaBetween(thiz.getZ(), enemy.getZ());
 
         // Vanilla parity code
         while (deltaX * deltaX + deltaZ * deltaZ < 1.0E-4) {

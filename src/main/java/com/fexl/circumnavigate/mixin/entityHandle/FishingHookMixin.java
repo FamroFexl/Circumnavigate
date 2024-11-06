@@ -17,9 +17,9 @@ public abstract class FishingHookMixin {
     @WrapOperation(method = "pullEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"))
     public void pullEntity(Entity instance, Vec3 deltaMovement, Operation<Void> original, @Local(name = "entity2") Entity owner) {
         WorldTransformer transformer = instance.level().getTransformer();
-        double deltaX = transformer.xTransformer.getMinimumDistBetween(instance.getX(), owner.getX());
+        double deltaX = transformer.xTransformer.getDeltaBetween(instance.getX(), owner.getX());
         double deltaY = owner.getY() - instance.getY(); // Cant use y directly from deltaMovement since its scaled by vanilla
-        double deltaZ = transformer.zTransformer.getMinimumDistBetween(instance.getZ(), owner.getZ());
+        double deltaZ = transformer.zTransformer.getDeltaBetween(instance.getZ(), owner.getZ());
 
         Vec3 newDeltaMovement = new Vec3(deltaX, deltaY, deltaZ).scale(0.1);
         original.call(instance, instance.getDeltaMovement().add(newDeltaMovement));

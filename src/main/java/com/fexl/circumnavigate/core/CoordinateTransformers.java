@@ -122,10 +122,11 @@ public class CoordinateTransformers {
 		return unwrappedCoord;
 	}
 
-	public double getMinimumDistBetween(double fromCoord, double toCoord) {
+
+	public double getDeltaBetween(double fromCoord, double toCoord) {
 		double toCoordUnwrapped = unwrapCoordFromLimit(fromCoord, toCoord);
 
-		return Math.abs(toCoordUnwrapped - fromCoord);
+		return toCoordUnwrapped - fromCoord;
 	}
 
 	public boolean isCoordOverLimit(double coord) {
