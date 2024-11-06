@@ -36,11 +36,23 @@ public abstract class LivingEntityMixin {
 
     @WrapMethod(method = "knockback")
     public void knockback(double strength, double x, double z, Operation<Void> original) {
-        original.call(strength, this.deltaX, this.deltaZ);
+        // In case this method would be called from somewhere else
+        if (deltaX != 0 || deltaZ != 0) {
+            x = deltaX;
+            z = deltaZ;
+        }
+
+        original.call(strength, x, z);
     }
 
     @WrapMethod(method = "indicateDamage")
-    public void indicateDamage(double xDistance, double zDistance, Operation<Void> original) {
-        original.call(this.deltaX, this.deltaZ);
+    public void indicateDamage(double x, double z, Operation<Void> original) {
+        // In case this method would be called from somewhere else
+        if (deltaX != 0 || deltaZ != 0) {
+            x = deltaX;
+            z = deltaZ;
+        }
+
+        original.call(x, z);
     }
 }
