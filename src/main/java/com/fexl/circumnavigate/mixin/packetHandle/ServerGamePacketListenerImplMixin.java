@@ -11,10 +11,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketUtils;
-import net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket;
-import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import net.minecraft.network.protocol.game.ServerboundMoveVehiclePacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -51,19 +48,13 @@ public abstract class ServerGamePacketListenerImplMixin {
 		return transformer.distanceToSqrWrapped(instance, vec);
 	}
 
-	/**
-	 * @Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;distanceToSqr(DDD)D", ordinal = 0))
-	 * public double playerDistanceWrap1(ServerPlayer instance, double x, double y, double z) {
-	 * WorldTransformer transformer = player.serverLevel().getTransformer();
-	 * return transformer.distanceToSqrWrapped(instance.getX(), instance.getY(), instance.getZ(), x, y, z);
-	 * }
-	 **/
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;", ordinal = 0))
-	public Vec3 plyaerDistanceWrap2(Vec3 instance, Vec3 vec) {
+	public Vec3 playerDistanceWrap2(Vec3 instance, Vec3 vec) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return instance.subtract(transformer.translateVecFromBounds(instance, vec));
 	}
+
 
 	@Redirect(method = "handleInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
 	public double interactionDistanceWrap2(AABB aabb, Vec3 vec) {
@@ -77,12 +68,11 @@ public abstract class ServerGamePacketListenerImplMixin {
 		return player.serverLevel().getTransformer().translateBlockToBounds(pos);
 	}
 
-
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
 	public BlockHitResult handleUseItemOn(ServerboundUseItemOnPacket instance) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
-		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
+		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()).relative(blockHit.getDirection(), 1), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos().relative(blockHit.getDirection())), blockHit.isInside());
 	}
 
 	// TODO: dont override the whole method, just the part that needs to be changed
