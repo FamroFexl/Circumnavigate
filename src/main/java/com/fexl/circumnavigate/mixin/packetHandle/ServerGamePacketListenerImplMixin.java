@@ -9,6 +9,7 @@ package com.fexl.circumnavigate.mixin.packetHandle;
 import com.fexl.circumnavigate.core.WorldTransformer;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.network.protocol.game.*;
@@ -72,6 +73,10 @@ public abstract class ServerGamePacketListenerImplMixin {
 	public BlockHitResult handleUseItemOn(ServerboundUseItemOnPacket instance) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
+
+		if(blockHit.getDirection() == Direction.UP || blockHit.getDirection() == Direction.DOWN) {
+			return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
+		}
 		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()).relative(blockHit.getDirection(), 1), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos().relative(blockHit.getDirection())), blockHit.isInside());
 	}
 
