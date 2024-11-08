@@ -21,13 +21,13 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(NeighborUpdater.class)
 public interface NeighborUpdatorMixin {
 	@ModifyVariable(method = "executeUpdate", at = @At("HEAD"), index = 2, argsOnly = true)
-	private static BlockPos executeUpdate_blockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
+	private static BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
 		if(level.isClientSide) return blockPos;
 		return level.getTransformer().translateBlockToBounds(blockPos);
 	}
 
 	@ModifyVariable(method = "executeShapeUpdate", at = @At("HEAD"), index = 3, argsOnly = true)
-	private static BlockPos executeShapeUpdate_blockPos(BlockPos blockPos, @Local(argsOnly = true) LevelAccessor level) {
+	private static BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) LevelAccessor level) {
 		if(level instanceof ServerLevel serverLevel) {
 			return serverLevel.getTransformer().translateBlockToBounds(blockPos);
 		}

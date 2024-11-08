@@ -22,8 +22,11 @@ import java.util.function.Function;
 
 @Mixin(ConfiguredWorldCarver.class)
 public class ConfiguredWorldCarverMixin implements LevelAccessor {
+	/**
+	 * Cancel if beyond chunk bounds.
+	 */
     @Inject(method = "carve", at = @At("HEAD"), cancellable = true)
-    public void carve(CarvingContext context, ChunkAccess chunk, Function<BlockPos, Holder<Biome>> biomeAccessor, RandomSource random, Aquifer aquifer, ChunkPos chunkPos, CarvingMask carvingMask, CallbackInfoReturnable<Boolean> cir) {
+    public void carveOverBoundsCancel(CarvingContext context, ChunkAccess chunk, Function<BlockPos, Holder<Biome>> biomeAccessor, RandomSource random, Aquifer aquifer, ChunkPos chunkPos, CarvingMask carvingMask, CallbackInfoReturnable<Boolean> cir) {
         WorldTransformer transformer = getLevel().getTransformer();
         if(transformer.isChunkOverBounds(chunk.getPos())) cir.setReturnValue(false);
     }

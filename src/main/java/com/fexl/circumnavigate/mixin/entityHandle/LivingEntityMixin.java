@@ -21,7 +21,7 @@ public abstract class LivingEntityMixin {
     @Unique private double deltaZ;
 
     @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
-    public void hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, @Local(name = "entity2") Entity enemy) {
+    public void wrapDelta(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, @Local(name = "entity2") Entity enemy) {
         Entity thiz = (Entity) (Object) this;
         WorldTransformer transformer = enemy.level().getTransformer();
         deltaX = transformer.xTransformer.getDeltaBetween(thiz.getX(), enemy.getX());
@@ -35,7 +35,7 @@ public abstract class LivingEntityMixin {
     }
 
     @WrapMethod(method = "knockback")
-    public void knockback(double strength, double x, double z, Operation<Void> original) {
+    public void wrapDistance1(double strength, double x, double z, Operation<Void> original) {
         // In case this method would be called from somewhere else
         if (deltaX != 0 || deltaZ != 0) {
             x = deltaX;
@@ -46,7 +46,7 @@ public abstract class LivingEntityMixin {
     }
 
     @WrapMethod(method = "indicateDamage")
-    public void indicateDamage(double x, double z, Operation<Void> original) {
+    public void wrapDistance2(double x, double z, Operation<Void> original) {
         // In case this method would be called from somewhere else
         if (deltaX != 0 || deltaZ != 0) {
             x = deltaX;

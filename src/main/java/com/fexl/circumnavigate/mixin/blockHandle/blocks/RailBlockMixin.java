@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class RailBlockMixin {
 
     @ModifyVariable(method = "updateState", at = @At("HEAD"), index = 3, argsOnly = true)
-    public BlockPos updateState(BlockPos blockPos, @Local(argsOnly = true) Level level) {
+    public BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
         if(level.isClientSide) return blockPos;
         return level.getTransformer().translateBlockToBounds(blockPos);
     }

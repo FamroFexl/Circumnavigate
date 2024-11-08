@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class HitResultMixin {
     @Final @Shadow protected Vec3 location;
     @Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
-    public void distanceTo(Entity entity, CallbackInfoReturnable<Double> cir) {
+    public void wrapDistanceSquared(Entity entity, CallbackInfoReturnable<Double> cir) {
         if(entity.level().isClientSide) return;
         cir.setReturnValue(entity.level().getTransformer().distanceToSqrWrapped(entity.getX(), entity.getY(), entity.getZ(), location.x, location.y, location.z));
     }

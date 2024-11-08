@@ -38,7 +38,7 @@ public interface EntityGetterMixin {
 	 * Determines if two entity bounding boxes intersect. Modified to support wrapped worlds.
 	 */
 	@Redirect(method = "isUnobstructed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/shapes/Shapes;joinIsNotEmpty(Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/BooleanOp;)Z"))
-	default boolean create(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator, @Local(argsOnly = true) @Nullable Entity entity) {
+	default boolean wrapAABB(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator, @Local(argsOnly = true) @Nullable Entity entity) {
 		EntityGetter thiz = (EntityGetter) (Object) this;
 
 		if(this instanceof Level level && level.isClientSide) return Shapes.joinIsNotEmpty(shape1, shape2, resultOperator);
@@ -68,7 +68,7 @@ public interface EntityGetterMixin {
 	}**/
 
 	@Inject(method = "getNearbyPlayers", at = @At("HEAD"), cancellable = true)
-	default void getNearbyPlayers(TargetingConditions predicate, LivingEntity target, AABB area, CallbackInfoReturnable<List<Player>> cir) {
+	default void includeWrappedPlayers(TargetingConditions predicate, LivingEntity target, AABB area, CallbackInfoReturnable<List<Player>> cir) {
 		List<Player> list = Lists.<Player>newArrayList();
 
 		for (Player player : this.players()) {

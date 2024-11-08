@@ -19,7 +19,7 @@ public class ServerChunkCacheMixin {
 	 * Stores the serverLevel for usage further down the call chain where it was not passed.
 	 */
 	@Inject(method = "runDistanceManagerUpdates", at = @At("HEAD"))
-	public void runDistanceManagerUpdates(CallbackInfoReturnable<Boolean> cir) {
+	public void captureLevel(CallbackInfoReturnable<Boolean> cir) {
 		TransformerRequests.chunkCacheLevel = level;
 	}
 }

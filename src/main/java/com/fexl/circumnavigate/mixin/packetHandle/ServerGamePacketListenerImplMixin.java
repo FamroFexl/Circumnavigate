@@ -44,34 +44,34 @@ public abstract class ServerGamePacketListenerImplMixin {
 	public ServerPlayer player;
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
-	public double interactionDistanceWrap1(Vec3 instance, Vec3 vec) {
+	public double wrapDistanceSquared1(Vec3 instance, Vec3 vec) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(instance, vec);
 	}
 
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;", ordinal = 0))
-	public Vec3 playerDistanceWrap2(Vec3 instance, Vec3 vec) {
+	public Vec3 unwrapVec(Vec3 instance, Vec3 vec) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return instance.subtract(transformer.translateVecFromBounds(instance, vec));
 	}
 
 
 	@Redirect(method = "handleInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", ordinal = 0))
-	public double interactionDistanceWrap2(AABB aabb, Vec3 vec) {
+	public double wrapDistanceSquared2(AABB aabb, Vec3 vec) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		return transformer.distanceToSqrWrapped(aabb, vec);
 	}
 
 
 	@ModifyArg(method = "handlePlayerAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;handleBlockBreakAction(Lnet/minecraft/core/BlockPos;Lnet/minecraft/network/protocol/game/ServerboundPlayerActionPacket$Action;Lnet/minecraft/core/Direction;II)V"), index = 0)
-	public BlockPos handlePlayerAction(BlockPos pos) {
+	public BlockPos wrapBlockPos(BlockPos pos) {
 		return player.serverLevel().getTransformer().translateBlockToBounds(pos);
 	}
 
 	//TODO: implementations of net/minecraft/world/item/Item$useOn will have to be modified in the future for support. HangingEntity, LeadItem, etc.
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
-	public BlockHitResult handleUseItemOn(ServerboundUseItemOnPacket instance) {
+	public BlockHitResult wrapLocationAndBlockPos(ServerboundUseItemOnPacket instance) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
 

@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin {
 	@Inject(method = "placeBlock", at = @At("HEAD"), cancellable = true)
-	public void placeBlock(BlockPlaceContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
+	public void wrapBlockPos(BlockPlaceContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
 		if(context.getLevel().isClientSide) return;
 		WorldTransformer transformer = context.getLevel().getTransformer();
 		cir.setReturnValue(context.getLevel().setBlock(transformer.translateBlockToBounds(context.getClickedPos()), state, 11));

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(ClientboundLevelChunkWithLightPacket.class)
 public class ClientboundLevelChunkWithLightPacketMixin {
 	@ModifyArg(method = "<init>(Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/lighting/LevelLightEngine;Ljava/util/BitSet;Ljava/util/BitSet;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundLightUpdatePacketData;<init>(Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/world/level/lighting/LevelLightEngine;Ljava/util/BitSet;Ljava/util/BitSet;)V"), index = 0)
-	public ChunkPos init(ChunkPos chunkPos, @Local LevelChunk chunk) {
+	public ChunkPos wrapChunkPos(ChunkPos chunkPos, @Local LevelChunk chunk) {
 		return chunk.level.getTransformer().translateChunkToBounds(chunkPos);
 	}
 }

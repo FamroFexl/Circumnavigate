@@ -17,28 +17,28 @@ public class SkyLightEngineMixin {
 	BlockGetter level = ((LightEngineAccessor) this).getChunkSource().getLevel();
 
     @ModifyVariable(method = "propagateIncrease", at = @At("HEAD"), index = 1, argsOnly = true)
-    public long propagateIncrease(long pos) {
+    public long wrapBlockPos1(long pos) {
 		if(level.isClientSide()) return pos;
         WorldTransformer transformer = level.getTransformer();
         return transformer.translateBlockToBounds(pos);
     }
 
     @Redirect(method = "propagateIncrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
-    public long changeOffset(long pos, Direction direction) {
+    public long wrapBlockPos2(long pos, Direction direction) {
 	    if(level.isClientSide()) return BlockPos.offset(pos, direction);
         WorldTransformer transformer = level.getTransformer();
         return transformer.translateBlockToBounds(BlockPos.offset(pos, direction));
     }
 
     @ModifyVariable(method = "propagateDecrease", at = @At("HEAD"), index = 1, argsOnly = true)
-    public long propagateDecrease(long pos) {
+    public long wrapBlockPos3(long pos) {
 	    if(level.isClientSide()) return pos;
         WorldTransformer transformer = level.getTransformer();
         return transformer.translateBlockToBounds(pos);
     }
 
     @Redirect(method = "propagateDecrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
-    public long changeOffset2(long pos, Direction direction) {
+    public long wrapBlockPos4(long pos, Direction direction) {
 		if(level.isClientSide()) return BlockPos.offset(pos, direction);
         WorldTransformer transformer = level.getTransformer();
         return transformer.translateBlockToBounds(BlockPos.offset(pos, direction));

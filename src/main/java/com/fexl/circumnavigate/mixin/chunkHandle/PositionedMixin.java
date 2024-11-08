@@ -25,7 +25,7 @@ public abstract  class PositionedMixin {
 	 * Modified to ensure when the player is on a chunk boundary, and login, they will get the correct chunks from both sides of the world. This method is only used on login.
 	 */
 	@Inject(method = "forEach", at = @At("HEAD"), cancellable = true)
-	private void forEach(Consumer<ChunkPos> action, CallbackInfo ci) {
+	private void includeWrappedChunks(Consumer<ChunkPos> action, CallbackInfo ci) {
 		ci.cancel();
 		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
 
@@ -47,7 +47,7 @@ public abstract  class PositionedMixin {
 	 * Modified to ensure chunks aren't unnecessarily sent or dropped when the player is teleported across the world bounds.
 	 */
 	@Inject(method = "squareIntersects(Lnet/minecraft/server/level/ChunkTrackingView$Positioned;)Z", at = @At("HEAD"), cancellable = true)
-	protected void squareIntersects(Positioned other, CallbackInfoReturnable<Boolean> cir) {
+	protected void includeWrappedChunks(Positioned other, CallbackInfoReturnable<Boolean> cir) {
 		cir.cancel();
 
 		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();

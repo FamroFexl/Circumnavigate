@@ -5,6 +5,9 @@
 package com.fexl.circumnavigate.mixin.chunkHandle;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,45 +19,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Set;
 
 @Mixin(ChunkMap.TrackedEntity.class)
 public abstract class TrackedEntityMixin {
-	@Shadow Entity entity;
-
-	@Shadow abstract int getEffectiveRange();
-
-	@Shadow Set<ServerPlayerConnection> seenBy;
-
-	@Shadow ServerEntity serverEntity;
-
-
 	/**
 	 * Updates an entity's player tracking based on the player's distance. Modified to support wrapped distances.
 	 */
-	@Inject(method = "updatePlayer", at = @At("HEAD"), cancellable = true)
-	public void updatePlayer(ServerPlayer player, CallbackInfo ci) {
-		WorldTransformer transformer = player.serverLevel().getTransformer();
-		ci.cancel();
-		if (player != this.entity) {
-			Vec3 vec3 = player.position().subtract(transformer.translateVecFromBounds(player.position(), this.entity.position()));
-			int i = player.serverLevel().getChunkSource().chunkMap.getPlayerViewDistance(player);
-			double d = (double)Math.min(this.getEffectiveRange(), i * 16);
-			double e = vec3.x * vec3.x + vec3.z * vec3.z;
-			double f = d * d;
-			boolean bl = e <= f
-				&& this.entity.broadcastToPlayer(player)
-				&& player.serverLevel().getChunkSource().chunkMap.isChunkTracked(player, this.entity.chunkPosition().x, this.entity.chunkPosition().z);
-			if (bl) {
-				if (this.seenBy.add(player.connection)) {
-					this.serverEntity.addPairing(player);
-				}
-			} else if (this.seenBy.remove(player.connection)) {
-				this.serverEntity.removePairing(player);
-			}
-		}
+	@Redirect(method = "updatePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"))
+	public Vec3 unwrapVec(Vec3 playerPos, Vec3 entityPos, @Local(argsOnly = true) ServerPlayer player) {
+		return playerPos.subtract(player.level().getTransformer().translateVecFromBounds(playerPos, entityPos));
 	}
 
 }

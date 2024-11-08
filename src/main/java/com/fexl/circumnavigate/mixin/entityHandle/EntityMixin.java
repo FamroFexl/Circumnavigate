@@ -37,7 +37,7 @@ public abstract class EntityMixin {
 	 * Modifies the inputted X position of the entity to be within the wrapping bounds
 	 */
 	@ModifyVariable(method = "setPosRaw", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	public double setPosRawX(double x) {
+	public double wrapX(double x) {
 		if (level.isClientSide()) return x;
 
 		Entity thiz = (Entity)(Object)this;
@@ -53,7 +53,7 @@ public abstract class EntityMixin {
 	 * Modifies the inputted Z position of the entity to be within the wrapping bounds
 	 */
 	@ModifyVariable(method = "setPosRaw", at = @At("HEAD"), ordinal = 2, argsOnly = true)
-	public double setPosRawZ(double z) {
+	public double wrapZ(double z) {
 		if (level.isClientSide()) return z;
 
 		Entity thiz = (Entity)(Object)this;
@@ -69,7 +69,7 @@ public abstract class EntityMixin {
 	 * Checks if an entity is colliding with a block. Modified to support wrapped worlds.
 	 */
 	@Redirect(method = "isColliding", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/shapes/Shapes;joinIsNotEmpty(Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/BooleanOp;)Z"))
-	public boolean create(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator) {
+	public boolean wrapAABB(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator) {
 		if (level.isClientSide()) return Shapes.joinIsNotEmpty(shape1, shape2, resultOperator);
 
 		WorldTransformer transformer = this.level.getTransformer();
@@ -79,21 +79,21 @@ public abstract class EntityMixin {
 	}
 
 	@Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
-	public void distanceTo(Entity entity, CallbackInfoReturnable<Float> cir) {
+	public void wrapDistanceSquared1(Entity entity, CallbackInfoReturnable<Float> cir) {
 		if(level.isClientSide) return;
 		cir.cancel();
 		cir.setReturnValue(Mth.sqrt((float)level.getTransformer().distanceToSqrWrapped(entity.getX(), entity.getY(), entity.getZ(), thiz.getX(), thiz.getY(), thiz.getZ())));
 	}
 
 	@Inject(method = "distanceToSqr(DDD)D", at = @At("HEAD"), cancellable = true)
-	public void distanceToSqr_Double(double x, double y, double z, CallbackInfoReturnable<Double> cir) {
+	public void wrapDistanceSquared2(double x, double y, double z, CallbackInfoReturnable<Double> cir) {
 		if(level.isClientSide) return;
 		cir.cancel();
 		cir.setReturnValue(level.getTransformer().distanceToSqrWrapped(x, y, z, thiz.getX(), thiz.getY(), thiz.getZ()));
 	}
 
 	@Inject(method = "distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", at = @At("HEAD"), cancellable = true)
-	public void distanceToSqr_Vec3(Vec3 vec, CallbackInfoReturnable<Double> cir) {
+	public void wrapDistanceSquared3(Vec3 vec, CallbackInfoReturnable<Double> cir) {
 		if(level.isClientSide) return;
 		cir.cancel();
 		cir.setReturnValue(level.getTransformer().distanceToSqrWrapped(vec, new Vec3(thiz.getX(), thiz.getY(), thiz.getZ())));

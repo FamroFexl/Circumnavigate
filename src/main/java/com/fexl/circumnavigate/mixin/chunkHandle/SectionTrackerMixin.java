@@ -20,7 +20,7 @@ public class SectionTrackerMixin {
 	 * Updates loading levels of adjacent chunk sections so they are ready when needed. Modified to include wrapped sections.
 	 */
 	@Inject(method = "checkNeighborsAfterUpdate", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void checkNeighbors(long pos, int level, boolean isDecreasing, CallbackInfo ci) {
+	public void wrappedSectionNeighbors(long pos, int level, boolean isDecreasing, CallbackInfo ci) {
 		//TODO: Stop sub-chunk access after bounds.
 		//ci.cancel();
 		WorldTransformer transformer = TransformerRequests.chunkCacheLevel.getTransformer();

@@ -8,14 +8,18 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChunkGenerator.class)
 public class ChunkGeneratorMixin implements LevelAccessor {
+	/**
+	 * Cancel if beyond chunk bounds.
+	 */
     @Inject(method = "applyBiomeDecoration", at = @At("HEAD"), cancellable = true)
-    public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager, CallbackInfo ci) {
+    public void decorateOverBoundsCancel(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager, CallbackInfo ci) {
         this.setLevel(level.getLevel());
 
         WorldTransformer transformer = level.getLevel().getTransformer();
@@ -23,7 +27,9 @@ public class ChunkGeneratorMixin implements LevelAccessor {
         if(transformer.isChunkOverBounds(chunk.getPos())) ci.cancel();
     }
 
+    @Unique
     ServerLevel level;
+
     @Override
     public ServerLevel getLevel() {
         return this.level;

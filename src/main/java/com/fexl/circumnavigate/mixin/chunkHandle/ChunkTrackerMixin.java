@@ -18,7 +18,7 @@ public class ChunkTrackerMixin {
 	 * Updates loading levels of adjacent chunks so they are ready when needed. Modified to include wrapped chunks.
 	 */
 	@Inject(method = "checkNeighborsAfterUpdate", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void checkNeighbors(long pos, int level, boolean isDecreasing, CallbackInfo ci) {
+	public void wrapppedChunkNeighbors(long pos, int level, boolean isDecreasing, CallbackInfo ci) {
 		ChunkTracker thiz = (ChunkTracker) (Object) this;
 		//TODO: Stop chunk access after bounds.
 		//ci.cancel();

@@ -12,8 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class BaseRailBlockMixin {
 
     @ModifyVariable(method = "neighborChanged", at = @At("HEAD"), index = 3, argsOnly = true)
-    public BlockPos neighborChanged(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-        level.getBlockState(blockPos).getBlock();
+    public BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
         if(level.isClientSide) return blockPos;
         return level.getTransformer().translateBlockToBounds(blockPos);
     }

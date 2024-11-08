@@ -45,7 +45,7 @@ public class PlayerChunkSenderMixin {
 	@Final @Shadow private LongSet pendingChunks;
 
 	@ModifyArg(method = "sendChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundLevelChunkWithLightPacket;<init>(Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/lighting/LevelLightEngine;Ljava/util/BitSet;Ljava/util/BitSet;)V"), index = 0)
-	private static LevelChunk sendChunk(LevelChunk chunk, @Local ServerGamePacketListenerImpl packetListener) {
+	private static LevelChunk wrapLevelChunk(LevelChunk chunk, @Local ServerGamePacketListenerImpl packetListener) {
 		WorldTransformer transformer = packetListener.player.level().getTransformer();
 		ChunkPos unwrapped = transformer.translateChunkFromBounds(packetListener.player.getClientChunk(), chunk.getPos());
 		LevelChunk send = new LevelChunk(chunk.level, unwrapped, chunk.getUpgradeData(), (LevelChunkTicks<Block>) chunk.getBlockTicks(), (LevelChunkTicks<Fluid>) chunk.getFluidTicks(), chunk.getInhabitedTime(), chunk.getSections(), chunk.postLoad, chunk.getBlendingData());
@@ -56,7 +56,7 @@ public class PlayerChunkSenderMixin {
 	 * Collect chunks to send, prioritizing closer chunks first. Modified to include wrapped chunks as closer.
 	 */
 	@Inject(method = "collectChunksToSend", at = @At("HEAD"), cancellable = true)
-	private void collectChunksToSend(ChunkMap chunkMap, ChunkPos chunkPos, CallbackInfoReturnable<List<LevelChunk>> cir) {
+	private void wrapChunkPosPriority(ChunkMap chunkMap, ChunkPos chunkPos, CallbackInfoReturnable<List<LevelChunk>> cir) {
 		WorldTransformer transformer = chunkMap.level.getTransformer();
 		cir.cancel();
 

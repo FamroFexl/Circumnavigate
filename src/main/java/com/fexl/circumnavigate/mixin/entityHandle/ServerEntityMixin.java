@@ -68,7 +68,7 @@ public abstract class ServerEntityMixin {
 	 * Determines entity movement and returns it in packets.
 	 */
 	@Inject(method = "sendChanges", at = @At("HEAD"), cancellable = true)
-	public void sendChanges(CallbackInfo ci) {
+	public void wrapChanges(CallbackInfo ci) {
 		WorldTransformer transformer = level.getTransformer();
 		ci.cancel();
 

@@ -72,12 +72,12 @@ public abstract class LevelMixin<T extends Entity> {
 
 
 	@ModifyVariable(method = "getBlockState", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos getBlockState(BlockPos blockPos) {
+	public BlockPos wrapBlockState(BlockPos blockPos) {
 		return wrapBlockPos(blockPos);
 	}
 
 	@ModifyVariable(method = "getFluidState", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos getFluidState(BlockPos blockPos) {
+	public BlockPos wrapFluidState(BlockPos blockPos) {
 		return wrapBlockPos(blockPos);
 	}
 

@@ -27,7 +27,7 @@ public class NaturalSpawnerMixin {
 	 * Prevents entities from spawning past the borders and causing issues with {@link net.minecraft.world.entity.Entity#setPosRaw(double, double, double)}.
 	 */
 	@Inject(method = "isSpawnPositionOk", at = @At("HEAD"), cancellable = true)
-	private static void isSpawnPositionOk(SpawnPlacements.Type placeType, LevelReader level, BlockPos pos, @Nullable EntityType<?> entityType, CallbackInfoReturnable<Boolean> cir) {
+	private static void spawnOverBoundsCancel(SpawnPlacements.Type placeType, LevelReader level, BlockPos pos, @Nullable EntityType<?> entityType, CallbackInfoReturnable<Boolean> cir) {
 		if(level instanceof ServerLevelAccessor) {
 			ServerLevelAccessor serverLevel = (ServerLevelAccessor) level;
 			WorldTransformer transformer = serverLevel.getLevel().getTransformer();

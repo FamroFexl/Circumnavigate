@@ -20,7 +20,7 @@ public interface ChunkTrackingViewMixin extends ChunkTrackingView {
 	 * Checks if a chunk is within a distance. Modified to support wrapping.
 	 */
 	@Inject(method = "isWithinDistance", at = @At("HEAD"), cancellable = true)
-	private static void isWithinDistance(int centerX, int centerZ, int viewDistance, int x, int z, boolean serachAllChunks, CallbackInfoReturnable<Boolean> cir) {
+	private static void checkWrappedChunks(int centerX, int centerZ, int viewDistance, int x, int z, boolean serachAllChunks, CallbackInfoReturnable<Boolean> cir) {
 		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
 
 		//Don't include chunks that extend past the bounds.
@@ -44,7 +44,7 @@ public interface ChunkTrackingViewMixin extends ChunkTrackingView {
 	 * Functional method which outputs chunks to remove and chunks to add. Modified to support wrapping.
 	 */
 	@Inject(method = "difference", at = @At("HEAD"), cancellable = true)
-	private static void difference(ChunkTrackingView oldChunkTrackingView, ChunkTrackingView newChunkTrackingView, Consumer<ChunkPos> chunkDropper, Consumer<ChunkPos> chunkMarker, CallbackInfo ci) {
+	private static void includeWrappedChunks(ChunkTrackingView oldChunkTrackingView, ChunkTrackingView newChunkTrackingView, Consumer<ChunkPos> chunkDropper, Consumer<ChunkPos> chunkMarker, CallbackInfo ci) {
 		ci.cancel();
 		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
 

@@ -19,8 +19,11 @@ import java.util.function.Function;
 
 @Mixin(ChunkStatus.class)
 public class ChunkStatusMixin {
+	/**
+	 * Capture the level further up for {@link ChunkGeneratorMixin}
+	 */
     @Inject(method = "method_38284", at = @At("HEAD"))
-    private static void method_38284(ChunkStatus chunkStatus, Executor executor, ServerLevel serverLevel, ChunkGenerator chunkGenerator, StructureTemplateManager structureTemplateManager, ThreadedLevelLightEngine threadedLevelLightEngine, Function function, List list, ChunkAccess chunkAccess, CallbackInfoReturnable<CompletableFuture> cir) {
+    private static void captureLevel(ChunkStatus chunkStatus, Executor executor, ServerLevel serverLevel, ChunkGenerator chunkGenerator, StructureTemplateManager structureTemplateManager, ThreadedLevelLightEngine threadedLevelLightEngine, Function function, List list, ChunkAccess chunkAccess, CallbackInfoReturnable<CompletableFuture> cir) {
         ((LevelAccessor) chunkGenerator).setLevel(serverLevel);
     }
 }

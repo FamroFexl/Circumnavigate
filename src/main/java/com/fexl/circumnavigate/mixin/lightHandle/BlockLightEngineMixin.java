@@ -17,21 +17,21 @@ public class BlockLightEngineMixin {
 	BlockGetter level = ((LightEngineAccessor) this).getChunkSource().getLevel();
 	
     @ModifyVariable(method = "propagateIncrease", at = @At("HEAD"), index = 1, argsOnly = true)
-    public long propagateIncrease(long pos) {
+    public long wrapBlockPos(long pos) {
 		if(level.isClientSide()) return pos;
         WorldTransformer transformer = level.getTransformer();
         return transformer.translateBlockToBounds(pos);
     }
 
     @Redirect(method = "propagateIncrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
-    public long changeOffset(long pos, Direction direction) {
+    public long wrapBlockPos2(long pos, Direction direction) {
 		if(level.isClientSide()) return BlockPos.offset(pos, direction);
         WorldTransformer transformer = level.getTransformer();
         return transformer.translateBlockToBounds(BlockPos.offset(pos, direction));
     }
 
     @Redirect(method = "propagateDecrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
-    public long changeOffset2(long pos, Direction direction) {
+    public long wrapBlockPos3(long pos, Direction direction) {
 		if(level.isClientSide()) return BlockPos.offset(pos, direction);
         WorldTransformer transformer = level.getTransformer();
         return transformer.translateBlockToBounds(BlockPos.offset(pos, direction));

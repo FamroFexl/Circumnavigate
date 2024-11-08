@@ -28,7 +28,7 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	 * Wraps block collisions.
 	 */
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void init(CollisionGetter collisionGetter, Entity entity, AABB box, boolean onlySuffocatingBlocks, BiFunction<BlockPos.MutableBlockPos, VoxelShape, T> resultProvider, CallbackInfo ci) {
+	private void wrap3DCursor(CollisionGetter collisionGetter, Entity entity, AABB box, boolean onlySuffocatingBlocks, BiFunction<BlockPos.MutableBlockPos, VoxelShape, T> resultProvider, CallbackInfo ci) {
 		if(collisionGetter instanceof Level level && level.isClientSide) return;
 
 		int i = Mth.floor(box.minX - 1.0E-7) - 1;
