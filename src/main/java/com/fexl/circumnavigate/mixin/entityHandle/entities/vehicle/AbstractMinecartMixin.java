@@ -17,7 +17,7 @@ public abstract class AbstractMinecartMixin {
 	AbstractMinecart thiz = (AbstractMinecart) (Object) this;
 
 	@ModifyVariable(method = "moveAlongTrack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/vehicle/AbstractMinecart;setPos(DDD)V", shift = At.Shift.AFTER), index = 1, argsOnly = true)
-	public BlockPos movealongs(BlockPos blockPos) {
+	public BlockPos moveAlongTrack(BlockPos blockPos) {
 		if(thiz.level().isClientSide) return blockPos;
 		return thiz.level().getTransformer().translateBlockFromBounds(thiz.blockPosition(), blockPos);
 	}

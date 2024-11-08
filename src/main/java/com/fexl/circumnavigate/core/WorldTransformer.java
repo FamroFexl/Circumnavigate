@@ -23,17 +23,17 @@ public class WorldTransformer {
 	public final int zChunkBoundMin;
 	public final int zChunkBoundMax;
 
-	public final int xBlockBoundMin;
-	public final int xBlockBoundMax;
-
-	public final int zBlockBoundMin;
-	public final int zBlockBoundMax;
-
 	public final int xCoordBoundMin;
 	public final int xCoordBoundMax;
 
 	public final int zCoordBoundMin;
 	public final int zCoordBoundMax;
+
+	public final int xBlockBoundMin;
+	public final int xBlockBoundMax;
+
+	public final int zBlockBoundMin;
+	public final int zBlockBoundMax;
 
 	//Only one can be set (non-zero) at a time.
 	//TODO: Implement chunk border shifting.
@@ -43,6 +43,10 @@ public class WorldTransformer {
 	public final int xWidth;
 
 	public final int zWidth;
+
+	public final int xBlockWidth;
+
+	public final int zBlockWidth;
 
 	public final int centerX;
 
@@ -61,21 +65,24 @@ public class WorldTransformer {
 		this.zChunkBoundMin = zChunkBoundMin;
 		this.zChunkBoundMax = zChunkBoundMax;
 
-		this.xBlockBoundMin = this.xChunkBoundMin*chunkWidth;
-		this.xBlockBoundMax = this.xChunkBoundMax*chunkWidth;
-		this.zBlockBoundMin = this.zChunkBoundMin*chunkWidth;
-		this.zBlockBoundMax = this.zChunkBoundMax*chunkWidth;
+		this.xCoordBoundMin = this.xChunkBoundMin * chunkWidth;
+		this.xCoordBoundMax = this.xChunkBoundMax * chunkWidth;
+		this.zCoordBoundMin = this.zChunkBoundMin * chunkWidth;
+		this.zCoordBoundMax = this.zChunkBoundMax * chunkWidth;
 
-		this.xCoordBoundMin = this.xBlockBoundMin;
-		this.xCoordBoundMax = this.xBlockBoundMax+1;
-		this.zCoordBoundMin = this.zBlockBoundMin;
-		this.zCoordBoundMax = this.zBlockBoundMax+1;
+		this.xBlockBoundMin = this.xChunkBoundMin * chunkWidth;
+		this.xBlockBoundMax = this.xChunkBoundMax * chunkWidth - 1;
+		this.zBlockBoundMin = this.zChunkBoundMin * chunkWidth;
+		this.zBlockBoundMax = this.zChunkBoundMax * chunkWidth - 1;
 
 		this.xShift = xShift;
 		this.zShift = zShift;
 
 		this.xWidth = Math.abs(xChunkBoundMin) + Math.abs(xChunkBoundMax);
 		this.zWidth = Math.abs(zChunkBoundMin) + Math.abs(zChunkBoundMax);
+
+		this.xBlockWidth = this.xWidth*chunkWidth - 1;
+		this.zBlockWidth = this.zWidth*chunkWidth - 1;
 
 		this.centerX = (this.xChunkBoundMax + this.xChunkBoundMin) / 2;
 		this.centerZ = (this.zChunkBoundMax + this.zChunkBoundMin) / 2;

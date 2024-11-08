@@ -2,7 +2,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-package com.fexl.circumnavigate.mixin.blockHandle;
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+package com.fexl.circumnavigate.mixin.itemHandle;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.world.item.BlockItem;

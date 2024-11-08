@@ -5,7 +5,7 @@
   "mixins": [
     "ServerPlayerGameModeMixin",
     "ServerToClientListener",
-    "blockHandle.BlockItemMixin",
+    "itemHandle.BlockItemMixin",
     "blockHandle.ExplosionMixin",
     "blockHandle.NeighborUpdatorMixin",
     "blockHandle.blocks.BaseRailBlockMixin",
