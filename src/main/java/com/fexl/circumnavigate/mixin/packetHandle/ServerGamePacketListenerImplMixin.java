@@ -69,15 +69,13 @@ public abstract class ServerGamePacketListenerImplMixin {
 		return player.serverLevel().getTransformer().translateBlockToBounds(pos);
 	}
 
+	//TODO: implementations of net/minecraft/world/item/Item$useOn will have to be modified in the future for support. HangingEntity, LeadItem, etc.
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
 	public BlockHitResult handleUseItemOn(ServerboundUseItemOnPacket instance) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
 
-		if(blockHit.getDirection() == Direction.UP || blockHit.getDirection() == Direction.DOWN) {
-			return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
-		}
-		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()).relative(blockHit.getDirection(), 1), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos().relative(blockHit.getDirection())), blockHit.isInside());
+		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
 	// TODO: dont override the whole method, just the part that needs to be changed
