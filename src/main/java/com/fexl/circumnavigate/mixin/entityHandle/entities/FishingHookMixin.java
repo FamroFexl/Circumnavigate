@@ -1,4 +1,8 @@
-package com.fexl.circumnavigate.mixin.entityHandle;
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+package com.fexl.circumnavigate.mixin.entityHandle.entities;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
