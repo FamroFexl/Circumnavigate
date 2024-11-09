@@ -33,7 +33,7 @@
     "entityHandle.collisions.LevelMixin",
     "entityHandle.entities.FishingHookMixin",
     "entityHandle.entities.vehicle.AbstractMinecartMixin",
-    "interfaceInjects.LevelTransformerInjectorMixin",
+    "interfaceInjects.LevelInjectorMixin",
     "interfaceInjects.PathNavigationRegionInjectorMixin",
     "interfaceInjects.PlayerClientInjectorMixin",
     "interfaceInjects.WorldGenRegionInjectorMixin",

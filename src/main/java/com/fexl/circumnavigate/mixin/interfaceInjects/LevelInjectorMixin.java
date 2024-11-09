@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
  * Injects a transformer, wrappedChunks and accessor methods into Level instances. This means transformers and wrappedChunks are stored on a per-level basis.
  */
 @Mixin(Level.class)
-public class LevelTransformerInjectorMixin implements LevelTransformerInjector, LevelWrappedChunksInjector {
+public class LevelInjectorMixin implements LevelTransformerInjector, LevelWrappedChunksInjector {
 	@Unique
 	private WorldTransformer transformer = null;
 
