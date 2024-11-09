@@ -5,7 +5,6 @@
   "mixins": [
     "ServerPlayerGameModeMixin",
     "ServerToClientListener",
-    "itemHandle.BlockItemMixin",
     "blockHandle.ExplosionMixin",
     "blockHandle.NeighborUpdatorMixin",
     "blockHandle.blocks.BaseRailBlockMixin",
@@ -14,6 +13,7 @@
     "chunkHandle.ChunkMapMixin",
     "chunkHandle.ChunkTrackerMixin",
     "chunkHandle.ChunkTrackingViewMixin",
+    "chunkHandle.DistanceManagerMixin",
     "chunkHandle.PositionedAccessorMixin",
     "chunkHandle.PositionedMixin",
     "chunkHandle.SectionTrackerMixin",
@@ -37,6 +37,7 @@
     "interfaceInjects.PathNavigationRegionInjectorMixin",
     "interfaceInjects.PlayerClientInjectorMixin",
     "interfaceInjects.WorldGenRegionInjectorMixin",
+    "itemHandle.BlockItemMixin",
     "lightHandle.BlockLightEngineMixin",
     "lightHandle.LightEngineAccessor",
     "lightHandle.SkyLightEngineMixin",

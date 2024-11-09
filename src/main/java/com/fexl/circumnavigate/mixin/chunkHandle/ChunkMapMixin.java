@@ -6,12 +6,8 @@ import com.fexl.circumnavigate.core.WorldTransformer;
 import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.*;
-import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,17 +16,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.List;
-import java.util.Set;
-
 @Mixin(ChunkMap.class)
 public abstract class ChunkMapMixin {
 	@Final @Shadow public ServerLevel level;
-	@Final @Shadow private ThreadedLevelLightEngine lightEngine;
-	@Final @Shadow private ChunkTaskPriorityQueueSorter queueSorter;
-	@Shadow abstract ChunkHolder updateChunkScheduling(long chunkPos, int newLevel, @Nullable ChunkHolder holder, int oldLevel);
-
-	ChunkMap thiz = (ChunkMap) (Object) this;
 
 	/**
 	 * Stores the serverLevel for usage further down the call chain where it was not passed.

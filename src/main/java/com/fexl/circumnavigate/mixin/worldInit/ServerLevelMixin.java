@@ -2,12 +2,12 @@
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
+import com.fexl.circumnavigate.core.WrappedChunks;
 import com.fexl.circumnavigate.options.WrappingSettings;
 import com.fexl.circumnavigate.core.WorldTransformer;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.*;
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.world.RandomSequences;
 import net.minecraft.world.level.Level;
@@ -23,14 +23,16 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 @Mixin(ServerLevel.class)
-public class ServerLevelMixin {
-	ServerLevel thiz = (ServerLevel) (Object) this;
+public abstract class ServerLevelMixin {
 
 	/**
-	 * Set the wrapping settings for each level when it is created
+	 * Set the wrapping settings for each level when it is created as quickly as possible.
 	 */
-	@Inject(method = "<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/Executor;Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lnet/minecraft/world/level/storage/ServerLevelData;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;Lnet/minecraft/server/level/progress/ChunkProgressListener;ZJLjava/util/List;ZLnet/minecraft/world/RandomSequences;)V", at = @At("TAIL"))
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"))
 	public void init(MinecraftServer server, Executor dispatcher, LevelStorageSource.LevelStorageAccess levelStorageAccess, ServerLevelData serverLevelData, ResourceKey dimension, LevelStem levelStem, ChunkProgressListener progressListener, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, RandomSequences randomSequences, CallbackInfo ci) {
+
+		ServerLevel thiz = (ServerLevel) (Object) this;
+
 		if(dimension.equals(Level.OVERWORLD)) {
 			thiz.setTransformer(new WorldTransformer(WrappingSettings.getXChunkBoundMin(), WrappingSettings.getXChunkBoundMax(), WrappingSettings.getZChunkBoundMin(), WrappingSettings.getZChunkBoundMax(), WrappingSettings.getXShift(),  WrappingSettings.getZShift()));
 		}
@@ -40,5 +42,7 @@ public class ServerLevelMixin {
 		else {
 			thiz.setTransformer(new WorldTransformer(WrappingSettings.invalidPos));
 		}
+
+		thiz.setWrappedChunks(new WrappedChunks());
 	}
 }

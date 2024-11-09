@@ -31,7 +31,7 @@
     "custom": {
       "loom:injected_interfaces": {
         "net/minecraft/class_3222": ["com/fexl/circumnavigate/injected/ServerPlayerInjector"],
-        "net/minecraft/class_1937": ["com/fexl/circumnavigate/injected/LevelTransformerInjector"],
+        "net/minecraft/class_1937": ["com/fexl/circumnavigate/injected/LevelTransformerInjector", "com/fexl/circumnavigate/injected/LevelWrappedChunksInjector"],
         "net/minecraft/class_1922": ["com/fexl/circumnavigate/injected/LevelTransformerInjector", "com/fexl/circumnavigate/injected/IsClientSideInjector"],
         "net/minecraft/class_1924": ["com/fexl/circumnavigate/injected/LevelTransformerInjector"]
       }
@@ -44,7 +44,7 @@
       }
 	],
 	"depends": {
-		"fabricloader": ">=0.15.7",
+		"fabricloader": ">=0.16.9",
 		"minecraft": "1.20.4",
 		"java": ">=17",
 		"fabric-api": "*"
