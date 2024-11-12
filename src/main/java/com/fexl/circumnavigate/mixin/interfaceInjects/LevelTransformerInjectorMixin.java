@@ -29,6 +29,4 @@ public class LevelTransformerInjectorMixin implements LevelTransformerInjector {
 	public void setTransformer(WorldTransformer transformer) {
 		this.transformer = transformer;
 	}
-
-
 }

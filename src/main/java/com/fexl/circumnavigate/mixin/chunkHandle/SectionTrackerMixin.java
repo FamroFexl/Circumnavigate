@@ -4,38 +4,32 @@ package com.fexl.circumnavigate.mixin.chunkHandle;
 
 import com.fexl.circumnavigate.storage.TransformerRequests;
 import com.fexl.circumnavigate.core.WorldTransformer;
-import net.minecraft.core.SectionPos;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.SectionTracker;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(SectionTracker.class)
 public class SectionTrackerMixin {
-	SectionTracker thiz = (SectionTracker) (Object) this;
 
 	/**
 	 * Updates loading levels of adjacent chunk sections so they are ready when needed. Modified to include wrapped sections.
 	 */
-	@Inject(method = "checkNeighborsAfterUpdate", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void wrappedSectionNeighbors(long pos, int level, boolean isDecreasing, CallbackInfo ci) {
-		//TODO: Stop sub-chunk access after bounds.
-		//ci.cancel();
-		WorldTransformer transformer = TransformerRequests.chunkCacheLevel.getTransformer();
+	@WrapOperation(method = "checkNeighborsAfterUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/SectionPos;offset(JIII)J"))
+	private long wrapChunkPos(long pos, int x, int y, int z, Operation<Long> original, @Local(argsOnly = true) int level, @Local(argsOnly = true) boolean isDecreasing) {
+		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
 
-		if (isDecreasing && level >= thiz.levelCount - 2) {
-			return;
+		int wrappedX = transformer.xTransformer.wrapChunkToLimit(x);
+		int wrappedZ = transformer.zTransformer.wrapChunkToLimit(z);
+		long chunkLong = original.call(pos, wrappedX, y, wrappedZ);
+
+		if (chunkLong != pos) {
+			SectionTracker thiz = (SectionTracker) (Object) this;
+			thiz.checkNeighbor(pos, chunkLong, level, isDecreasing);
 		}
-		for (int x = -1; x <= 1; ++x) {
-			for (int y = -1; y <= 1; ++y) {
-				for (int z = -1; z <= 1; ++z) {
-					long l = SectionPos.offset(pos, transformer.xTransformer.wrapChunkToLimit(x), y, transformer.zTransformer.wrapChunkToLimit(y));
-					if (l == pos) continue;
-					thiz.checkNeighbor(pos, l, level, isDecreasing);
-				}
-			}
-		}
+
+		return original.call(pos, x, y, z);
 	}
 }

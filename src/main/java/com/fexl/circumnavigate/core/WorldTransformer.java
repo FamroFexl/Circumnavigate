@@ -4,6 +4,7 @@ package com.fexl.circumnavigate.core;
 
 import com.fexl.circumnavigate.options.WrappingSettings;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.AABB;
@@ -177,7 +178,13 @@ public class WorldTransformer {
 		int returnZ = zTransformer.wrapChunkToLimit(chunkPos.z);
 
 		return new ChunkPos(returnX, returnZ);
+	}
 
+	public SectionPos translateSectionToBounds(SectionPos sectionPos) {
+		int returnX = xTransformer.wrapChunkToLimit(sectionPos.x());
+		int returnZ = zTransformer.wrapChunkToLimit(sectionPos.z());
+
+		return SectionPos.of(returnX, sectionPos.y(), returnZ);
 	}
 
 	public long translateChunkToBounds(long chunkPos) {

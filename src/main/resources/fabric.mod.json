@@ -29,19 +29,19 @@
 	},
     "accessWidener": "circumnavigate.accesswidener",
     "custom": {
-      "loom:injected_interfaces": {
-        "net/minecraft/class_3222": ["com/fexl/circumnavigate/injected/ServerPlayerInjector"],
-        "net/minecraft/class_1937": ["com/fexl/circumnavigate/injected/LevelTransformerInjector"],
-        "net/minecraft/class_1922": ["com/fexl/circumnavigate/injected/LevelTransformerInjector", "com/fexl/circumnavigate/injected/IsClientSideInjector"],
-        "net/minecraft/class_1924": ["com/fexl/circumnavigate/injected/LevelTransformerInjector"]
-      }
+      	"loom:injected_interfaces": {
+        	"net/minecraft/class_3222": ["com/fexl/circumnavigate/injected/ServerPlayerInjector"],
+        	"net/minecraft/class_1937": ["com/fexl/circumnavigate/injected/LevelTransformerInjector"],
+        	"net/minecraft/class_1922": ["com/fexl/circumnavigate/injected/LevelTransformerInjector", "com/fexl/circumnavigate/injected/IsClientSideInjector"],
+        	"net/minecraft/class_1924": ["com/fexl/circumnavigate/injected/LevelTransformerInjector"]
+      	}
     },
 	"mixins": [
 		"circumnavigate.mixins.json",
-      {
-        "config": "circumnavigate-client.mixins.json",
-        "environment": "client"
-      }
+		{
+			"config": "circumnavigate-client.mixins.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
 		"fabricloader": ">=0.16.9",
