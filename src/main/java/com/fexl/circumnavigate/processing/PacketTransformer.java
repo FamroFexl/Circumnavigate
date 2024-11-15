@@ -186,6 +186,7 @@ public class PacketTransformer {
 		buffer.writeFloat(packet.getKnockbackZ());
 		buffer.writeEnum(packet.getBlockInteraction());
 		ParticleTypes.STREAM_CODEC.encode(buffer, packet.getSmallExplosionParticles());
+		ParticleTypes.STREAM_CODEC.encode(buffer, packet.getLargeExplosionParticles());
 		SoundEvent.STREAM_CODEC.encode(buffer, packet.getExplosionSound());
 		
 		return ClientboundExplodePacket.STREAM_CODEC.decode(buffer);
