@@ -43,6 +43,7 @@
     "interfaceInjects.PlayerClientInjectorMixin",
     "interfaceInjects.WorldGenRegionInjectorMixin",
     "itemHandle.BlockItemMixin",
+    "itemHandle.BucketItemMixin",
     "lightHandle.BlockLightEngineMixin",
     "lightHandle.LightEngineAccessor",
     "lightHandle.SkyLightEngineMixin",
