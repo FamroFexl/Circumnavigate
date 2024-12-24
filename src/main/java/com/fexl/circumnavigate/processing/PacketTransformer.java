@@ -12,6 +12,7 @@ import com.fexl.circumnavigate.core.WorldTransformer;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -19,12 +20,17 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -320,6 +326,56 @@ public class PacketTransformer {
 
 	private static ClientboundBlockEntityDataPacket transformPacket(ClientboundBlockEntityDataPacket packet, ServerPlayer player) {
 		return new ClientboundBlockEntityDataPacket(getClientBlockPos(player, packet.getPos()), packet.getType(), packet.getTag());
+	}
+
+	private static ClientboundSetEntityDataPacket transformPacket(ClientboundSetEntityDataPacket packet, ServerPlayer player) {
+		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
+
+		buffer.writeVarInt(packet.id());
+
+		List<SynchedEntityData.DataValue<?>> repackedItems = new ArrayList<>();
+
+		for (SynchedEntityData.DataValue<?> dataValue : packet.packedItems()) {
+			if(dataValue.serializer().equals(EntityDataSerializers.BLOCK_POS)) {
+				BlockPos newBlockPos = getClientBlockPos(player, (BlockPos) dataValue.value());
+				SynchedEntityData.DataValue<BlockPos> newValue = new SynchedEntityData.DataValue<>(dataValue.id(), EntityDataSerializers.BLOCK_POS, newBlockPos);
+				repackedItems.add(newValue);
+			}
+			else if(dataValue.serializer().equals(EntityDataSerializers.OPTIONAL_BLOCK_POS)) {
+				Optional<BlockPos> value = (Optional<BlockPos>) dataValue.value();
+				Optional<BlockPos> newBlockPos = Optional.empty();
+				if(value.isPresent()) newBlockPos = Optional.of(getClientBlockPos(player, value.get()));
+
+				SynchedEntityData.DataValue<Optional<BlockPos>> newValue = new SynchedEntityData.DataValue<>(dataValue.id(), EntityDataSerializers.OPTIONAL_BLOCK_POS, newBlockPos);
+				repackedItems.add(newValue);
+			}
+			else if(dataValue.serializer().equals(EntityDataSerializers.OPTIONAL_GLOBAL_POS)) {
+				Optional<GlobalPos> value = (Optional<GlobalPos>) dataValue.value();
+				Optional<GlobalPos> newGlobalPos = Optional.empty();
+				if(value.isPresent()) newGlobalPos = Optional.of(new GlobalPos(value.get().dimension(), getClientBlockPos(player, value.get().pos())));
+
+				SynchedEntityData.DataValue<Optional<GlobalPos>> newValue = new SynchedEntityData.DataValue<>(dataValue.id(), EntityDataSerializers.OPTIONAL_GLOBAL_POS, newGlobalPos);
+				repackedItems.add(newValue);
+			}
+			else if(dataValue.serializer().equals(EntityDataSerializers.VECTOR3)) {
+				Vector3f value = (Vector3f) dataValue.value();
+				Vector3f newVector3f = new Vector3f((float) getClientX(player, value.x), value.y, (float) getClientZ(player, value.z));
+
+				SynchedEntityData.DataValue<Vector3f> newValue = new SynchedEntityData.DataValue<>(dataValue.id(), EntityDataSerializers.VECTOR3, newVector3f);
+				repackedItems.add(newValue);
+			}
+			else {
+				repackedItems.add(dataValue);
+			}
+		}
+
+		for (SynchedEntityData.DataValue<?> dataValue : repackedItems) {
+			dataValue.write(buffer);
+		}
+
+		buffer.writeByte(255);
+
+		return ClientboundSetEntityDataPacket.STREAM_CODEC.decode(buffer);
 	}
 
 	private static ClientboundAddEntityPacket transformPacket(ClientboundAddEntityPacket packet, ServerPlayer player) {
