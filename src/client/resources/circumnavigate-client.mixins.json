@@ -7,10 +7,9 @@
       "worldInit.WorldTabMixin",
       "worldInit.ClientLevelMixin",
       "worldInit.ConnectionMixin",
-
-      "chunkHandle.SectionOcclusionGraphMixin",
-      "chunkHandle.OptionsAccessorMixin",
-      "chunkHandle.OptionsMixin",
+      "chunk.SectionOcclusionGraphMixin",
+      "chunk.OptionsAccessorMixin",
+      "chunk.OptionsMixin",
 
       "debug.ChunkBorderRendererMixin",
       "debug.DebugScreenOverlayMixin",
