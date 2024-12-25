@@ -326,10 +326,10 @@ public class WorldTransformer {
 	}
 
 	/**
-	 * Adjusts a viewDistance to be within a 2 chunk boundary of a wrapped axis' radius.
+	 * Adjusts a viewDistance to be within a 3 chunk boundary of a wrapped axis' radius.
 	 */
 	public int limitViewDistance(int viewDistance) {
-		int min = Math.min(this.xWidth / 2, this.zWidth / 2) - 2;
+		int min = Math.min(this.xWidth / 2, this.zWidth / 2) - 3;
 		return Math.min(viewDistance, min);
 	}
 }

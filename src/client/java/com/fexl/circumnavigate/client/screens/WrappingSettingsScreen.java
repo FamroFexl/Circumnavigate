@@ -112,7 +112,7 @@ public class WrappingSettingsScreen extends Screen {
 		}
 
 		//Cannot have an axis less than 8 chunks
-		if(Math.abs(xMax1 - xMin1) < 8 || Math.abs(zMax1 - zMin1) < 8) {
+		if(Math.abs(xMax1 - xMin1) < 10 || Math.abs(zMax1 - zMin1) < 10) {
 			return false;
 		}
 
