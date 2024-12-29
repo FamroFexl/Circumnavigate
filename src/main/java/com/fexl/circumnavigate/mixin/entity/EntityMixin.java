@@ -8,7 +8,6 @@
 
 package com.fexl.circumnavigate.mixin.entity;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -37,8 +36,7 @@ public abstract class EntityMixin {
 	 */
 	@ModifyVariable(method = "setPosRaw", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 	public double wrapX(double x) {
-		if (level.isClientSide()) return x;
-		return level.getTransformer().xTransformer.wrapCoordToLimit(x);
+		return level.getTransformer().onlyServerSide().xTransformer.wrapCoordToLimit(x);
 	}
 
 	/**
@@ -46,8 +44,7 @@ public abstract class EntityMixin {
 	 */
 	@ModifyVariable(method = "setPosRaw", at = @At("HEAD"), ordinal = 2, argsOnly = true)
 	public double wrapZ(double z) {
-		if (level.isClientSide()) return z;
-		return level.getTransformer().zTransformer.wrapCoordToLimit(z);
+		return level.getTransformer().onlyServerSide().zTransformer.wrapCoordToLimit(z);
 	}
 
 	/**
@@ -55,33 +52,24 @@ public abstract class EntityMixin {
 	 */
 	@Redirect(method = "isColliding", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/shapes/Shapes;joinIsNotEmpty(Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/BooleanOp;)Z"))
 	public boolean wrapAABB(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator) {
-		if (level.isClientSide()) return Shapes.joinIsNotEmpty(shape1, shape2, resultOperator);
-
-		WorldTransformer transformer = this.level.getTransformer();
-		VoxelShape result = Shapes.create(transformer.translateAABBFromBounds(shape1.bounds(), shape2.bounds()));
+		VoxelShape result = Shapes.create(this.level.getTransformer().onlyServerSide().translateAABBFromBounds(shape1.bounds(), shape2.bounds()));
 
 		return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 	}
 
 	@Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
 	public void wrapDistanceSquared1(Entity entity, CallbackInfoReturnable<Float> cir) {
-		if(level.isClientSide) return;
-		cir.cancel();
-		cir.setReturnValue(Mth.sqrt((float)level.getTransformer().distanceToSqrWrappedCoord(entity.getX(), entity.getY(), entity.getZ(), thiz.getX(), thiz.getY(), thiz.getZ())));
+		cir.setReturnValue(Mth.sqrt((float)level.getTransformer().onlyServerSide().distanceToSqrWrappedCoord(entity.getX(), entity.getY(), entity.getZ(), thiz.getX(), thiz.getY(), thiz.getZ())));
 	}
 
 	@Inject(method = "distanceToSqr(DDD)D", at = @At("HEAD"), cancellable = true)
 	public void wrapDistanceSquared2(double x, double y, double z, CallbackInfoReturnable<Double> cir) {
-		if(level.isClientSide) return;
-		cir.cancel();
-		cir.setReturnValue(level.getTransformer().distanceToSqrWrappedCoord(x, y, z, thiz.getX(), thiz.getY(), thiz.getZ()));
+		cir.setReturnValue(level.getTransformer().onlyServerSide().distanceToSqrWrappedCoord(x, y, z, thiz.getX(), thiz.getY(), thiz.getZ()));
 	}
 
 	@Inject(method = "distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", at = @At("HEAD"), cancellable = true)
 	public void wrapDistanceSquared3(Vec3 vec, CallbackInfoReturnable<Double> cir) {
-		if(level.isClientSide) return;
-		cir.cancel();
-		cir.setReturnValue(level.getTransformer().distanceToSqrWrappedCoord(vec, new Vec3(thiz.getX(), thiz.getY(), thiz.getZ())));
+		cir.setReturnValue(level.getTransformer().onlyServerSide().distanceToSqrWrappedCoord(vec, new Vec3(thiz.getX(), thiz.getY(), thiz.getZ())));
 	}
 
 

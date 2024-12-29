@@ -13,7 +13,6 @@ public class RailBlockMixin {
 
     @ModifyVariable(method = "updateState", at = @At("HEAD"), index = 3, argsOnly = true)
     public BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-        if(level.isClientSide) return blockPos;
-        return level.getTransformer().translateBlockToBounds(blockPos);
+        return level.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
     }
 }

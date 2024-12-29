@@ -22,19 +22,16 @@ public class ExplosionMixin {
 
 	@Redirect(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;containing(DDD)Lnet/minecraft/core/BlockPos;"))
 	public BlockPos wrapBlockPos(double x, double y, double z) {
-		if(level.isClientSide) return BlockPos.containing(x, y, z);
-		return level.getTransformer().translateBlockToBounds(BlockPos.containing(x, y, z));
+		return level.getTransformer().onlyServerSide().translateBlockToBounds(BlockPos.containing(x, y, z));
 	}
 
 	@Redirect(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getX()D"))
 	public double unwrapEntityX(Entity instance) {
-		if(level.isClientSide) return instance.getX();
-		return level.getTransformer().xTransformer.unwrapCoordFromLimit(instance.getX(), x);
+		return level.getTransformer().onlyServerSide().xTransformer.unwrapCoordFromLimit(instance.getX(), x);
 	}
 
 	@Redirect(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getZ()D"))
 	public double unwrapEntityZ(Entity instance) {
-		if(level.isClientSide) return instance.getZ();
-		return level.getTransformer().zTransformer.unwrapCoordFromLimit(instance.getZ(), z);
+		return level.getTransformer().onlyServerSide().zTransformer.unwrapCoordFromLimit(instance.getZ(), z);
 	}
 }

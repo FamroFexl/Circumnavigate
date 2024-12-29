@@ -56,12 +56,16 @@ public class WorldTransformer {
 	public final CoordinateTransformers xTransformer;
 	public final CoordinateTransformers zTransformer;
 
+	private final boolean isClientSide;
+
 	private final int chunkWidth = LevelChunkSection.SECTION_WIDTH;
 
-	public static final WorldTransformer INVALID = new WorldTransformer(WrappingSettings.invalidPos);
+	public static final WorldTransformer INVALID = new WorldTransformer(WrappingSettings.invalidPos, false);
 
-	public WorldTransformer(int x1, int z1, int x2, int z2, int xShift, int zShift) {
+	public WorldTransformer(int x1, int z1, int x2, int z2, int xShift, int zShift, boolean isClientSide) {
 		int invalidPos = WrappingSettings.invalidPos;
+
+		this.isClientSide = isClientSide;
 
 		//Not a wrapped world. Don't wrap.
 		if(Math.abs(x1) == invalidPos || Math.abs(z1) == invalidPos || Math.abs(x2) == invalidPos || Math.abs(z2) == invalidPos) {
@@ -112,30 +116,40 @@ public class WorldTransformer {
 	/**
 	 * For bounds without chunk shifting.
 	 */
-	public WorldTransformer(int x1, int z1, int x2, int z2) {
-		this(x1, z1, x2, z2, 0, 0);
+	public WorldTransformer(int x1, int z1, int x2, int z2, boolean isClientSide) {
+		this(x1, z1, x2, z2, 0, 0, isClientSide);
 	}
 
 	/**
 	 * For bounds centered at (0,0).
 	 */
-	public WorldTransformer(int xChunkBound, int zChunkBound) {
-		this(-xChunkBound, -zChunkBound, xChunkBound, zChunkBound);
+	public WorldTransformer(int xChunkBound, int zChunkBound, boolean isClientSide) {
+		this(-xChunkBound, -zChunkBound, xChunkBound, zChunkBound, isClientSide);
 	}
 
 	/**
 	 * For equivalently bounds at (0,0).
 	 */
-	public WorldTransformer(int chunkBound) {
-		this(chunkBound, chunkBound);
+	public WorldTransformer(int chunkBound, boolean isClientSide) {
+		this(chunkBound, chunkBound, isClientSide);
 	}
 
-	public WorldTransformer(ChunkPos min, ChunkPos max, int xShift, int zShift) {
-		this(min.x, min.z, max.x, max.z, xShift, zShift);
+	public WorldTransformer(ChunkPos min, ChunkPos max, int xShift, int zShift, boolean isClientSide) {
+		this(min.x, min.z, max.x, max.z, xShift, zShift, isClientSide);
 	}
 
-	public WorldTransformer(ChunkPos min, ChunkPos max) {
-		this(min, max, 0, 0);
+	public WorldTransformer(ChunkPos min, ChunkPos max, boolean isClientSide) {
+		this(min, max, 0, 0, isClientSide);
+	}
+
+	public WorldTransformer onlyServerSide() {
+		if(!isClientSide) return this;
+		else return INVALID;
+	}
+
+	public WorldTransformer onlyClientSide() {
+		if(isClientSide) return this;
+		else return INVALID;
 	}
 
 	public Vec3 translateVecToBounds(Vec3 vec3) {

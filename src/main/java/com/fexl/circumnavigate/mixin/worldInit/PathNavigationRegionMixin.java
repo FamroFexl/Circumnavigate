@@ -4,7 +4,6 @@
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -20,7 +19,6 @@ public class PathNavigationRegionMixin {
 	public void init(Level level, BlockPos centerPos, BlockPos offsetPos, CallbackInfo ci) {
 		PathNavigationRegion thiz = (PathNavigationRegion) (Object) this;
 
-		if(level.isClientSide) thiz.setTransformer(WorldTransformer.INVALID);
-		if(level instanceof ServerLevel serverLevel) thiz.setTransformer(serverLevel.getTransformer());
+		if(level instanceof ServerLevel serverLevel) thiz.setTransformer(serverLevel.getTransformer().onlyServerSide());
 	}
 }

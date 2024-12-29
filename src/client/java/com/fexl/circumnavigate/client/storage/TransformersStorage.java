@@ -23,7 +23,7 @@ public class TransformersStorage {
 		//No transformer packet received. No wrapping on server.
 		WorldTransformer transformer = transformers.get(levelKey);
 		if(transformer == null) {
-			return new WorldTransformer(WrappingSettings.invalidPos);
+			return new WorldTransformer(WrappingSettings.invalidPos, true);
 		}
 		return transformer;
 	}

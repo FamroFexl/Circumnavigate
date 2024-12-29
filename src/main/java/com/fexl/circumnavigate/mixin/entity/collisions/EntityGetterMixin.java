@@ -13,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.EntityGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -85,10 +84,6 @@ public interface EntityGetterMixin {
 
 	@Unique
 	private double wrapDistance(Entity entity, double x, double y, double z) {
-		Level level = entity.level();
-		if(level.isClientSide) return entity.distanceToSqr(x, y, z);
-
-		WorldTransformer transformer = entity.level().getTransformer();
-		return transformer.distanceToSqrWrappedCoord(entity.position(), new Vec3(x, y, z));
+		return entity.level().getTransformer().onlyServerSide().distanceToSqrWrappedCoord(entity.position(), new Vec3(x, y, z));
 	}
 }

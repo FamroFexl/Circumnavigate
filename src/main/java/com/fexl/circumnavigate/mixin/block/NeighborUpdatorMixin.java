@@ -22,8 +22,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public interface NeighborUpdatorMixin {
 	@ModifyVariable(method = "executeUpdate", at = @At("HEAD"), index = 2, argsOnly = true)
 	private static BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-		if(level.isClientSide) return blockPos;
-		return level.getTransformer().translateBlockToBounds(blockPos);
+		return level.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
 	}
 
 	@ModifyVariable(method = "executeShapeUpdate", at = @At("HEAD"), index = 3, argsOnly = true)

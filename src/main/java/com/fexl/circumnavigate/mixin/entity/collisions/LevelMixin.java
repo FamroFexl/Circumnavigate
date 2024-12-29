@@ -85,20 +85,17 @@ public abstract class LevelMixin<T extends Entity> {
 
 	@ModifyVariable(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At("HEAD"), argsOnly = true, index = 1)
 	public BlockPos modifyBlockPos2(BlockPos blockPos) {
-		if(thiz.isClientSide) return blockPos;
-		return thiz.getTransformer().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
 	}
 
 	@ModifyVariable(method = "removeBlock", at = @At("HEAD"), argsOnly = true, index = 1)
 	public BlockPos modifyBlockPos3(BlockPos blockPos) {
-		if(thiz.isClientSide) return blockPos;
-		return thiz.getTransformer().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
 	}
 
 	@ModifyVariable(method = "destroyBlock", at = @At("HEAD"), argsOnly = true, index = 1)
 	public BlockPos modifyBlockPos4(BlockPos blockPos) {
-		if(thiz.isClientSide) return blockPos;
-		return thiz.getTransformer().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
 	}
 
 	/**
@@ -114,7 +111,6 @@ public abstract class LevelMixin<T extends Entity> {
 
 	@Unique
 	private BlockPos wrapBlockPos(BlockPos blockPos) {
-		if(thiz.isClientSide) return blockPos;
-		return thiz.getTransformer().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
 	}
 }

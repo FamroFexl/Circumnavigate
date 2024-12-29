@@ -23,7 +23,7 @@ public abstract class LivingEntityMixin {
     public void wrapDelta(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         Entity thiz = (Entity) (Object) this;
         Entity enemy = source.getEntity();
-        WorldTransformer transformer = enemy.level().getTransformer();
+        WorldTransformer transformer = enemy.level().getTransformer().onlyServerSide();
         deltaX = transformer.xTransformer.getDeltaBetween(thiz.getX(), enemy.getX());
         deltaZ = transformer.zTransformer.getDeltaBetween(thiz.getZ(), enemy.getZ());
 

@@ -19,7 +19,7 @@ public record LevelWrappingPayload(ResourceKey<Level> levelKey, WorldTransformer
 	public static final CustomPacketPayload.Type<LevelWrappingPayload> TYPE = CustomPacketPayload.createType("debug/circumnavigate/wrapping_data");
 
 	private LevelWrappingPayload(FriendlyByteBuf buffer) {
-		this(buffer.readResourceKey(Registries.DIMENSION), new WorldTransformer(buffer.readChunkPos(), buffer.readChunkPos(), buffer.readInt(), buffer.readInt()));
+		this(buffer.readResourceKey(Registries.DIMENSION), new WorldTransformer(buffer.readChunkPos(), buffer.readChunkPos(), buffer.readInt(), buffer.readInt(), true));
 	}
 
 	private void write(FriendlyByteBuf buffer) {

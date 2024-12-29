@@ -15,7 +15,6 @@ public class HitResultMixin {
     @Final @Shadow protected Vec3 location;
     @Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
     public void wrapDistanceSquared(Entity entity, CallbackInfoReturnable<Double> cir) {
-        if(entity.level().isClientSide) return;
-        cir.setReturnValue(entity.level().getTransformer().distanceToSqrWrappedCoord(entity.getX(), entity.getY(), entity.getZ(), location.x, location.y, location.z));
+        cir.setReturnValue(entity.level().getTransformer().onlyServerSide().distanceToSqrWrappedCoord(entity.getX(), entity.getY(), entity.getZ(), location.x, location.y, location.z));
     }
 }

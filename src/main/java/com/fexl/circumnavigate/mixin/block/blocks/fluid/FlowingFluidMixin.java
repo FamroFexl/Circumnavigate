@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public abstract class FlowingFluidMixin {
 	@ModifyVariable(method = "spread", at = @At("HEAD"), argsOnly = true, index = 2)
 	public BlockPos wrapSpread(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-		if(level.isClientSide) return blockPos;
-		return new BlockPosWrapped(blockPos, level.getTransformer());
+		return new BlockPosWrapped(blockPos, level.getTransformer().onlyServerSide());
 	}
 }

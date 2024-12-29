@@ -32,7 +32,7 @@ public class ServerLevelMixin {
 		ServerLevel thiz = (ServerLevel) (Object) this;
 
 		if(dimension.equals(Level.OVERWORLD)) {
-			thiz.setTransformer(new WorldTransformer(WrappingSettings.getXChunkBoundMin(), WrappingSettings.getZChunkBoundMin(), WrappingSettings.getXChunkBoundMax(), WrappingSettings.getZChunkBoundMax(), WrappingSettings.getXShift(),  WrappingSettings.getZShift()));
+			thiz.setTransformer(new WorldTransformer(WrappingSettings.getXChunkBoundMin(), WrappingSettings.getZChunkBoundMin(), WrappingSettings.getXChunkBoundMax(), WrappingSettings.getZChunkBoundMax(), WrappingSettings.getXShift(),  WrappingSettings.getZShift(), false));
 		}
 		//else if(dimension.equals(Level.NETHER)) {
 		//}
