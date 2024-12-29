@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class BlockPosWrapped extends BlockPos {
     final WorldTransformer transformer;
     public BlockPosWrapped(BlockPos blockPos, WorldTransformer transformer) {
-        super(transformer.xTransformer.wrapCoordToLimit(blockPos.getX()), blockPos.getY(), transformer.xTransformer.wrapCoordToLimit(blockPos.getZ()));
+        super(transformer.xTransformer.wrapCoordToLimit(blockPos.getX()), blockPos.getY(), transformer.zTransformer.wrapCoordToLimit(blockPos.getZ()));
         this.transformer = transformer;
     }
 
