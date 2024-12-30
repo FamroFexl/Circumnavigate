@@ -26,10 +26,10 @@ public interface ChunkTrackingViewMixin {
 		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
 
 		//Don't include chunks that extend past the bounds.
-		if(transformer.xTransformer.isChunkOverLimit(x) || transformer.zTransformer.isChunkOverLimit(z)) { cir.setReturnValue(false); return; }
+		if(transformer.Chunk.X.isOverBounds(x) || transformer.Chunk.Z.isOverBounds(z)) { cir.setReturnValue(false); return; }
 
-		int unwrappedX = transformer.xTransformer.unwrapChunkFromLimit(centerX, x);
-		int unwrappedZ = transformer.zTransformer.unwrapChunkFromLimit(centerZ, z);
+		int unwrappedX = transformer.Chunk.X.unwrapFromBounds(centerX, x);
+		int unwrappedZ = transformer.Chunk.Z.unwrapFromBounds(centerZ, z);
 
 		int i = Math.max(0, Math.abs(unwrappedX - centerX) - 1);
 		int j = Math.max(0, Math.abs(unwrappedZ - centerZ) - 1);
@@ -58,16 +58,16 @@ public interface ChunkTrackingViewMixin {
 			WorldTransformer transformer = ((TransformerAccessor) (Object) positioned).getTransformer();
 
 			//This prevents mass calculation of unneeded chunks and keeps chunk bandwidth predictable when crossing borders
-			int i = Math.min(positioned.minX(), transformer.xTransformer.unwrapChunkFromLimit(positioned.minX(), positioned2.minX()));
-			int j = Math.min(positioned.minZ(), transformer.zTransformer.unwrapChunkFromLimit(positioned.minZ(), positioned2.minZ()));
-			int k = Math.max(positioned.maxX(), transformer.xTransformer.unwrapChunkFromLimit(positioned.maxX(), positioned2.maxX()));
-			int l = Math.max(positioned.maxZ(), transformer.zTransformer.unwrapChunkFromLimit(positioned.maxZ(), positioned2.maxZ()));
+			int i = Math.min(positioned.minX(), transformer.Chunk.X.unwrapFromBounds(positioned.minX(), positioned2.minX()));
+			int j = Math.min(positioned.minZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.minZ(), positioned2.minZ()));
+			int k = Math.max(positioned.maxX(), transformer.Chunk.X.unwrapFromBounds(positioned.maxX(), positioned2.maxX()));
+			int l = Math.max(positioned.maxZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.maxZ(), positioned2.maxZ()));
 
 			for (int x = i; x <= k; x++) {
 				for (int z = j; z <= l; z++) {
 
-					int wrappedX = transformer.xTransformer.wrapChunkToLimit(x);
-					int wrappedZ = transformer.zTransformer.wrapChunkToLimit(z);
+					int wrappedX = transformer.Chunk.X.wrapToBounds(x);
+					int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
 
 					boolean bl = positioned.contains(wrappedX, wrappedZ);
 					boolean bl2 = positioned2.contains(wrappedX, wrappedZ);

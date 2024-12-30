@@ -24,8 +24,8 @@ public abstract class LivingEntityMixin {
         Entity thiz = (Entity) (Object) this;
         Entity enemy = source.getEntity();
         WorldTransformer transformer = enemy.level().getTransformer().onlyServerSide();
-        deltaX = transformer.xTransformer.getDeltaBetween(thiz.getX(), enemy.getX());
-        deltaZ = transformer.zTransformer.getDeltaBetween(thiz.getZ(), enemy.getZ());
+        deltaX = transformer.Coord.X.deltaFromBounds(thiz.getX(), enemy.getX());
+        deltaZ = transformer.Coord.Z.deltaFromBounds(thiz.getZ(), enemy.getZ());
 
         // Vanilla parity code
         while (deltaX * deltaX + deltaZ * deltaZ < 1.0E-4) {

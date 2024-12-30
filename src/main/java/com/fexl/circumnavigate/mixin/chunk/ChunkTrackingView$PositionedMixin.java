@@ -29,8 +29,8 @@ public abstract class ChunkTrackingView$PositionedMixin implements TransformerAc
 		for (int x = thiz.minX(); x <= thiz.maxX(); x++) {
 			for (int z = thiz.minZ(); z <= thiz.maxZ(); z++) {
 
-				int wrappedX = transformer.xTransformer.wrapChunkToLimit(x);
-				int wrappedZ = transformer.zTransformer.wrapChunkToLimit(z);
+				int wrappedX = transformer.Chunk.X.wrapToBounds(x);
+				int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
 
 				if (((Positioned)(Object)this).contains(wrappedX, wrappedZ)) {
 					action.accept(new ChunkPos(wrappedX, wrappedZ));

@@ -22,9 +22,9 @@ public abstract class FishingHookMixin {
     public void wrapDelta(Entity instance, Vec3 deltaMovement, Operation<Void> original) {
 		Entity owner = thiz.getOwner();
         WorldTransformer transformer = instance.level().getTransformer().onlyServerSide();
-        double deltaX = transformer.xTransformer.getDeltaBetween(instance.getX(), owner.getX());
+        double deltaX = transformer.Coord.X.deltaFromBounds(instance.getX(), owner.getX());
         double deltaY = owner.getY() - instance.getY(); // Cant use y directly from deltaMovement since its scaled by vanilla
-        double deltaZ = transformer.zTransformer.getDeltaBetween(instance.getZ(), owner.getZ());
+        double deltaZ = transformer.Coord.Z.deltaFromBounds(instance.getZ(), owner.getZ());
 
         Vec3 newDeltaMovement = new Vec3(deltaX, deltaY, deltaZ).scale(0.1);
         original.call(instance, instance.getDeltaMovement().add(newDeltaMovement));

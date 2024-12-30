@@ -29,7 +29,7 @@ public abstract class ChunkMapMixin {
 	public void unwrapChunkPosForCheck(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
 		TransformerRequests.chunkMapLevel = player.serverLevel();
 		WorldTransformer transformer = player.serverLevel().getTransformer();
-		cir.setReturnValue(player.getChunkTrackingView().contains(x, z) && !player.connection.chunkSender.isPending(ChunkPos.asLong(transformer.xTransformer.unwrapChunkFromLimit(player.getClientChunk().x, x), transformer.zTransformer.unwrapChunkFromLimit(player.getClientChunk().z, z))));
+		cir.setReturnValue(player.getChunkTrackingView().contains(x, z) && !player.connection.chunkSender.isPending(ChunkPos.asLong(transformer.Chunk.X.unwrapFromBounds(player.getClientChunk().x, x), transformer.Chunk.Z.unwrapFromBounds(player.getClientChunk().z, z))));
 	}
 
 	/**
@@ -54,6 +54,6 @@ public abstract class ChunkMapMixin {
     private static void wrapDistanceToSquare(ChunkPos chunkPos, Entity entity, CallbackInfoReturnable<Double> cir) {
 		double d = SectionPos.sectionToBlockCoord(chunkPos.x, 8);
 		double e = SectionPos.sectionToBlockCoord(chunkPos.z, 8);
-		cir.setReturnValue(entity.level().getTransformer().distanceToSqrWrappedCoord(entity.getX(), 0, entity.getY(), d, 0, e));
+		cir.setReturnValue(entity.level().getTransformer().Coord.sqrDistToBounds(entity.getX(), 0, entity.getY(), d, 0, e));
 	}
 }

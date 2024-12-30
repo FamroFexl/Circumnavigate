@@ -42,7 +42,7 @@ public interface EntityGetterMixin {
 
 		if(this instanceof ServerLevel level) {
 			WorldTransformer transformer = level.getTransformer();
-			VoxelShape result = Shapes.create(transformer.translateAABBFromBounds(shape1.bounds(), shape2.bounds()));
+			VoxelShape result = Shapes.create(transformer.AABB.unwrapFromBounds(shape1.bounds(), shape2.bounds()));
 
 			return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 		}
@@ -74,7 +74,7 @@ public interface EntityGetterMixin {
 
 		for (Player player : this.players()) {
 			WorldTransformer transformer = player.level().getTransformer();
-			if (area.contains(transformer.xTransformer.unwrapCoordFromLimit(area.minX, player.getX()), player.getY(), transformer.zTransformer.unwrapCoordFromLimit(area.minZ, player.getZ())) && predicate.test(target, player)) {
+			if (area.contains(transformer.Coord.X.unwrapFromBounds(area.minX, player.getX()), player.getY(), transformer.Coord.Z.unwrapFromBounds(area.minZ, player.getZ())) && predicate.test(target, player)) {
 				list.add(player);
 			}
 		}
@@ -84,6 +84,6 @@ public interface EntityGetterMixin {
 
 	@Unique
 	private double wrapDistance(Entity entity, double x, double y, double z) {
-		return entity.level().getTransformer().onlyServerSide().distanceToSqrWrappedCoord(entity.position(), new Vec3(x, y, z));
+		return entity.level().getTransformer().onlyServerSide().Vector3D.sqrDistToBounds(entity.position(), new Vec3(x, y, z));
 	}
 }

@@ -8,6 +8,6 @@ import net.minecraft.world.phys.EntityHitResult;
 
 public class EntityHitResultWrapped extends EntityHitResult {
 	public EntityHitResultWrapped(EntityHitResult result) {
-		super(result.getEntity(), result.getEntity().level().getTransformer().translateVecToBounds(result.getLocation()));
+		super(result.getEntity(), result.getEntity().level().getTransformer().Vector3D.wrapToBounds(result.getLocation()));
 	}
 }

@@ -42,7 +42,7 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	public BlockGetter getChunk(BlockCollisions<?> instance, int x, int z, Operation<BlockGetter> original) {
 		if(serverLevel == null) return original.call(instance, x, z);
 		WorldTransformer transformer = serverLevel.getTransformer();
-		return original.call(instance, transformer.xTransformer.wrapCoordToLimit(x), transformer.zTransformer.wrapCoordToLimit(z));
+		return original.call(instance, (int) transformer.Coord.X.wrapToBounds(x), (int) transformer.Coord.Z.wrapToBounds(z));
 	}
 
 	/**
@@ -52,6 +52,6 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	public BlockPos.MutableBlockPos setPos(BlockPos.MutableBlockPos instance, int x, int y, int z, Operation<BlockPos.MutableBlockPos> original) {
 		if(serverLevel == null) return original.call(instance, x, y, z);
 		WorldTransformer transformer = serverLevel.getTransformer();
-		return original.call(instance, transformer.xTransformer.wrapCoordToLimit(x), y, transformer.zTransformer.wrapCoordToLimit(z));
+		return original.call(instance, (int) transformer.Coord.X.wrapToBounds(x), y, (int) transformer.Coord.Z.wrapToBounds(z));
 	}
 }

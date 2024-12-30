@@ -2,10 +2,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/*
- * SPDX-License-Identifier: AGPL-3.0-only
- */
-
 package com.fexl.circumnavigate.processing;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
@@ -86,27 +82,27 @@ public class PacketTransformer {
 		return serverPlayer.serverLevel().getTransformer();
 	}
 	private static double getClientX(ServerPlayer player, double packetX) {
-		return playerTransformer(player).xTransformer.unwrapCoordFromLimit(player.getClientX(), packetX);
+		return playerTransformer(player).Coord.X.unwrapFromBounds(player.getClientX(), packetX);
 	}
 
 	private static double getClientZ(ServerPlayer player, double packetZ) {
-		return playerTransformer(player).zTransformer.unwrapCoordFromLimit(player.getClientZ(), packetZ);
+		return playerTransformer(player).Coord.Z.unwrapFromBounds(player.getClientZ(), packetZ);
 	}
 
 	private static int getClientX(ServerPlayer player, int packetX) {
-		return playerTransformer(player).xTransformer.unwrapCoordFromLimit(player.getClientBlock().getX(), packetX);
+		return playerTransformer(player).Coord.X.unwrapFromBounds(player.getClientBlock().getX(), packetX);
 	}
 
 	private static int getClientZ(ServerPlayer player, int packetZ) {
-		return playerTransformer(player).zTransformer.unwrapCoordFromLimit(player.getClientBlock().getZ(), packetZ);
+		return playerTransformer(player).Coord.Z.unwrapFromBounds(player.getClientBlock().getZ(), packetZ);
 	}
 
 	private static ChunkPos getClientChunkPos(ServerPlayer player, ChunkPos packetChunkPos) {
-		return playerTransformer(player).translateChunkFromBounds(player.getClientChunk(), packetChunkPos);
+		return playerTransformer(player).Chunk.unwrapFromBounds(player.getClientChunk(), packetChunkPos);
 	}
 
 	private static BlockPos getClientBlockPos(ServerPlayer player, BlockPos packetBlockPos) {
-		return playerTransformer(player).translateBlockFromBounds(player.getClientBlock(), packetBlockPos);
+		return playerTransformer(player).Block.unwrapFromBounds(player.getClientBlock(), packetBlockPos);
 	}
 
 	private static ClientboundLightUpdatePacket transformPacket(ClientboundLightUpdatePacket packet, ServerPlayer player) {

@@ -66,7 +66,7 @@ public abstract class PlayerListMixin {
 	 */
 	@Redirect(method = "broadcast", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getX()D"))
 	public double broadcast_X(ServerPlayer instance, @Local(ordinal = 0, argsOnly = true) double x) {
-		return instance.serverLevel().getTransformer().xTransformer.unwrapCoordFromLimit(x, instance.getX());
+		return instance.serverLevel().getTransformer().Coord.X.unwrapFromBounds(x, instance.getX());
 	}
 
 	/**
@@ -74,6 +74,6 @@ public abstract class PlayerListMixin {
 	 */
 	@Redirect(method = "broadcast", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getZ()D"))
 	public double broadcast_Z(ServerPlayer instance, @Local(ordinal = 2, argsOnly = true) double z) {
-		return instance.serverLevel().getTransformer().zTransformer.unwrapCoordFromLimit(z, instance.getZ());
+		return instance.serverLevel().getTransformer().Coord.Z.unwrapFromBounds(z, instance.getZ());
 	}
 }

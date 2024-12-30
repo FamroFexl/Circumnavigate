@@ -21,7 +21,7 @@ public class BlockHitResultWrapped extends BlockHitResult {
 	private final boolean inside;
 
 	private BlockHitResultWrapped(boolean miss, Vec3 location, Direction direction, BlockPos blockPos, boolean inside, WorldTransformer transformer) {
-		super(transformer.translateVecToBounds(location), direction, transformer.translateBlockToBounds(blockPos), inside);
+		super(transformer.Vector3D.wrapToBounds(location), direction, transformer.Block.wrapToBounds(blockPos), inside);
 		this.miss = miss;
 		this.location = location;
 		this.direction = direction;
@@ -40,6 +40,6 @@ public class BlockHitResultWrapped extends BlockHitResult {
 
 	@Override
 	public double distanceTo(Entity entity) {
-		return this.transformer.distanceToSqrWrappedCoord(entity.getX(), entity.getY(), entity.getZ(), this.location.x, this.location.y, this.location.z);
+		return this.transformer.Coord.sqrDistToBounds(entity.getX(), entity.getY(), entity.getZ(), this.location.x, this.location.y, this.location.z);
 	}
 }

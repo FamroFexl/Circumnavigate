@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class BlockPosWrapped extends BlockPos {
     final WorldTransformer transformer;
     public BlockPosWrapped(BlockPos blockPos, WorldTransformer transformer) {
-        super(transformer.xTransformer.wrapCoordToLimit(blockPos.getX()), blockPos.getY(), transformer.zTransformer.wrapCoordToLimit(blockPos.getZ()));
+        super(transformer.Coord.X.wrapToBounds(blockPos.getX()), blockPos.getY(), transformer.Coord.Z.wrapToBounds(blockPos.getZ()));
         this.transformer = transformer;
     }
 
@@ -24,7 +24,7 @@ public class BlockPosWrapped extends BlockPos {
 	}
 
     public static long offset(long pos, int dx, int dy, int dz, Level level) {
-        return level.getTransformer().translateBlockToBounds(asLong(getX(pos) + dx, getY(pos) + dy, getZ(pos) + dz));
+        return level.getTransformer().Block.wrapToBounds(asLong(getX(pos) + dx, getY(pos) + dy, getZ(pos) + dz));
     }
 
     @Override
@@ -92,13 +92,13 @@ public class BlockPosWrapped extends BlockPos {
         }
 
         public BlockPosWrapped.@NotNull MutableBlockPos setX(int x) {
-            x = transformer.xTransformer.wrapCoordToLimit(x);
+            x = transformer.Coord.X.wrapToBounds(x);
             super.setX(x);
             return this;
         }
 
         public BlockPosWrapped.@NotNull MutableBlockPos setZ(int z) {
-            z = transformer.zTransformer.wrapCoordToLimit(z);
+            z = transformer.Coord.Z.wrapToBounds(z);
             super.setZ(z);
             return this;
         }

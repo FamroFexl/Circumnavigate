@@ -2,10 +2,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/*
- * SPDX-License-Identifier: AGPL-3.0-only
- */
-
 package com.fexl.circumnavigate.mixin.packet;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
@@ -48,7 +44,7 @@ public class PlayerChunkSenderMixin {
 		List<LevelChunk> list;
 		if (!this.memoryConnection && this.pendingChunks.size() > i) {
 			//list = ((List)this.pendingChunks.stream().collect(Comparators.least(i, Comparator.comparingInt(chunkPos::distanceSquared))))
-			list = ((List)this.pendingChunks.stream().collect(Comparators.least(i, Comparator.comparingInt(compare -> transformer.distanceToSqrWrappedChunk(chunkPos.toLong(), compare)))))
+			list = ((List)this.pendingChunks.stream().collect(Comparators.least(i, Comparator.comparingInt(compare -> transformer.Chunk.sqrDistToBounds(chunkPos.toLong(), compare)))))
 				.stream()
 				.mapToLong(longValue -> (long) longValue)
 				.mapToObj(chunkMap::getChunkToSend)
@@ -60,7 +56,7 @@ public class PlayerChunkSenderMixin {
 				.mapToObj(chunkMap::getChunkToSend)
 				.filter(Objects::nonNull)
 				//.sorted(Comparator.comparingInt(levelChunkx -> chunkPos.distanceSquared(levelChunkx.getPos())))
-				.sorted(Comparator.comparingInt(levelChunkx -> transformer.distanceToSqrWrappedChunk(levelChunkx.getPos(), chunkPos)))
+				.sorted(Comparator.comparingInt(levelChunkx -> transformer.Chunk.sqrDistToBounds(levelChunkx.getPos(), chunkPos)))
 				.toList();
 		}
 

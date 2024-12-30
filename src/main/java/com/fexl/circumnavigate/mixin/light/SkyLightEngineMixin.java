@@ -21,7 +21,7 @@ public class SkyLightEngineMixin {
     public long wrapBlockPos1(long pos) {
 		if(level instanceof ServerChunkCache cache) {
 			WorldTransformer transformer = cache.getLevel().getTransformer();
-			return transformer.translateBlockToBounds(pos);
+			return transformer.Block.wrapToBounds(pos);
 		}
 
 		return pos;
@@ -31,7 +31,7 @@ public class SkyLightEngineMixin {
     public long wrapBlockPos2(long pos, Direction direction) {
 	    if(level instanceof ServerChunkCache cache) {
 		    WorldTransformer transformer = cache.getLevel().getTransformer();
-		    return transformer.translateBlockToBounds(BlockPos.offset(pos, direction));
+		    return transformer.Block.wrapToBounds(BlockPos.offset(pos, direction));
 	    }
 
 	    return BlockPos.offset(pos, direction);
@@ -41,7 +41,7 @@ public class SkyLightEngineMixin {
     public long wrapBlockPos3(long pos) {
 	    if(level instanceof ServerChunkCache cache) {
 		    WorldTransformer transformer = cache.getLevel().getTransformer();
-		    return transformer.translateBlockToBounds(pos);
+		    return transformer.Block.wrapToBounds(pos);
 	    }
 
 	    return pos;
@@ -51,7 +51,7 @@ public class SkyLightEngineMixin {
     public long wrapBlockPos4(long pos, Direction direction) {
 	    if(level instanceof ServerChunkCache cache) {
 		    WorldTransformer transformer = cache.getLevel().getTransformer();
-		    return transformer.translateBlockToBounds(BlockPos.offset(pos, direction));
+		    return transformer.Block.wrapToBounds(BlockPos.offset(pos, direction));
 	    }
 
 	    return BlockPos.offset(pos, direction);

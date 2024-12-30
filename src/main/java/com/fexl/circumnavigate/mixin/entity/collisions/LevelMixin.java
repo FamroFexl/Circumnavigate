@@ -45,7 +45,7 @@ public abstract class LevelMixin<T extends Entity> {
 		WorldTransformer transformer = thiz.getTransformer();
 
 		this.getProfiler().incrementCounter("getEntities");
-		List<AABB> boxes = transformer.splitAcrossBounds(bounds);
+		List<AABB> boxes = transformer.AABB.splitAcrossBounds(bounds);
 		for(AABB box : boxes) {
 			this.getEntities().get(entityTypeTest, box, entity -> {
 				if (predicate.test(entity)) {
@@ -85,17 +85,17 @@ public abstract class LevelMixin<T extends Entity> {
 
 	@ModifyVariable(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At("HEAD"), argsOnly = true, index = 1)
 	public BlockPos modifyBlockPos2(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
 	}
 
 	@ModifyVariable(method = "removeBlock", at = @At("HEAD"), argsOnly = true, index = 1)
 	public BlockPos modifyBlockPos3(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
 	}
 
 	@ModifyVariable(method = "destroyBlock", at = @At("HEAD"), argsOnly = true, index = 1)
 	public BlockPos modifyBlockPos4(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
 	}
 
 	/**
@@ -111,6 +111,6 @@ public abstract class LevelMixin<T extends Entity> {
 
 	@Unique
 	private BlockPos wrapBlockPos(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
+		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
 	}
 }

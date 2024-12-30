@@ -45,12 +45,12 @@ public abstract class ServerGamePacketListenerImplMixin {
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;", ordinal = 0))
 	public Vec3 unwrapVec(Vec3 instance, Vec3 vec) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
-		return instance.subtract(transformer.translateVecFromBounds(instance, vec));
+		return instance.subtract(transformer.Vector3D.unwrapFromBounds(instance, vec));
 	}
 
 	@ModifyArg(method = "handlePlayerAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;handleBlockBreakAction(Lnet/minecraft/core/BlockPos;Lnet/minecraft/network/protocol/game/ServerboundPlayerActionPacket$Action;Lnet/minecraft/core/Direction;II)V"), index = 0)
 	public BlockPos wrapBlockPos(BlockPos pos) {
-		return player.serverLevel().getTransformer().translateBlockToBounds(pos);
+		return player.serverLevel().getTransformer().Block.wrapToBounds(pos);
 	}
 
 	//TODO: implementations of net/minecraft/world/item/Item$useOn will have to be modified in the future for support. HangingEntity, LeadItem, etc.
@@ -59,7 +59,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
 
-		return new BlockHitResult(transformer.translateVecToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.translateBlockToBounds(blockHit.getBlockPos()), blockHit.isInside());
+		return new BlockHitResult(transformer.Vector3D.wrapToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.Block.wrapToBounds(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
 	// TODO: dont override the whole method, just the part that needs to be changed
@@ -100,12 +100,12 @@ public abstract class ServerGamePacketListenerImplMixin {
 		thiz.awaitingTeleportTime = thiz.tickCount;
 
 		//Wrap x to bounds
-		double d = ServerGamePacketListenerImpl.clampHorizontal(transformer.xTransformer.wrapCoordToLimit(packet.getX(thiz.player.getX())));
+		double d = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.X.wrapToBounds(packet.getX(thiz.player.getX())));
 
 		double e = ServerGamePacketListenerImpl.clampVertical(packet.getY(thiz.player.getY()));
 
 		//Wrap z to bounds
-		double f = ServerGamePacketListenerImpl.clampHorizontal(transformer.zTransformer.wrapCoordToLimit(packet.getZ(thiz.player.getZ())));
+		double f = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.Z.wrapToBounds(packet.getZ(thiz.player.getZ())));
 
 		//Set the client relative position
 		thiz.player.setClientX(ServerGamePacketListenerImpl.clampHorizontal(packet.getX(thiz.player.getClientX())));
@@ -230,9 +230,9 @@ public abstract class ServerGamePacketListenerImplMixin {
 			double e = entity.getY();
 			double f = entity.getZ();
 			// Warp x and z to bounds
-			double g = ServerGamePacketListenerImpl.clampHorizontal(transformer.xTransformer.wrapCoordToLimit(packet.getX()));
+			double g = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.X.wrapToBounds(packet.getX()));
 			double h = ServerGamePacketListenerImpl.clampVertical(packet.getY());
-			double i = ServerGamePacketListenerImpl.clampHorizontal(transformer.zTransformer.wrapCoordToLimit(packet.getZ()));
+			double i = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.Z.wrapToBounds(packet.getZ()));
 			float j = Mth.wrapDegrees(packet.getYRot());
 			float k = Mth.wrapDegrees(packet.getXRot());
 			double l = g - thiz.vehicleFirstGoodX;

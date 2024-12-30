@@ -13,7 +13,7 @@ public class BaseRailBlockMixin {
 
     @ModifyVariable(method = "neighborChanged", at = @At("HEAD"), index = 3, argsOnly = true)
     public BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-        return level.getTransformer().onlyServerSide().translateBlockToBounds(blockPos);
+        return level.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
     }
 
 

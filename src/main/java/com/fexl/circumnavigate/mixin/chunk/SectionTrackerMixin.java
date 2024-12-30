@@ -23,8 +23,8 @@ public class SectionTrackerMixin implements TransformerAccessor {
 	private long wrapChunkPos(long pos, int x, int y, int z, Operation<Long> original, @Local(argsOnly = true) int level, @Local(argsOnly = true) boolean isDecreasing) {
 		WorldTransformer transformer = getTransformer();
 
-		int wrappedX = transformer.xTransformer.wrapChunkToLimit(x);
-		int wrappedZ = transformer.zTransformer.wrapChunkToLimit(z);
+		int wrappedX = transformer.Chunk.X.wrapToBounds(x);
+		int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
 		long chunkLong = original.call(pos, wrappedX, y, wrappedZ);
 
 		if (chunkLong != pos) {

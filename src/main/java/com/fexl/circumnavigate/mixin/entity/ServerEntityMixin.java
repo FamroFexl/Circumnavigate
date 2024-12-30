@@ -139,7 +139,7 @@ public abstract class ServerEntityMixin {
 				long n = this.positionCodec.encodeZ(vec3);
 				//------------------------------ Changes
 				Vec3 decodedPositionCodec = this.positionCodec.decode(0L, 0L, 0L);
-				double wrappedSqr = transformer.distanceToSqrWrappedCoord(decodedPositionCodec, vec3);
+				double wrappedSqr = transformer.Vector3D.sqrDistToBounds(decodedPositionCodec, vec3);
 				//boolean bl7 = l < -32768L || l > 32767L || m < -32768L || m > 32767L || n < -32768L || n > 32767L;
 				boolean bl7 = wrappedSqr > 8;
 				//-----------------------------------

@@ -13,18 +13,18 @@ public class Vec3iWrapped extends Vec3i {
 	final WorldTransformer transformer;
 
 	public Vec3iWrapped(int x, int y, int z, WorldTransformer transformer) {
-		super(transformer.xTransformer.wrapCoordToLimit(x), y, transformer.zTransformer.wrapCoordToLimit(z));
+		super(transformer.Coord.X.wrapToBounds(x), y, transformer.Coord.Z.wrapToBounds(z));
 		this.transformer = transformer;
 	}
 
 	@Override
 	protected @NotNull Vec3iWrapped setX(int x) {
-		return (Vec3iWrapped) super.setX(transformer.xTransformer.wrapCoordToLimit(x));
+		return (Vec3iWrapped) super.setX(transformer.Coord.X.wrapToBounds(x));
 	}
 
 	@Override
 	protected @NotNull Vec3iWrapped setZ(int z) {
-		return (Vec3iWrapped) super.setZ(transformer.zTransformer.wrapCoordToLimit(z));
+		return (Vec3iWrapped) super.setZ(transformer.Coord.Z.wrapToBounds(z));
 	}
 
 	@Override
@@ -72,19 +72,19 @@ public class Vec3iWrapped extends Vec3i {
 
 	@Override
 	public double distToCenterSqr(double x, double y, double z) {
-		return transformer.distanceToSqrWrappedCoord(x, y, z, this.getX() + 0.5, this.getY() + 0.5, this.getZ() + 0.5);
+		return transformer.Coord.sqrDistToBounds(x, y, z, this.getX() + 0.5, this.getY() + 0.5, this.getZ() + 0.5);
 	}
 
 	@Override
 	public double distToLowCornerSqr(double x, double y, double z) {
-		return transformer.distanceToSqrWrappedCoord(x, y, z, this.getX(), this.getY(), this.getZ());
+		return transformer.Coord.sqrDistToBounds(x, y, z, this.getX(), this.getY(), this.getZ());
 	}
 
 	@Override
 	public int distManhattan(Vec3i vector) {
-		float f = transformer.xTransformer.wrapCoordToLimit(Math.abs(vector.getX() - this.getX()));
+		float f = transformer.Coord.X.wrapToBounds(Math.abs(vector.getX() - this.getX()));
 		float g = (float)Math.abs(vector.getY() - this.getY());
-		float h = transformer.zTransformer.wrapCoordToLimit(Math.abs(vector.getZ() - this.getZ()));
+		float h = transformer.Coord.Z.wrapToBounds(Math.abs(vector.getZ() - this.getZ()));
 		return (int)(f + g + h);
 	}
 }
