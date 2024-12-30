@@ -40,7 +40,7 @@ public abstract class PlayerListMixin {
 	}
 
 	/**
-	 * Modifies the client view distance so it is within world bounds and chunk loading requirements.
+	 * Modifies the server's per-level view distance to align with client expectations.
 	 */
 	@Inject(method = "setViewDistance", at = @At("HEAD"), cancellable = true)
 	public void setViewDistance(int viewDistance, CallbackInfo ci) {
@@ -58,6 +58,9 @@ public abstract class PlayerListMixin {
 		}
 	}
 
+	/**
+	 * Modifies the server's per-level simulation distance to align with client expectations.
+	 */
 	@Inject(method = "setSimulationDistance", at = @At("HEAD"), cancellable = true)
 	public void setSimulationDistance(int simulationDistance, CallbackInfo ci) {
 		ci.cancel();

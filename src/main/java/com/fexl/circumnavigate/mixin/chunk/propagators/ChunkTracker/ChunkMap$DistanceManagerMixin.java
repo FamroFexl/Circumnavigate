@@ -2,7 +2,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-package com.fexl.circumnavigate.mixin.chunk.propagators;
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+package com.fexl.circumnavigate.mixin.chunk.propagators.ChunkTracker;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
 import net.minecraft.server.level.ChunkMap;
