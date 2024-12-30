@@ -12,6 +12,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.protocol.Packet;
@@ -103,6 +104,24 @@ public class PacketTransformer {
 
 	private static BlockPos getClientBlockPos(ServerPlayer player, BlockPos packetBlockPos) {
 		return playerTransformer(player).Block.unwrapFromBounds(player.getClientBlock(), packetBlockPos);
+	}
+
+	private static ClientboundLoginPacket transformPacket(ClientboundLoginPacket packet, ServerPlayer player) {
+		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
+
+		buffer.writeInt(packet.playerId());
+		buffer.writeBoolean(packet.hardcore());
+		buffer.writeCollection(packet.levels(), FriendlyByteBuf::writeResourceKey);
+		buffer.writeVarInt(packet.maxPlayers());
+		buffer.writeVarInt(player.level().getTransformer().limitViewDistance(packet.chunkRadius()));
+		buffer.writeVarInt(player.level().getTransformer().limitViewDistance(packet.simulationDistance()));
+		buffer.writeBoolean(packet.reducedDebugInfo());
+		buffer.writeBoolean(packet.showDeathScreen());
+		buffer.writeBoolean(packet.doLimitedCrafting());
+		packet.commonPlayerSpawnInfo().write(buffer);
+		buffer.writeBoolean(packet.enforcesSecureChat());
+
+		return ClientboundLoginPacket.STREAM_CODEC.decode(buffer);
 	}
 
 	private static ClientboundLightUpdatePacket transformPacket(ClientboundLightUpdatePacket packet, ServerPlayer player) {

@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
+import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +30,7 @@ public abstract class PlayerListMixin {
 	@Shadow public abstract List<ServerPlayer> getPlayers();
 	@Shadow public abstract MinecraftServer getServer();
 	@Shadow private int viewDistance;
+	@Shadow private int simulationDistance;
 
 	/**
 	 * Initializes the player's client-side positioning so they can be used for unwrapping operations.
@@ -57,6 +59,24 @@ public abstract class PlayerListMixin {
 				WorldTransformer levelTransformer = serverLevel.getTransformer();
 				serverLevel.getChunkSource().setViewDistance(levelTransformer.limitViewDistance(viewDistance));
 
+			}
+		}
+	}
+
+	@Inject(method = "setSimulationDistance", at = @At("HEAD"), cancellable = true)
+	public void setSimulationDistance(int simulationDistance, CallbackInfo ci) {
+		ci.cancel();
+
+		this.simulationDistance = simulationDistance;
+		for (ServerPlayer player : this.getPlayers()) {
+			WorldTransformer transformer = player.level().getTransformer();
+			player.connection.send(new ClientboundSetSimulationDistancePacket(transformer.limitViewDistance(simulationDistance)));
+		}
+
+		for (ServerLevel serverLevel : this.getServer().getAllLevels()) {
+			if (serverLevel != null) {
+				WorldTransformer levelTransformer = serverLevel.getTransformer();
+				serverLevel.getChunkSource().setSimulationDistance(levelTransformer.limitViewDistance(simulationDistance));
 			}
 		}
 	}

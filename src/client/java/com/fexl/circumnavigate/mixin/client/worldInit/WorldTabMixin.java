@@ -26,7 +26,6 @@ public class WorldTabMixin {
 	 */
 	@Inject(method = "<init>(Lnet/minecraft/client/gui/screens/worldselection/CreateWorldScreen;)V", at = @At("TAIL"))
 	public void gameTab(CreateWorldScreen createWorldScreen, CallbackInfo ci, @Local GridLayout.RowHelper rowHelper) {
-		//TODO Render distance must be limited to prevent chunk glitching. (renderDistance + 2 > Math.min(xWidth/2, zWidth/2) ? TOO_HIGH : JUST_RIGHT)
 		CycleButton.Builder<Boolean> wrappingButton = CycleButton.onOffBuilder(false);
 		Tooltip tooltip = Tooltip.create(Component.literal("Wrap the world along boundaries."));
 		wrappingButton.withTooltip(boolean_ -> tooltip);

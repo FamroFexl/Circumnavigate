@@ -53,7 +53,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 		return player.serverLevel().getTransformer().Block.wrapToBounds(pos);
 	}
 
-	//TODO: implementations of net/minecraft/world/item/Item$useOn will have to be modified in the future for support. HangingEntity, LeadItem, etc.
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
 	public BlockHitResult wrapLocationAndBlockPos(ServerboundUseItemOnPacket instance) {
 		WorldTransformer transformer = player.serverLevel().getTransformer();
@@ -174,7 +173,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 		}
 		n = f - thiz.player.getZ();
 
-		//TODO doesn't work in worlds where the min and max bounds aren't opposites (i.g. -32 -> 32)
 		//------------------------------------------------------
 		//Don't invalidate the player movement if they moved across the world border
 		if (Math.abs(l) + 0.0625 * 2 > transformer.xWidth) {
@@ -269,7 +267,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 			}
 			n = i - entity.getZ();
 
-			// TODO doesn't work in worlds where the min and max bounds aren't opposites (i.g. -32 -> 32)
 			// Don't invalidate the vehicle movement if it moved across the world border
 			//------------------------------------------------------
 			if (Math.abs(l) + 0.0625 * 2 > transformer.xWidth) {
