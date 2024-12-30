@@ -27,6 +27,7 @@ import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 
@@ -106,6 +107,10 @@ public class PacketTransformer {
 		return playerTransformer(player).Block.unwrapFromBounds(player.getClientBlock(), packetBlockPos);
 	}
 
+	private static int getLimitedDistance(ServerPlayer player, int distance) {
+		return playerTransformer(player).limitViewDistance(distance);
+	}
+
 	private static ClientboundLoginPacket transformPacket(ClientboundLoginPacket packet, ServerPlayer player) {
 		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
 
@@ -113,8 +118,8 @@ public class PacketTransformer {
 		buffer.writeBoolean(packet.hardcore());
 		buffer.writeCollection(packet.levels(), FriendlyByteBuf::writeResourceKey);
 		buffer.writeVarInt(packet.maxPlayers());
-		buffer.writeVarInt(player.level().getTransformer().limitViewDistance(packet.chunkRadius()));
-		buffer.writeVarInt(player.level().getTransformer().limitViewDistance(packet.simulationDistance()));
+		buffer.writeVarInt(getLimitedDistance(player, packet.chunkRadius()));
+		buffer.writeVarInt(getLimitedDistance(player, packet.simulationDistance()));
 		buffer.writeBoolean(packet.reducedDebugInfo());
 		buffer.writeBoolean(packet.showDeathScreen());
 		buffer.writeBoolean(packet.doLimitedCrafting());
@@ -122,6 +127,32 @@ public class PacketTransformer {
 		buffer.writeBoolean(packet.enforcesSecureChat());
 
 		return ClientboundLoginPacket.STREAM_CODEC.decode(buffer);
+	}
+
+	private static ClientboundSetChunkCacheRadiusPacket transformPacket(ClientboundSetChunkCacheRadiusPacket packet, ServerPlayer player) {
+		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
+
+		buffer.writeVarInt(getLimitedDistance(player, packet.getRadius()));
+
+		return ClientboundSetChunkCacheRadiusPacket.STREAM_CODEC.decode(buffer);
+	}
+
+	private static ClientboundSetSimulationDistancePacket transformPacket(ClientboundSetSimulationDistancePacket packet, ServerPlayer player) {
+		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
+
+		buffer.writeVarInt(getLimitedDistance(player, packet.simulationDistance()));
+
+		return ClientboundSetSimulationDistancePacket.STREAM_CODEC.decode(buffer);
+	}
+
+	private static ClientboundSetChunkCacheCenterPacket transformPacket(ClientboundSetChunkCacheCenterPacket packet, ServerPlayer player) {
+		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
+
+		ChunkPos newPos = getClientChunkPos(player, new ChunkPos(packet.getX(), packet.getZ()));
+		buffer.writeVarInt(newPos.x);
+		buffer.writeVarInt(newPos.z);
+
+		return ClientboundSetChunkCacheCenterPacket.STREAM_CODEC.decode(buffer);
 	}
 
 	private static ClientboundLightUpdatePacket transformPacket(ClientboundLightUpdatePacket packet, ServerPlayer player) {
@@ -144,16 +175,6 @@ public class PacketTransformer {
 		packet.getLightData().write(buffer);
 
 		return ClientboundLevelChunkWithLightPacket.STREAM_CODEC.decode(buffer);
-	}
-
-	private static ClientboundSetChunkCacheCenterPacket transformPacket(ClientboundSetChunkCacheCenterPacket packet, ServerPlayer player) {
-		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
-		
-		ChunkPos newPos = getClientChunkPos(player, new ChunkPos(packet.getX(), packet.getZ()));
-		buffer.writeVarInt(newPos.x);
-		buffer.writeVarInt(newPos.z);
-
-		return ClientboundSetChunkCacheCenterPacket.STREAM_CODEC.decode(buffer);
 	}
 
 	/**

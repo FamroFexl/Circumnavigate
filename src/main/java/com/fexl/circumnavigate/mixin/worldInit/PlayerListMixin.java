@@ -3,14 +3,13 @@
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.core.WorldTransformer;
-import com.fexl.circumnavigate.network.packet.LevelWrappingPayload;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
 import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -21,14 +20,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
-	@Shadow public abstract List<ServerPlayer> getPlayers();
 	@Shadow public abstract MinecraftServer getServer();
+	@Shadow public abstract void broadcastAll(Packet<?> packet);
 	@Shadow private int viewDistance;
 	@Shadow private int simulationDistance;
 
@@ -49,10 +47,7 @@ public abstract class PlayerListMixin {
 		ci.cancel();
 
 		this.viewDistance = viewDistance;
-		for (ServerPlayer player : this.getPlayers()) {
-			WorldTransformer transformer = player.level().getTransformer();
-			player.connection.send(new ClientboundSetChunkCacheRadiusPacket(transformer.limitViewDistance(viewDistance)));
-		}
+		this.broadcastAll(new ClientboundSetChunkCacheRadiusPacket(viewDistance));
 
 		for (ServerLevel serverLevel : this.getServer().getAllLevels()) {
 			if (serverLevel != null) {
@@ -68,10 +63,7 @@ public abstract class PlayerListMixin {
 		ci.cancel();
 
 		this.simulationDistance = simulationDistance;
-		for (ServerPlayer player : this.getPlayers()) {
-			WorldTransformer transformer = player.level().getTransformer();
-			player.connection.send(new ClientboundSetSimulationDistancePacket(transformer.limitViewDistance(simulationDistance)));
-		}
+		this.broadcastAll(new ClientboundSetSimulationDistancePacket(simulationDistance));
 
 		for (ServerLevel serverLevel : this.getServer().getAllLevels()) {
 			if (serverLevel != null) {
