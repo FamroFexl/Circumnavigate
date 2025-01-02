@@ -3,7 +3,6 @@
 	"package": "com.fexl.circumnavigate.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
-      "worldInit.CreateWorldScreenMixin",
       "worldInit.WorldTabMixin",
       "worldInit.ClientLevelMixin",
       "worldInit.ConnectionMixin",

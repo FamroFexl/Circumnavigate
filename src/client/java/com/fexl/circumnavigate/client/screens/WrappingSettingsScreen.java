@@ -3,7 +3,10 @@
 package com.fexl.circumnavigate.client.screens;
 
 import com.fexl.circumnavigate.mixin.worldInit.PrimaryLevelDataMixin;
-import com.fexl.circumnavigate.options.WrappingSettings;
+import com.fexl.circumnavigate.options.DimensionWrappingSettings;
+import com.fexl.circumnavigate.options.WorldWrappingSettings;
+import com.fexl.circumnavigate.options.WrappingOptions;
+import com.fexl.circumnavigate.storage.WrappingDataStorage;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.tabs.TabManager;
@@ -12,8 +15,13 @@ import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Step 2: Display a screen showing {@link com.fexl.circumnavigate.options.WrappingSettings}. On world creation, they are processed by {@link PrimaryLevelDataMixin}
@@ -60,7 +68,7 @@ public class WrappingSettingsScreen extends Screen {
 		zMax = rowHelper.addChild(new EditBox(WrappingSettingsScreen.this.font, 50, 20, (Component)Component.literal((String)"Maximum Z")));
 		rowHelper.addChild(SpacerElement.height(28), 2);
 		rowHelper.addChild(new StringWidget(Component.literal("Shifted Axis"), this.font), new LayoutSettings.LayoutSettingsImpl().alignHorizontallyLeft().alignVerticallyMiddle());
-		axis = rowHelper.addChild(CycleButton.builder(WrappingSettings.Axis::getText).withValues(WrappingSettings.Axis.X, WrappingSettings.Axis.Z).withInitialValue(WrappingSettings.Axis.X).displayOnlyValue().create(0,0,50,20,Component.literal("Shifted Axis")), new LayoutSettings.LayoutSettingsImpl().alignHorizontallyCenter());
+		axis = rowHelper.addChild(CycleButton.builder((axis) -> Component.literal(axis.toString())).withValues(DimensionWrappingSettings.Axis.X, DimensionWrappingSettings.Axis.Z).withInitialValue(DimensionWrappingSettings.Axis.X).displayOnlyValue().create(0,0,50,20,Component.literal("Shifted Axis")), new LayoutSettings.LayoutSettingsImpl().alignHorizontallyCenter());
 		rowHelper.addChild(new StringWidget(Component.literal("Shift Amount"), this.font), new LayoutSettings.LayoutSettingsImpl().alignHorizontallyLeft().alignVerticallyMiddle());
 		axisShift = rowHelper.addChild(new EditBox(WrappingSettingsScreen.this.font, 50, 20, (Component)Component.literal((String)"Shift Amount")));
 
@@ -90,7 +98,7 @@ public class WrappingSettingsScreen extends Screen {
 		int xMax1;
 		int zMin1;
 		int zMax1;
-		WrappingSettings.Axis axis1;
+		DimensionWrappingSettings.Axis axis1;
 		int axisShift1;
 
 		try {
@@ -98,7 +106,7 @@ public class WrappingSettingsScreen extends Screen {
 			xMax1 = Integer.parseInt(xMax.getValue());
 			zMin1 = Integer.parseInt(zMin.getValue());
 			zMax1 = Integer.parseInt(zMax.getValue());
-			axis1 = (WrappingSettings.Axis) axis.getValue();
+			axis1 = (DimensionWrappingSettings.Axis) axis.getValue();
 			axisShift1 = Integer.parseInt(axisShift.getValue() != "" ? axisShift.getValue() : "0");
 		}
 		//Invalid values
@@ -116,7 +124,9 @@ public class WrappingSettingsScreen extends Screen {
 			return false;
 		}
 
-		new WrappingSettings(xMin1, xMax1, zMin1, zMax1, axis1, axisShift1);
+		Map<ResourceKey<Level>, DimensionWrappingSettings> wrappingSettingsMap = new HashMap<>();
+		wrappingSettingsMap.put(Level.OVERWORLD, new DimensionWrappingSettings(xMin1, xMax1, zMin1, zMax1, DimensionWrappingSettings.Axis.X, 0, false));
+		WrappingDataStorage.settings = new WorldWrappingSettings(new WrappingOptions(1), wrappingSettingsMap);
 		return true;
 	}
 

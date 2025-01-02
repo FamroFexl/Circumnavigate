@@ -2,8 +2,10 @@
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
-import com.fexl.circumnavigate.options.WrappingSettings;
+import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.storage.WrappingDataStorage;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -28,14 +30,12 @@ public class ServerLevelMixin {
 	 * Set the wrapping settings for each level when it is created as quickly as possible.
 	 */
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"))
-	public void init(MinecraftServer server, Executor dispatcher, LevelStorageSource.LevelStorageAccess levelStorageAccess, ServerLevelData serverLevelData, ResourceKey dimension, LevelStem levelStem, ChunkProgressListener progressListener, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, RandomSequences randomSequences, CallbackInfo ci) {
+	public void init(MinecraftServer server, Executor dispatcher, LevelStorageSource.LevelStorageAccess levelStorageAccess, ServerLevelData serverLevelData, ResourceKey<Level> dimension, LevelStem levelStem, ChunkProgressListener progressListener, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, RandomSequences randomSequences, CallbackInfo ci) {
 		ServerLevel thiz = (ServerLevel) (Object) this;
 
-		if(dimension.equals(Level.OVERWORLD)) {
-			thiz.setTransformer(new WorldTransformer(WrappingSettings.getXChunkBoundMin(), WrappingSettings.getZChunkBoundMin(), WrappingSettings.getXChunkBoundMax(), WrappingSettings.getZChunkBoundMax(), WrappingSettings.getXShift(),  WrappingSettings.getZShift(), false));
+		if(WrappingDataStorage.settings != null && WrappingDataStorage.settings.dimensions().containsKey(dimension)) {
+			thiz.setTransformer(new WorldTransformer(WrappingDataStorage.settings.dimensions().get(dimension), false));
 		}
-		//else if(dimension.equals(Level.NETHER)) {
-		//}
 		else {
 			thiz.setTransformer(WorldTransformer.INVALID);
 		}

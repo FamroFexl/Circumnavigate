@@ -2,7 +2,6 @@
 
 package com.fexl.circumnavigate.client.storage;
 
-import com.fexl.circumnavigate.options.WrappingSettings;
 import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -23,7 +22,7 @@ public class TransformersStorage {
 		//No transformer packet received. No wrapping on server.
 		WorldTransformer transformer = transformers.get(levelKey);
 		if(transformer == null) {
-			return new WorldTransformer(WrappingSettings.invalidPos, true);
+			return new WorldTransformer(WorldTransformer.invalidPos, true);
 		}
 		return transformer;
 	}

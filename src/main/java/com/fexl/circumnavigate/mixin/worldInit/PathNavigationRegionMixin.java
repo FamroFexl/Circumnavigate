@@ -19,6 +19,6 @@ public class PathNavigationRegionMixin {
 	public void init(Level level, BlockPos centerPos, BlockPos offsetPos, CallbackInfo ci) {
 		PathNavigationRegion thiz = (PathNavigationRegion) (Object) this;
 
-		if(level instanceof ServerLevel serverLevel) thiz.setTransformer(serverLevel.getTransformer().onlyServerSide());
+		thiz.setTransformer(level.getTransformer().onlyServerSide());
 	}
 }

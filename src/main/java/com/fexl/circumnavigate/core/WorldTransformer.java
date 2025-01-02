@@ -2,7 +2,8 @@
 
 package com.fexl.circumnavigate.core;
 
-import com.fexl.circumnavigate.options.WrappingSettings;
+import com.fexl.circumnavigate.options.DimensionWrappingSettings;
+import com.fexl.circumnavigate.options.WorldWrappingSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
@@ -60,7 +61,9 @@ public class WorldTransformer {
 
 	private final int chunkWidth = LevelChunkSection.SECTION_WIDTH;
 
-	public static final WorldTransformer INVALID = new WorldTransformer(WrappingSettings.invalidPos, true);
+	public static final int invalidPos = ChunkPos.getX(ChunkPos.INVALID_CHUNK_POS)+10000;
+
+	public static final WorldTransformer INVALID = new WorldTransformer(invalidPos, true);
 
 	//Accessor constants for various standard object operations
 	public final CoordMethods Coord;
@@ -71,8 +74,6 @@ public class WorldTransformer {
 	public final AABBMethods AABB;
 
 	public WorldTransformer(int x1, int z1, int x2, int z2, int xShift, int zShift, boolean isClientSide) {
-		int invalidPos = WrappingSettings.invalidPos;
-
 		this.isClientSide = isClientSide;
 
 		//Not a wrapped world. Don't wrap.
@@ -125,6 +126,10 @@ public class WorldTransformer {
 		this.Vector3D = new Vector3DMethods();
 		this.Block = new BlockMethods();
 		this.AABB = new AABBMethods();
+	}
+
+	public WorldTransformer(DimensionWrappingSettings settings, boolean isClientSide) {
+		this(settings.xChunkBoundMin(), settings.zChunkBoundMin(), settings.xChunkBoundMax(), settings.zChunkBoundMax(), isClientSide);
 	}
 
 	/**
@@ -391,7 +396,6 @@ public class WorldTransformer {
 	}
 
 	public boolean isWrapped() {
-		int invalidPos = WrappingSettings.invalidPos;
 		return !(xChunkBoundMin == -invalidPos || xChunkBoundMax == invalidPos || zChunkBoundMin == -invalidPos || zChunkBoundMax == invalidPos);
 	}
 }

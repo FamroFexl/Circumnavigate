@@ -4,18 +4,16 @@
 
 package com.fexl.circumnavigate.core;
 
-import com.fexl.circumnavigate.options.WrappingSettings;
-
 public class FakeCoordinateTransformers extends CoordinateTransformers {
 	public FakeCoordinateTransformers() {
-		super(-WrappingSettings.invalidPos, WrappingSettings.invalidPos);
+		super(-WorldTransformer.invalidPos, WorldTransformer.invalidPos);
 
 		this.Coord = new CoordMethods();
 		this.Chunk = new ChunkMethods();
 	}
 
 	public class CoordMethods extends CoordinateTransformers.CoordMethods {
-		public final int domainLength = WrappingSettings.invalidPos*2;
+		public final int domainLength = WorldTransformer.invalidPos*2;
 
 		@Override
 		public Double wrapToBounds(Double coord) {

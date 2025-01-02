@@ -4,7 +4,6 @@
 
 package com.fexl.circumnavigate.core;
 
-import com.fexl.circumnavigate.options.WrappingSettings;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 
 public class CoordinateTransformers {

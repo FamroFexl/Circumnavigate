@@ -2,12 +2,15 @@
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
-import com.fexl.circumnavigate.options.WrappingSettings;
+import com.fexl.circumnavigate.options.WorldWrappingSettings;
+import com.fexl.circumnavigate.storage.WrappingDataStorage;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.LevelSettings;
+import net.minecraft.world.level.WorldDataConfiguration;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.Optional;
+
 @SuppressWarnings("deprecation")
 @Mixin(PrimaryLevelData.class)
 public class PrimaryLevelDataMixin {
@@ -25,14 +30,9 @@ public class PrimaryLevelDataMixin {
 	 */
 	@Inject(method = "setTagData(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/nbt/CompoundTag;)V", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void injectSaveData(RegistryAccess registry, CompoundTag nbt, CompoundTag playerNBT, CallbackInfo ci) {
-		nbt = WrappingSettings.serialize(nbt);
-	}
-
-	/**
-	 * Retrieve the wrappingSettings save data on world creation.
-	 */
-	@Inject(method = "<init>(Lnet/minecraft/world/level/LevelSettings;Lnet/minecraft/world/level/levelgen/WorldOptions;Lnet/minecraft/world/level/storage/PrimaryLevelData$SpecialWorldProperty;Lcom/mojang/serialization/Lifecycle;)V", at = @At("TAIL"))
-	public void init(CallbackInfo ci) {
+		if(WrappingDataStorage.settings != null) {
+			nbt.put("WrappingSettings", WorldWrappingSettings.CODEC.encodeStart(NbtOps.INSTANCE, WrappingDataStorage.settings).getOrThrow());
+		}
 	}
 
 	/**
@@ -40,9 +40,7 @@ public class PrimaryLevelDataMixin {
 	 */
 	@Inject(method = "parse", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void parseInject(Dynamic<?> tag, LevelSettings levelSettings, PrimaryLevelData.SpecialWorldProperty specialWorldProperty, WorldOptions worldOptions, Lifecycle worldGenSettingsLifecycle, CallbackInfoReturnable<PrimaryLevelData> cir) {
-		WrappingSettings settings = WrappingSettings.parse(tag);
-		if(settings.equals(WrappingSettings.CORRUPT)) {
-			//TODO: Cancel world load. Wrapping settings are corrupt and cannot be used.
-		}
+		Optional<WorldWrappingSettings> worldWrappingSettings = WorldWrappingSettings.CODEC.parse(tag.get("WrappingSettings").orElseEmptyMap()).result();
+		WrappingDataStorage.settings = worldWrappingSettings.orElse(null);
 	}
 }
