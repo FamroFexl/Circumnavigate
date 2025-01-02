@@ -3,10 +3,7 @@
 package com.fexl.circumnavigate.mixin.client.worldInit;
 
 import com.fexl.circumnavigate.client.storage.TransformersStorage;
-import com.fexl.circumnavigate.core.WorldTransformer;
-import com.fexl.circumnavigate.network.packet.LevelWrappingRequest;
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
-import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -27,7 +24,7 @@ public class ClientLevelMixin {
 	ClientLevel thiz = (ClientLevel) (Object) this;
 
 	/**
-	 * Set the world transformer for the ClientLevel depending on the requested dimension.
+	 * Set the dimension transformer for the ClientLevel depending on the requested dimension.
 	 */
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void init(ClientPacketListener connection, ClientLevel.ClientLevelData clientLevelData, ResourceKey<Level> dimension, Holder dimensionType, int viewDistance, int serverSimulationDistance, Supplier profiler, LevelRenderer levelRenderer, boolean isDebug, long biomeZoomSeed, CallbackInfo ci) {
@@ -36,7 +33,7 @@ public class ClientLevelMixin {
 
 	@ModifyVariable(method = "<init>", at = @At("HEAD"), index = 5, argsOnly = true)
 	private static int changeViewDistance(int viewDistance, @Local ResourceKey dimension) {
-		WorldTransformer transformer = TransformersStorage.getTransformer(dimension);
+		DimensionTransformer transformer = TransformersStorage.getTransformer(dimension);
 		return transformer.limitViewDistance(viewDistance);
 	}
 }

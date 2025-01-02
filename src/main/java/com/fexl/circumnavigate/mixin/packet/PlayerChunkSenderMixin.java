@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.packet;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.google.common.collect.Comparators;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.server.level.ChunkMap;
@@ -37,7 +37,7 @@ public class PlayerChunkSenderMixin {
 	 */
 	@Inject(method = "collectChunksToSend", at = @At("HEAD"), cancellable = true)
 	private void wrapChunkPosPriority(ChunkMap chunkMap, ChunkPos chunkPos, CallbackInfoReturnable<List<LevelChunk>> cir) {
-		WorldTransformer transformer = chunkMap.level.getTransformer();
+		DimensionTransformer transformer = chunkMap.level.getTransformer();
 		cir.cancel();
 
 		int i = Mth.floor(this.batchQuota);

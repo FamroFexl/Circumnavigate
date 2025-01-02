@@ -6,7 +6,7 @@
 
 package com.fexl.circumnavigate.mixin.packet;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -44,7 +44,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;", ordinal = 0))
 	public Vec3 unwrapVec(Vec3 instance, Vec3 vec) {
-		WorldTransformer transformer = player.serverLevel().getTransformer();
+		DimensionTransformer transformer = player.serverLevel().getTransformer();
 		return instance.subtract(transformer.Vector3D.unwrapFromBounds(instance, vec));
 	}
 
@@ -55,7 +55,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
 	public BlockHitResult wrapLocationAndBlockPos(ServerboundUseItemOnPacket instance) {
-		WorldTransformer transformer = player.serverLevel().getTransformer();
+		DimensionTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
 
 		return new BlockHitResult(transformer.Vector3D.wrapToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.Block.wrapToBounds(blockHit.getBlockPos()), blockHit.isInside());
@@ -66,7 +66,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 	public void handleMovePlayer(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
 		PacketUtils.ensureRunningOnSameThread(packet, thiz, player.serverLevel());
 
-		WorldTransformer transformer = player.serverLevel().getTransformer();
+		DimensionTransformer transformer = player.serverLevel().getTransformer();
 		ci.cancel();
 
 		boolean bl;
@@ -213,7 +213,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 	@Inject(method = "handleMoveVehicle", at = @At("HEAD"), cancellable = true)
 	public void handleMoveVehicle(ServerboundMoveVehiclePacket packet, CallbackInfo ci) {
 		PacketUtils.ensureRunningOnSameThread(packet, thiz, player.serverLevel());
-		WorldTransformer transformer = player.serverLevel().getTransformer();
+		DimensionTransformer transformer = player.serverLevel().getTransformer();
 		ci.cancel();
 
 		if (ServerGamePacketListenerImpl.containsInvalidValues(packet.getX(), packet.getY(), packet.getZ(), packet.getYRot(), packet.getXRot())) {

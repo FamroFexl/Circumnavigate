@@ -4,16 +4,16 @@
 
 package com.fexl.circumnavigate.processing;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.core.Cursor3D;
 
 /**
  * Wraps outputs by manipulating them via a transformer.
  */
 public class Cursor3DWrapped extends Cursor3D {
-	final WorldTransformer transformer;
+	final DimensionTransformer transformer;
 
-	public Cursor3DWrapped(int originX, int originY, int originZ, int endX, int endY, int endZ, WorldTransformer transformer) {
+	public Cursor3DWrapped(int originX, int originY, int originZ, int endX, int endY, int endZ, DimensionTransformer transformer) {
 		super(originX, originY, originZ, endX, endY, endZ);
 		this.transformer = transformer;
 	}

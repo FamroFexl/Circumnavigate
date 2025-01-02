@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.processing;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -13,14 +13,14 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockHitResultWrapped extends BlockHitResult {
-	final WorldTransformer transformer;
+	final DimensionTransformer transformer;
 
 	private final Vec3 location;
 	private final Direction direction;
 	private final boolean miss;
 	private final boolean inside;
 
-	private BlockHitResultWrapped(boolean miss, Vec3 location, Direction direction, BlockPos blockPos, boolean inside, WorldTransformer transformer) {
+	private BlockHitResultWrapped(boolean miss, Vec3 location, Direction direction, BlockPos blockPos, boolean inside, DimensionTransformer transformer) {
 		super(transformer.Vector3D.wrapToBounds(location), direction, transformer.Block.wrapToBounds(blockPos), inside);
 		this.miss = miss;
 		this.location = location;
@@ -29,7 +29,7 @@ public class BlockHitResultWrapped extends BlockHitResult {
 		this.transformer = transformer;
 	}
 
-	public BlockHitResultWrapped(BlockHitResult result, WorldTransformer transformer) {
+	public BlockHitResultWrapped(BlockHitResult result, DimensionTransformer transformer) {
 		this(result.getType() == Type.MISS, result.getLocation(), result.getDirection(), result.getBlockPos(), result.isInside(), transformer);
 	}
 

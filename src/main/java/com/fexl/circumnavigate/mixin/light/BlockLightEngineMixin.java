@@ -1,6 +1,6 @@
 package com.fexl.circumnavigate.mixin.light;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerChunkCache;
@@ -20,7 +20,7 @@ public class BlockLightEngineMixin {
     @ModifyVariable(method = "propagateIncrease", at = @At("HEAD"), index = 1, argsOnly = true)
     public long wrapBlockPos(long pos) {
 		if(level instanceof ServerChunkCache cache) {
-			WorldTransformer transformer = cache.getLevel().getTransformer();
+			DimensionTransformer transformer = cache.getLevel().getTransformer();
 			return transformer.Block.wrapToBounds(pos);
 		}
 
@@ -30,7 +30,7 @@ public class BlockLightEngineMixin {
     @Redirect(method = "propagateIncrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
     public long wrapBlockPos2(long pos, Direction direction) {
 	    if(level instanceof ServerChunkCache cache) {
-		    WorldTransformer transformer = cache.getLevel().getTransformer();
+		    DimensionTransformer transformer = cache.getLevel().getTransformer();
 		    return transformer.Block.wrapToBounds(BlockPos.offset(pos, direction));
 	    }
 
@@ -40,7 +40,7 @@ public class BlockLightEngineMixin {
     @Redirect(method = "propagateDecrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
     public long wrapBlockPos3(long pos, Direction direction) {
 	    if(level instanceof ServerChunkCache cache) {
-		    WorldTransformer transformer = cache.getLevel().getTransformer();
+		    DimensionTransformer transformer = cache.getLevel().getTransformer();
 		    return transformer.Block.wrapToBounds(BlockPos.offset(pos, direction));
 	    }
 		return BlockPos.offset(pos, direction);

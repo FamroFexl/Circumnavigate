@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.mixin.chunk;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -21,7 +21,7 @@ public class SectionTrackerMixin implements TransformerAccessor {
 	 */
 	@WrapOperation(method = "checkNeighborsAfterUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/SectionPos;offset(JIII)J"))
 	private long wrapChunkPos(long pos, int x, int y, int z, Operation<Long> original, @Local(argsOnly = true) int level, @Local(argsOnly = true) boolean isDecreasing) {
-		WorldTransformer transformer = getTransformer();
+		DimensionTransformer transformer = getTransformer();
 
 		int wrappedX = transformer.Chunk.X.wrapToBounds(x);
 		int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
@@ -35,15 +35,15 @@ public class SectionTrackerMixin implements TransformerAccessor {
 		return original.call(pos, x, y, z);
 	}
 
-	WorldTransformer transformer;
+	DimensionTransformer transformer;
 
 	@Override
-	public WorldTransformer getTransformer() {
+	public DimensionTransformer getTransformer() {
 		return this.transformer;
 	}
 
 	@Override
-	public void setTransformer(WorldTransformer transformer) {
+	public void setTransformer(DimensionTransformer transformer) {
 		this.transformer = transformer;
 	}
 }

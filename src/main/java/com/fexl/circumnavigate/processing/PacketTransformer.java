@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.processing;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.core.BlockPos;
@@ -17,7 +17,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,8 +25,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.Vec3;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 
@@ -80,7 +77,7 @@ public class PacketTransformer {
 		}
 	}
 
-	private static WorldTransformer playerTransformer(ServerPlayer serverPlayer) {
+	private static DimensionTransformer playerTransformer(ServerPlayer serverPlayer) {
 		return serverPlayer.serverLevel().getTransformer();
 	}
 	private static double getClientX(ServerPlayer player, double packetX) {
@@ -206,7 +203,7 @@ public class PacketTransformer {
 	private static ClientboundExplodePacket transformPacket(ClientboundExplodePacket packet, ServerPlayer player) {
 		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
 
-		WorldTransformer transformer = player.serverLevel().getTransformer();
+		DimensionTransformer transformer = player.serverLevel().getTransformer();
 
 		double clientWrappedX = getClientX(player, packet.getX());
 		double clientWrappedZ = getClientZ(player, packet.getZ());

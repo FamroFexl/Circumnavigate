@@ -2,7 +2,6 @@
 
 package com.fexl.circumnavigate.mixin.client.chunk;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;

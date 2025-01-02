@@ -2,14 +2,13 @@
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
 import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -20,8 +19,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
@@ -51,7 +48,7 @@ public abstract class PlayerListMixin {
 
 		for (ServerLevel serverLevel : this.getServer().getAllLevels()) {
 			if (serverLevel != null) {
-				WorldTransformer levelTransformer = serverLevel.getTransformer();
+				DimensionTransformer levelTransformer = serverLevel.getTransformer();
 				serverLevel.getChunkSource().setViewDistance(levelTransformer.limitViewDistance(viewDistance));
 
 			}
@@ -70,7 +67,7 @@ public abstract class PlayerListMixin {
 
 		for (ServerLevel serverLevel : this.getServer().getAllLevels()) {
 			if (serverLevel != null) {
-				WorldTransformer levelTransformer = serverLevel.getTransformer();
+				DimensionTransformer levelTransformer = serverLevel.getTransformer();
 				serverLevel.getChunkSource().setSimulationDistance(levelTransformer.limitViewDistance(simulationDistance));
 			}
 		}

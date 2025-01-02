@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.entity;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -76,7 +76,7 @@ public abstract class ServerEntityMixin {
 	 */
 	@Inject(method = "sendChanges", at = @At("HEAD"), cancellable = true)
 	public void wrapChanges(CallbackInfo ci) {
-		WorldTransformer transformer = level.getTransformer();
+		DimensionTransformer transformer = level.getTransformer();
 		ci.cancel();
 
 		List<Entity> list = this.entity.getPassengers();

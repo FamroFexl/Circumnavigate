@@ -37,7 +37,7 @@
     "entity.entities.FishingHookMixin",
     "entity.entities.vehicle.AbstractMinecartMixin",
     "interfaceInjects.ChunkTrackerInjectorMixin",
-    "interfaceInjects.LevelTransformerInjectorMixin",
+    "interfaceInjects.DimensionTransformerInjectorMixin",
     "interfaceInjects.PathNavigationRegionInjectorMixin",
     "interfaceInjects.PlayerClientInjectorMixin",
     "interfaceInjects.WorldGenRegionInjectorMixin",

@@ -3,15 +3,12 @@
 package com.fexl.circumnavigate;
 
 import com.fexl.circumnavigate.client.storage.TransformersStorage;
-import com.fexl.circumnavigate.core.WorldTransformer;
-import com.fexl.circumnavigate.network.packet.ChunkLoadingLevelsPayload;
-import com.fexl.circumnavigate.network.packet.LevelWrappingPayload;
+import com.fexl.circumnavigate.core.DimensionTransformer;
+import com.fexl.circumnavigate.network.packet.DimensionWrappingPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.world.level.ChunkPos;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class CircumnavigateClient implements ClientModInitializer {
@@ -20,8 +17,8 @@ public class CircumnavigateClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		//Read an incoming transformer from the server. Received during server configuration.
-		ClientConfigurationNetworking.registerGlobalReceiver(LevelWrappingPayload.TYPE, (((payload, context) -> {
-			TransformersStorage.setTransformer(payload.levelKey(), new WorldTransformer(payload.wrappingSettings(), true));
+		ClientConfigurationNetworking.registerGlobalReceiver(DimensionWrappingPayload.TYPE, (((payload, context) -> {
+			TransformersStorage.setTransformer(payload.levelKey(), new DimensionTransformer(payload.wrappingSettings(), true));
 		})));
 
 		/**

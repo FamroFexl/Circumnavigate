@@ -2,13 +2,12 @@
 
 package com.fexl.circumnavigate.mixin.client.debug;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,7 +25,7 @@ public class DebugScreenOverlayMixin {
 
 	@Inject(method = "getGameInformation()Ljava/util/List;", at = @At("RETURN"))
 	public void getGameInformation(CallbackInfoReturnable<List<String>> cir, @Local BlockPos blockPos, @Local ChunkPos chunkPos, @Local List list) {
-		WorldTransformer transformer = minecraft.level.getTransformer();
+		DimensionTransformer transformer = minecraft.level.getTransformer();
 		if(!transformer.isWrapped())
 			return;
 

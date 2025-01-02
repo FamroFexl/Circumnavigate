@@ -6,7 +6,6 @@ import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -14,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Stores wrapping constants and provides world-wrapping operations.
+ * Stores wrapping constants and provides dimension-wrapping operations.
  */
-public class WorldTransformer {
+public class DimensionTransformer {
 	public final int xWidth;
 
 	public final int zWidth;
@@ -30,7 +29,7 @@ public class WorldTransformer {
 
 	private final boolean isClientSide;
 
-	public static final WorldTransformer DISABLED = new WorldTransformer(new DimensionWrappingSettings(CoordinateConstants.DISABLING_CHUNK_POS), false);
+	public static final DimensionTransformer DISABLED = new DimensionTransformer(new DimensionWrappingSettings(CoordinateConstants.DISABLING_CHUNK_POS), false);
 
 	//Accessor constants for various standard object operations
 	public final CoordMethods Coord;
@@ -42,7 +41,7 @@ public class WorldTransformer {
 
 	public final DimensionWrappingSettings wrappingSettings;
 
-	public WorldTransformer(DimensionWrappingSettings wrappingSettings, boolean isClientSide) {
+	public DimensionTransformer(DimensionWrappingSettings wrappingSettings, boolean isClientSide) {
 		this.wrappingSettings = wrappingSettings;
 		this.isClientSide = isClientSide;
 
@@ -69,12 +68,12 @@ public class WorldTransformer {
 		this.AABB = new AABBMethods();
 	}
 
-	public WorldTransformer onlyServerSide() {
+	public DimensionTransformer onlyServerSide() {
 		if(!isClientSide) return this;
 		return DISABLED;
 	}
 
-	public WorldTransformer onlyClientSide() {
+	public DimensionTransformer onlyClientSide() {
 		if(isClientSide) return this;
 		return DISABLED;
 	}

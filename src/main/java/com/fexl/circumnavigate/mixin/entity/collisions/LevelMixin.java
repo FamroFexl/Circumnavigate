@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.entity.collisions;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.AbortableIterationConsumer;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -42,7 +42,7 @@ public abstract class LevelMixin<T extends Entity> {
 	public void getEntities(EntityTypeTest<Entity, T> entityTypeTest, AABB bounds, Predicate<? super T> predicate, List<? super T> output, int maxResults, CallbackInfo ci) {
 		if(thiz.isClientSide) return;
 		ci.cancel();
-		WorldTransformer transformer = thiz.getTransformer();
+		DimensionTransformer transformer = thiz.getTransformer();
 
 		this.getProfiler().incrementCounter("getEntities");
 		List<AABB> boxes = transformer.AABB.splitAcrossBounds(bounds);

@@ -4,8 +4,8 @@
 
 package com.fexl.circumnavigate.mixin.packet;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
-import com.fexl.circumnavigate.network.packet.LevelWrappingPayload;
+import com.fexl.circumnavigate.core.DimensionTransformer;
+import com.fexl.circumnavigate.network.packet.DimensionWrappingPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
@@ -20,10 +20,10 @@ public class ServerConfigurationPacketListenerImplMixin {
 	@Inject(method = "startConfiguration", at = @At("HEAD"))
 	public void startConfiguration(CallbackInfo ci) {
 		for(ServerLevel level : thiz.server.getAllLevels()) {
-			if (level.getTransformer().equals(WorldTransformer.DISABLED)) {
+			if (level.getTransformer().equals(DimensionTransformer.DISABLED)) {
 				continue;
 			}
-			ServerConfigurationNetworking.send(thiz, new LevelWrappingPayload(level.dimension(), level.getTransformer().wrappingSettings));
+			ServerConfigurationNetworking.send(thiz, new DimensionWrappingPayload(level.dimension(), level.getTransformer().wrappingSettings));
 		}
 	}
 }

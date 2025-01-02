@@ -2,16 +2,13 @@
 
 package com.fexl.circumnavigate.mixin.client.debug;
 
-import com.fexl.circumnavigate.CircumnavigateClient;
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.debug.ChunkBorderRenderer;
-import net.minecraft.client.renderer.debug.DebugRenderer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
@@ -24,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Changes the debug chunk borders so that they appear purple at the world borders.
+ * Changes the debug chunk borders so that they appear purple at the dimension borders.
  */
 @Mixin(ChunkBorderRenderer.class)
 public class ChunkBorderRendererMixin {
@@ -45,12 +42,12 @@ public class ChunkBorderRendererMixin {
 		return (chunkPos + iter/16) % (width) == bounds;
 	}
 
-	//TODO doesn't work in worlds where the min and max bounds aren't opposites (i.g. -32 -> 32)
+	//TODO doesn't work in dimensions where the min and max bounds aren't opposites (i.g. -32 -> 32)
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	public void render(PoseStack poseStack, MultiBufferSource buffer, double camX, double camY, double camZ, CallbackInfo ci) {
 		ChunkBorderRenderer thiz = (ChunkBorderRenderer) (Object) this;
 
-		WorldTransformer transformer = minecraft.level.getTransformer();
+		DimensionTransformer transformer = minecraft.level.getTransformer();
 
 		int xChunkBoundMin = transformer.wrappingSettings.xChunkBoundMin();
 		int zChunkBoundMin = transformer.wrappingSettings.zChunkBoundMin();

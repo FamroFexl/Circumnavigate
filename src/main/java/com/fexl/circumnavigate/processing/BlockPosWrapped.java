@@ -1,25 +1,23 @@
 package com.fexl.circumnavigate.processing;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
-import com.google.common.collect.AbstractIterator;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
 public class BlockPosWrapped extends BlockPos {
-    final WorldTransformer transformer;
-    public BlockPosWrapped(BlockPos blockPos, WorldTransformer transformer) {
+    final DimensionTransformer transformer;
+    public BlockPosWrapped(BlockPos blockPos, DimensionTransformer transformer) {
         super(transformer.Coord.X.wrapToBounds(blockPos.getX()), blockPos.getY(), transformer.Coord.Z.wrapToBounds(blockPos.getZ()));
         this.transformer = transformer;
     }
 
-	private BlockPosWrapped(int x, int y, int z, WorldTransformer transformer) {
+	private BlockPosWrapped(int x, int y, int z, DimensionTransformer transformer) {
 		this(new BlockPos(x, y, z), transformer);
 	}
 
@@ -77,17 +75,17 @@ public class BlockPosWrapped extends BlockPos {
     }
 
     @Deprecated
-    public static Stream<BlockPos> squareOutSouthEast(BlockPos pos, WorldTransformer transformer) {
+    public static Stream<BlockPos> squareOutSouthEast(BlockPos pos, DimensionTransformer transformer) {
 		BlockPosWrapped wrappedBlockPos = new BlockPosWrapped(pos, transformer);
         return Stream.of(wrappedBlockPos, wrappedBlockPos.south(), wrappedBlockPos.east(), wrappedBlockPos.south().east());
     }
 
     public static class MutableBlockPos extends BlockPosWrapped {
-        public MutableBlockPos(int x, int y, int z, WorldTransformer transformer) {
+        public MutableBlockPos(int x, int y, int z, DimensionTransformer transformer) {
             super(x, y, z, transformer);
         }
 
-        public MutableBlockPos(double x, double y, double z, WorldTransformer transformer) {
+        public MutableBlockPos(double x, double y, double z, DimensionTransformer transformer) {
             this(Mth.floor(x), Mth.floor(y), Mth.floor(z), transformer);
         }
 

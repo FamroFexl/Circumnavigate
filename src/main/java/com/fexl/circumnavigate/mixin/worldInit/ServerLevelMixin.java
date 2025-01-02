@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.fexl.circumnavigate.storage.WrappingDataStorage;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -32,10 +32,10 @@ public class ServerLevelMixin {
 		ServerLevel thiz = (ServerLevel) (Object) this;
 
 		if(WrappingDataStorage.settings != null && WrappingDataStorage.settings.dimensions().containsKey(dimension)) {
-			thiz.setTransformer(new WorldTransformer(WrappingDataStorage.settings.dimensions().get(dimension), false));
+			thiz.setTransformer(new DimensionTransformer(WrappingDataStorage.settings.dimensions().get(dimension), false));
 		}
 		else {
-			thiz.setTransformer(WorldTransformer.DISABLED);
+			thiz.setTransformer(DimensionTransformer.DISABLED);
 		}
 	}
 }

@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.mixin.chunk;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.*;
@@ -28,7 +28,7 @@ public abstract class ChunkMapMixin {
 	@Inject(method = "isChunkTracked", at = @At("HEAD"), cancellable = true)
 	public void unwrapChunkPosForCheck(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
 		TransformerRequests.chunkMapLevel = player.serverLevel();
-		WorldTransformer transformer = player.serverLevel().getTransformer();
+		DimensionTransformer transformer = player.serverLevel().getTransformer();
 		cir.setReturnValue(player.getChunkTrackingView().contains(x, z) && !player.connection.chunkSender.isPending(ChunkPos.asLong(transformer.Chunk.X.unwrapFromBounds(player.getClientChunk().x, x), transformer.Chunk.Z.unwrapFromBounds(player.getClientChunk().z, z))));
 	}
 

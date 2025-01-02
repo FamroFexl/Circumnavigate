@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.entity.collisions;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.google.common.collect.AbstractIterator;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -41,7 +41,7 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	@WrapOperation(method = "computeNext", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/BlockCollisions;getChunk(II)Lnet/minecraft/world/level/BlockGetter;"))
 	public BlockGetter getChunk(BlockCollisions<?> instance, int x, int z, Operation<BlockGetter> original) {
 		if(serverLevel == null) return original.call(instance, x, z);
-		WorldTransformer transformer = serverLevel.getTransformer();
+		DimensionTransformer transformer = serverLevel.getTransformer();
 		return original.call(instance, (int) transformer.Coord.X.wrapToBounds(x), (int) transformer.Coord.Z.wrapToBounds(z));
 	}
 
@@ -51,7 +51,7 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	@WrapOperation(method = "computeNext", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos$MutableBlockPos;set(III)Lnet/minecraft/core/BlockPos$MutableBlockPos;"))
 	public BlockPos.MutableBlockPos setPos(BlockPos.MutableBlockPos instance, int x, int y, int z, Operation<BlockPos.MutableBlockPos> original) {
 		if(serverLevel == null) return original.call(instance, x, y, z);
-		WorldTransformer transformer = serverLevel.getTransformer();
+		DimensionTransformer transformer = serverLevel.getTransformer();
 		return original.call(instance, (int) transformer.Coord.X.wrapToBounds(x), y, (int) transformer.Coord.Z.wrapToBounds(z));
 	}
 }

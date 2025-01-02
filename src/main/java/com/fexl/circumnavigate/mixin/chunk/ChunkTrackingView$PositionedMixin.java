@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.mixin.chunk;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.server.level.ChunkTrackingView.Positioned;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
@@ -57,15 +57,15 @@ public abstract class ChunkTrackingView$PositionedMixin implements TransformerAc
 		cir.setReturnValue(xIntersects && zIntersects);
 	}
 
-	WorldTransformer transformer;
+	DimensionTransformer transformer;
 
 	@Override
-	public WorldTransformer getTransformer() {
+	public DimensionTransformer getTransformer() {
 		return this.transformer;
 	}
 
 	@Override
-	public void setTransformer(WorldTransformer transformer) {
+	public void setTransformer(DimensionTransformer transformer) {
 		this.transformer = transformer;
 	}
 }

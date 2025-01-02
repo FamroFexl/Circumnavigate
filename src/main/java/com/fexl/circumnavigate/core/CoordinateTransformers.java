@@ -4,13 +4,9 @@
 
 package com.fexl.circumnavigate.core;
 
-import net.minecraft.world.level.chunk.LevelChunkSection;
-
 public class CoordinateTransformers {
 	public final int lowerChunkBounds;
 	public final int upperChunkBounds;
-
-	private final int chunkWidth = LevelChunkSection.SECTION_WIDTH;
 
 	public CoordMethods Coord;
 	public ChunkMethods Chunk;
@@ -24,14 +20,14 @@ public class CoordinateTransformers {
 	}
 
 	public class CoordMethods extends BasicPositionOperations<Double> {
-		public final int domainLength = Math.abs(upperChunkBounds - lowerChunkBounds) * chunkWidth;
+		public final int domainLength = Math.abs(upperChunkBounds - lowerChunkBounds) * CoordinateConstants.CHUNK_WIDTH;
 
 		@Override
 		public Double wrapToBounds(Double coord) {
 			//Short-circuit
 			if(!isOverBounds(coord)) return coord;
 
-			double domainStart = lowerChunkBounds * chunkWidth;
+			double domainStart = lowerChunkBounds * CoordinateConstants.CHUNK_WIDTH;
 			double wrappedCoord = (coord - domainStart) % domainLength;
 
 			// If wrappedCoord is negative, adjust it by adding domainLength
@@ -71,7 +67,7 @@ public class CoordinateTransformers {
 
 		@Override
 		public boolean isOverBounds(Double coord) {
-			return coord >= upperChunkBounds * chunkWidth || coord < lowerChunkBounds * chunkWidth;
+			return coord >= upperChunkBounds * CoordinateConstants.CHUNK_WIDTH || coord < lowerChunkBounds * CoordinateConstants.CHUNK_WIDTH;
 		}
 
 		public boolean isOverBounds(Integer coord) {
@@ -85,10 +81,10 @@ public class CoordinateTransformers {
 		}
 
 		public Double sqrDistToBounds(Double dist) {
-			if(dist > upperChunkBounds * chunkWidth) {
+			if(dist > upperChunkBounds * CoordinateConstants.CHUNK_WIDTH) {
 				dist -= Coord.domainLength;
 			}
-			else if (dist < lowerChunkBounds * chunkWidth) {
+			else if (dist < lowerChunkBounds * CoordinateConstants.CHUNK_WIDTH) {
 				dist += Coord.domainLength;
 			}
 

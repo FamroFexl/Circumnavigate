@@ -4,8 +4,6 @@
 
 package com.fexl.circumnavigate.mixin.entity;
 
-import com.fexl.circumnavigate.core.FakeCoordinateTransformers;
-import com.fexl.circumnavigate.core.WorldTransformer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;

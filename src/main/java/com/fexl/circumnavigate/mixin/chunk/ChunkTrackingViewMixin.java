@@ -3,7 +3,7 @@
 package com.fexl.circumnavigate.mixin.chunk;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.server.level.ChunkTrackingView;
 import net.minecraft.world.level.ChunkPos;
@@ -23,7 +23,7 @@ public interface ChunkTrackingViewMixin {
 	@Inject(method = "isWithinDistance", at = @At("HEAD"), cancellable = true)
 	private static void checkWrappedChunks(int centerX, int centerZ, int viewDistance, int x, int z, boolean serachAllChunks, CallbackInfoReturnable<Boolean> cir) {
 		//Because isWithinDistance is a static method, it requires an exterior transformer instance that can't be passed down.
-		WorldTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
+		DimensionTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
 
 		//Don't include chunks that extend past the bounds.
 		if(transformer.Chunk.X.isOverBounds(x) || transformer.Chunk.Z.isOverBounds(z)) { cir.setReturnValue(false); return; }
@@ -55,7 +55,7 @@ public interface ChunkTrackingViewMixin {
 			&& ((PositionedAccessorMixin) (Object) positioned).squareIntersectsAM(positioned2))
 		{
 
-			WorldTransformer transformer = ((TransformerAccessor) (Object) positioned).getTransformer();
+			DimensionTransformer transformer = ((TransformerAccessor) (Object) positioned).getTransformer();
 
 			//This prevents mass calculation of unneeded chunks and keeps chunk bandwidth predictable when crossing borders
 			int i = Math.min(positioned.minX(), transformer.Chunk.X.unwrapFromBounds(positioned.minX(), positioned2.minX()));

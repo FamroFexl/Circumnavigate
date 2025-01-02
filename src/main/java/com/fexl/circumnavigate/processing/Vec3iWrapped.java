@@ -4,15 +4,15 @@
 
 package com.fexl.circumnavigate.processing;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
 public class Vec3iWrapped extends Vec3i {
-	final WorldTransformer transformer;
+	final DimensionTransformer transformer;
 
-	public Vec3iWrapped(int x, int y, int z, WorldTransformer transformer) {
+	public Vec3iWrapped(int x, int y, int z, DimensionTransformer transformer) {
 		super(transformer.Coord.X.wrapToBounds(x), y, transformer.Coord.Z.wrapToBounds(z));
 		this.transformer = transformer;
 	}

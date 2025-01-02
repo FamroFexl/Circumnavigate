@@ -2,24 +2,22 @@
 
 package com.fexl.circumnavigate.network.packet;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
 import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 /**
- * Sends clients world wrapping data.
+ * Sends clients dimension wrapping data.
  */
-public record LevelWrappingPayload(ResourceKey<Level> levelKey, DimensionWrappingSettings wrappingSettings) implements CustomPacketPayload {
-	public static final StreamCodec<FriendlyByteBuf, LevelWrappingPayload> STREAM_CODEC = CustomPacketPayload.codec(LevelWrappingPayload::write, LevelWrappingPayload::new);
-	public static final CustomPacketPayload.Type<LevelWrappingPayload> TYPE = CustomPacketPayload.createType("debug/circumnavigate/wrapping_data");
+public record DimensionWrappingPayload(ResourceKey<Level> levelKey, DimensionWrappingSettings wrappingSettings) implements CustomPacketPayload {
+	public static final StreamCodec<FriendlyByteBuf, DimensionWrappingPayload> STREAM_CODEC = CustomPacketPayload.codec(DimensionWrappingPayload::write, DimensionWrappingPayload::new);
+	public static final CustomPacketPayload.Type<DimensionWrappingPayload> TYPE = CustomPacketPayload.createType("debug/circumnavigate/wrapping_data");
 
-	private LevelWrappingPayload(FriendlyByteBuf buffer) {
+	private DimensionWrappingPayload(FriendlyByteBuf buffer) {
 		this(buffer.readResourceKey(Registries.DIMENSION), new DimensionWrappingSettings(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readEnum(DimensionWrappingSettings.Axis.class), buffer.readInt(), false));
 	}
 
@@ -34,7 +32,7 @@ public record LevelWrappingPayload(ResourceKey<Level> levelKey, DimensionWrappin
 	}
 
 	@Override
-	public CustomPacketPayload.Type<LevelWrappingPayload> type() {
+	public CustomPacketPayload.Type<DimensionWrappingPayload> type() {
 		return TYPE;
 	}
 }

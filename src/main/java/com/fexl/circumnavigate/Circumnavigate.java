@@ -2,19 +2,12 @@
 
 package com.fexl.circumnavigate;
 
-import com.fexl.circumnavigate.network.packet.ChunkLoadingLevelsPayload;
-import com.fexl.circumnavigate.network.packet.LevelWrappingPayload;
-import com.fexl.circumnavigate.storage.DebugInfo;
+import com.fexl.circumnavigate.network.packet.DimensionWrappingPayload;
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.HashMap;
 
 public class Circumnavigate implements ModInitializer {
 	public static final String MOD_ID = "circumnavigate";
@@ -23,7 +16,7 @@ public class Circumnavigate implements ModInitializer {
 	public static int tickCount = 0;
 	@Override
 	public void onInitialize() {
-		PayloadTypeRegistry.configurationS2C().register(LevelWrappingPayload.TYPE, LevelWrappingPayload.STREAM_CODEC);
+		PayloadTypeRegistry.configurationS2C().register(DimensionWrappingPayload.TYPE, DimensionWrappingPayload.STREAM_CODEC);
 		//PayloadTypeRegistry.playS2C().register(ChunkLoadingLevelsPayload.TYPE, ChunkLoadingLevelsPayload.STREAM_CODEC);
 
 		/**

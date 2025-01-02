@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.mixin.chunk;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -36,7 +36,7 @@ public abstract class ChunkTrackerMixin extends DynamicGraphMinFixedPoint {
 
 		int originalRet = original.call(instance, startPos, endPos, startLevel);
 
-	    WorldTransformer transformer = thiz.getTransformer();
+	    DimensionTransformer transformer = thiz.getTransformer();
 
 	    ChunkPos chunkPos = new ChunkPos(startPos);
 	    ChunkPos wrappedChunkPos = transformer.Chunk.wrapToBounds(chunkPos);
@@ -60,7 +60,7 @@ public abstract class ChunkTrackerMixin extends DynamicGraphMinFixedPoint {
 	 */
 	@WrapOperation(method = "checkNeighborsAfterUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ChunkPos;asLong(II)J"))
 	private long wrapChunkPos(int x, int z, Operation<Long> original, @Local(argsOnly = true) long pos, @Local(argsOnly = true) int level, @Local(argsOnly = true) boolean isDecreasing) {
-		WorldTransformer transformer = thiz.getTransformer();
+		DimensionTransformer transformer = thiz.getTransformer();
 
 		int wrappedX = transformer.Chunk.X.wrapToBounds(x);
 		int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);

@@ -1,6 +1,6 @@
 package com.fexl.circumnavigate.mixin.entity;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,7 +23,7 @@ public abstract class LivingEntityMixin {
     public void wrapDelta(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         Entity thiz = (Entity) (Object) this;
         Entity enemy = source.getEntity();
-        WorldTransformer transformer = enemy.level().getTransformer().onlyServerSide();
+        DimensionTransformer transformer = enemy.level().getTransformer().onlyServerSide();
         deltaX = transformer.Coord.X.deltaFromBounds(thiz.getX(), enemy.getX());
         deltaZ = transformer.Coord.Z.deltaFromBounds(thiz.getZ(), enemy.getZ());
 

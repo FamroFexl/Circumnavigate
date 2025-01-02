@@ -5,7 +5,7 @@
 package com.fexl.circumnavigate.mixin.chunk.propagators.ChunkTracker;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.server.level.DistanceManager;
 import net.minecraft.server.level.TickingTracker;
 import org.spongepowered.asm.mixin.*;
@@ -28,15 +28,15 @@ public abstract class DistanceManagerMixin implements TransformerAccessor {
 		this.tickingTicketsTracker.setTransformer(this.getTransformer());
 	}
 
-	WorldTransformer transformer;
+	DimensionTransformer transformer;
 
 	@Override
-	public WorldTransformer getTransformer() {
+	public DimensionTransformer getTransformer() {
 		return this.transformer;
 	}
 
 	@Override
-	public void setTransformer(WorldTransformer transformer) {
+	public void setTransformer(DimensionTransformer transformer) {
 		this.transformer = transformer;
 	}
 }

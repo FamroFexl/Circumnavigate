@@ -4,9 +4,9 @@
 
 package com.fexl.circumnavigate.accessors;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 
 public interface TransformerAccessor {
-	WorldTransformer getTransformer();
-	void setTransformer(WorldTransformer transformer);
+	DimensionTransformer getTransformer();
+	void setTransformer(DimensionTransformer transformer);
 }

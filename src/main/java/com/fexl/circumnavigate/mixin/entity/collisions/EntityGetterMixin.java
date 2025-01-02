@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.entity.collisions;
 
-import com.fexl.circumnavigate.core.WorldTransformer;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ServerLevel;
@@ -41,7 +41,7 @@ public interface EntityGetterMixin {
 		EntityGetter thiz = (EntityGetter) (Object) this;
 
 		if(this instanceof ServerLevel level) {
-			WorldTransformer transformer = level.getTransformer();
+			DimensionTransformer transformer = level.getTransformer();
 			VoxelShape result = Shapes.create(transformer.AABB.unwrapFromBounds(shape1.bounds(), shape2.bounds()));
 
 			return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
@@ -73,7 +73,7 @@ public interface EntityGetterMixin {
 		List<Player> list = Lists.<Player>newArrayList();
 
 		for (Player player : this.players()) {
-			WorldTransformer transformer = player.level().getTransformer();
+			DimensionTransformer transformer = player.level().getTransformer();
 			if (area.contains(transformer.Coord.X.unwrapFromBounds(area.minX, player.getX()), player.getY(), transformer.Coord.Z.unwrapFromBounds(area.minZ, player.getZ())) && predicate.test(target, player)) {
 				list.add(player);
 			}
