@@ -22,8 +22,8 @@ public record DimensionWrappingSettings(int xChunkBoundMin, int xChunkBoundMax, 
 			.apply(instance, instance.stable(DimensionWrappingSettings::new))
 	);
 
-	public DimensionWrappingSettings(int xChunkBoundMin, int xChunkBoundMax, int zChunkBoundMin, int zChunkBoundMax) {
-		this(xChunkBoundMin, xChunkBoundMax, zChunkBoundMin, zChunkBoundMax, Axis.X, 0, false);
+	public DimensionWrappingSettings(int bounds) {
+		this(-Math.abs(bounds), Math.abs(bounds), -Math.abs(bounds), Math.abs(bounds), Axis.X, 0, false);
 	}
 
 	public enum Axis {

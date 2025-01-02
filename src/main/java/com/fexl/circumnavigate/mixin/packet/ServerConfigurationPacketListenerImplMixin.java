@@ -20,7 +20,7 @@ public class ServerConfigurationPacketListenerImplMixin {
 	@Inject(method = "startConfiguration", at = @At("HEAD"))
 	public void startConfiguration(CallbackInfo ci) {
 		for(ServerLevel level : thiz.server.getAllLevels()) {
-			if (level.getTransformer().equals(WorldTransformer.INVALID)) {
+			if (level.getTransformer().equals(WorldTransformer.DISABLED)) {
 				continue;
 			}
 			ServerConfigurationNetworking.send(thiz, new LevelWrappingPayload(level.dimension(), level.getTransformer().wrappingSettings));

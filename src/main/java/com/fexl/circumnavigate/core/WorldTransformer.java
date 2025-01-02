@@ -30,11 +30,7 @@ public class WorldTransformer {
 
 	private final boolean isClientSide;
 
-	private final int chunkWidth = LevelChunkSection.SECTION_WIDTH;
-
-	public static final int invalidPos = ChunkPos.getX(ChunkPos.INVALID_CHUNK_POS)+10000;
-
-	public static final WorldTransformer INVALID = new WorldTransformer(new DimensionWrappingSettings(-invalidPos, invalidPos, -invalidPos, invalidPos), false);
+	public static final WorldTransformer DISABLED = new WorldTransformer(new DimensionWrappingSettings(CoordinateConstants.DISABLING_CHUNK_POS), false);
 
 	//Accessor constants for various standard object operations
 	public final CoordMethods Coord;
@@ -50,7 +46,7 @@ public class WorldTransformer {
 		this.wrappingSettings = wrappingSettings;
 		this.isClientSide = isClientSide;
 
-		if(this.wrappingSettings.xChunkBoundMax() == invalidPos || this.wrappingSettings.zChunkBoundMax() == invalidPos) {
+		if(this.wrappingSettings.xChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.zChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS) {
 			this.xTransformer = new FakeCoordinateTransformers();
 			this.zTransformer = new FakeCoordinateTransformers();
 		}
@@ -75,12 +71,12 @@ public class WorldTransformer {
 
 	public WorldTransformer onlyServerSide() {
 		if(!isClientSide) return this;
-		return INVALID;
+		return DISABLED;
 	}
 
 	public WorldTransformer onlyClientSide() {
 		if(isClientSide) return this;
-		return INVALID;
+		return DISABLED;
 	}
 
 	/**
@@ -241,10 +237,10 @@ public class WorldTransformer {
 		 * Splits an AABB into up to 4 separate AABB depending on bounds overlap.
 		 */
 		public List<AABB> splitAcrossBounds(AABB original) {
-			int xCoordBoundMin = wrappingSettings.xChunkBoundMin() * chunkWidth;
-			int zCoordBoundMin = wrappingSettings.zChunkBoundMin() * chunkWidth;
-			int xCoordBoundMax = wrappingSettings.xChunkBoundMax() * chunkWidth;
-			int zCoordBoundMax = wrappingSettings.zChunkBoundMax() * chunkWidth;
+			int xCoordBoundMin = wrappingSettings.xChunkBoundMin() * CoordinateConstants.CHUNK_WIDTH;
+			int zCoordBoundMin = wrappingSettings.zChunkBoundMin() * CoordinateConstants.CHUNK_WIDTH;
+			int xCoordBoundMax = wrappingSettings.xChunkBoundMax() * CoordinateConstants.CHUNK_WIDTH;
+			int zCoordBoundMax = wrappingSettings.zChunkBoundMax() * CoordinateConstants.CHUNK_WIDTH;
 
 			double minX = original.minX;
 			double maxX = original.maxX;
@@ -303,7 +299,7 @@ public class WorldTransformer {
 	 * Adjusts a viewDistance to be within a 3 chunk boundary of a wrapped axis' radius.
 	 */
 	public int limitViewDistance(int viewDistance) {
-		int min = Math.min(this.xWidth / 2, this.zWidth / 2) - 3;
+		int min = Math.min(this.xWidth / 2, this.zWidth / 2) - CoordinateConstants.MIN_VIEW_DISTANCE_BUFFER;
 		return Math.min(viewDistance, min);
 	}
 
@@ -314,6 +310,6 @@ public class WorldTransformer {
 	}
 
 	public boolean isWrapped() {
-		return !wrappingSettings.equals(INVALID.wrappingSettings);
+		return !wrappingSettings.equals(DISABLED.wrappingSettings);
 	}
 }

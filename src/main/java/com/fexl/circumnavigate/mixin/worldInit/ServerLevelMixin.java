@@ -2,10 +2,8 @@
 
 package com.fexl.circumnavigate.mixin.worldInit;
 
-import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import com.fexl.circumnavigate.core.WorldTransformer;
 import com.fexl.circumnavigate.storage.WrappingDataStorage;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -37,7 +35,7 @@ public class ServerLevelMixin {
 			thiz.setTransformer(new WorldTransformer(WrappingDataStorage.settings.dimensions().get(dimension), false));
 		}
 		else {
-			thiz.setTransformer(WorldTransformer.INVALID);
+			thiz.setTransformer(WorldTransformer.DISABLED);
 		}
 	}
 }

@@ -6,14 +6,14 @@ package com.fexl.circumnavigate.core;
 
 public class FakeCoordinateTransformers extends CoordinateTransformers {
 	public FakeCoordinateTransformers() {
-		super(-WorldTransformer.invalidPos, WorldTransformer.invalidPos);
+		super(-CoordinateConstants.DISABLING_CHUNK_POS, CoordinateConstants.DISABLING_CHUNK_POS);
 
 		this.Coord = new CoordMethods();
 		this.Chunk = new ChunkMethods();
 	}
 
 	public class CoordMethods extends CoordinateTransformers.CoordMethods {
-		public final int domainLength = WorldTransformer.invalidPos*2;
+		public final int domainLength = CoordinateConstants.DISABLING_CHUNK_POS*2 * 16;
 
 		@Override
 		public Double wrapToBounds(Double coord) {

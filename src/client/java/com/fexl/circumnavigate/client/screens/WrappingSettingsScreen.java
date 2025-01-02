@@ -2,6 +2,7 @@
 
 package com.fexl.circumnavigate.client.screens;
 
+import com.fexl.circumnavigate.core.CoordinateConstants;
 import com.fexl.circumnavigate.mixin.worldInit.PrimaryLevelDataMixin;
 import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import com.fexl.circumnavigate.options.WorldWrappingSettings;
@@ -120,7 +121,7 @@ public class WrappingSettingsScreen extends Screen {
 		}
 
 		//Cannot have an axis less than 8 chunks
-		if(Math.abs(xMax1 - xMin1) < 10 || Math.abs(zMax1 - zMin1) < 10) {
+		if(Math.abs(xMax1 - xMin1) < CoordinateConstants.MIN_LEVEL_WIDTH || Math.abs(zMax1 - zMin1) < CoordinateConstants.MIN_LEVEL_WIDTH) {
 			return false;
 		}
 
