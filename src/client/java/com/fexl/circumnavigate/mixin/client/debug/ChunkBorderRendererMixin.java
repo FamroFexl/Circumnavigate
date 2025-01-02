@@ -52,6 +52,11 @@ public class ChunkBorderRendererMixin {
 
 		WorldTransformer transformer = minecraft.level.getTransformer();
 
+		int xChunkBoundMin = transformer.wrappingSettings.xChunkBoundMin();
+		int zChunkBoundMin = transformer.wrappingSettings.zChunkBoundMin();
+		int xChunkBoundMax = transformer.wrappingSettings.xChunkBoundMax();
+		int zChunkBoundMax = transformer.wrappingSettings.zChunkBoundMax();
+
 		ci.cancel();
 
 		int k;
@@ -70,7 +75,7 @@ public class ChunkBorderRendererMixin {
 			for (k = -16; k <= 32; k += 16) {
 				vertexConsumer.addVertex(matrix4f, h + (float)j, f, i + (float)k).setColor(1.0f, 0.0f, 0.0f, 0.0f);
 				//Set purple
-				if(onBounds(chunkPos.x, j, transformer.xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x, j, transformer.xChunkBoundMax, transformer.xWidth) || onBounds(chunkPos.z, k, transformer.zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z, k, transformer.zChunkBoundMax, transformer.zWidth)) {
+				if(onBounds(chunkPos.x, j, xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x, j, xChunkBoundMax, transformer.xWidth) || onBounds(chunkPos.z, k, zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z, k, zChunkBoundMax, transformer.zWidth)) {
 					vertexConsumer.addVertex(matrix4f, h + (float)j, f, i + (float)k).setColor(DARK_PURPLE);
 					vertexConsumer.addVertex(matrix4f, h + (float)j, g, i + (float)k).setColor(DARK_PURPLE);
 				}
@@ -128,7 +133,7 @@ public class ChunkBorderRendererMixin {
 		for (j = 0; j <= 16; j += 16) {
 			for (int k2 = 0; k2 <= 16; k2 += 16) {
 				//Set purple
-				if(onBounds(chunkPos.x, j, transformer.xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x, j, transformer.xChunkBoundMax, transformer.xWidth) || onBounds(chunkPos.z, k2, transformer.zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z, k2, transformer.zChunkBoundMax, transformer.zWidth)) {vertexConsumer.addVertex(matrix4f, h + (float)j, f, i + (float)k2).setColor(PURPLE_CLEAR);
+				if(onBounds(chunkPos.x, j, xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x, j, xChunkBoundMax, transformer.xWidth) || onBounds(chunkPos.z, k2, zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z, k2, zChunkBoundMax, transformer.zWidth)) {vertexConsumer.addVertex(matrix4f, h + (float)j, f, i + (float)k2).setColor(PURPLE_CLEAR);
 					vertexConsumer.addVertex(matrix4f, h + (float)j, f, i + (float)k2).setColor(PURPLE);
 					vertexConsumer.addVertex(matrix4f, h + (float)j, g, i + (float)k2).setColor(PURPLE);
 					vertexConsumer.addVertex(matrix4f, h + (float)j, g, i + (float)k2).setColor(PURPLE_CLEAR);
@@ -150,7 +155,7 @@ public class ChunkBorderRendererMixin {
 			vertexConsumer.addVertex(matrix4f, h, l, i).setColor(0.25f, 0.25f, 1.0f, 0.0f);
 
 			//Northwest to southwest
-			if(onBounds(chunkPos.x, 0, transformer.xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x, 0, transformer.xChunkBoundMax, transformer.xWidth)) {
+			if(onBounds(chunkPos.x, 0, xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x, 0, xChunkBoundMax, transformer.xWidth)) {
 				vertexConsumer.addVertex(matrix4f, h, l, i).setColor(PURPLE);
 				vertexConsumer.addVertex(matrix4f, h, l, i + 16.0f).setColor(PURPLE);
 			}
@@ -160,7 +165,7 @@ public class ChunkBorderRendererMixin {
 			}
 
 			//Southwest to southeast
-			if(onBounds(chunkPos.z + 1, 0, transformer.zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z + 1, 0, transformer.zChunkBoundMax, transformer.zWidth)) {
+			if(onBounds(chunkPos.z + 1, 0, zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z + 1, 0, zChunkBoundMax, transformer.zWidth)) {
 				vertexConsumer.addVertex(matrix4f, h, l, i + 16.0f).setColor(PURPLE);
 				vertexConsumer.addVertex(matrix4f, h + 16.0f, l, i + 16.0f).setColor(PURPLE);
 			}
@@ -170,7 +175,7 @@ public class ChunkBorderRendererMixin {
 			}
 
 			//Southeast to northeast
-			if(onBounds(chunkPos.x + 1, 0, transformer.xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x + 1, 0, transformer.xChunkBoundMax, transformer.xWidth)) {
+			if(onBounds(chunkPos.x + 1, 0, xChunkBoundMin, transformer.xWidth) || onBounds(chunkPos.x + 1, 0, xChunkBoundMax, transformer.xWidth)) {
 				vertexConsumer.addVertex(matrix4f, h + 16.0f, l, i + 16.0f).setColor(PURPLE);
 				vertexConsumer.addVertex(matrix4f, h + 16.0f, l, i).setColor(PURPLE);
 			}
@@ -180,7 +185,7 @@ public class ChunkBorderRendererMixin {
 			}
 
 			//Northeast to northwest
-			if(onBounds(chunkPos.z, 0, transformer.zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z, 0, transformer.zChunkBoundMax, transformer.zWidth)) {
+			if(onBounds(chunkPos.z, 0, zChunkBoundMin, transformer.zWidth) || onBounds(chunkPos.z, 0, zChunkBoundMax, transformer.zWidth)) {
 				vertexConsumer.addVertex(matrix4f, h + 16.0f, l, i).setColor(PURPLE);
 				vertexConsumer.addVertex(matrix4f, h, l, i).setColor(PURPLE);
 			}

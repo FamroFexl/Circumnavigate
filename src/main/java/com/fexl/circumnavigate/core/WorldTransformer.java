@@ -3,7 +3,6 @@
 package com.fexl.circumnavigate.core;
 
 import com.fexl.circumnavigate.options.DimensionWrappingSettings;
-import com.fexl.circumnavigate.options.WorldWrappingSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
@@ -18,37 +17,9 @@ import java.util.List;
  * Stores wrapping constants and provides world-wrapping operations.
  */
 public class WorldTransformer {
-
-	public final int xChunkBoundMin;
-	public final int xChunkBoundMax;
-
-	public final int zChunkBoundMin;
-	public final int zChunkBoundMax;
-
-	public final int xCoordBoundMin;
-	public final int xCoordBoundMax;
-
-	public final int zCoordBoundMin;
-	public final int zCoordBoundMax;
-
-	public final int xBlockBoundMin;
-	public final int xBlockBoundMax;
-
-	public final int zBlockBoundMin;
-	public final int zBlockBoundMax;
-
-	//Only one can be set (non-zero) at a time.
-	//TODO: Implement chunk border shifting.
-	public final int xShift;
-	public final int zShift;
-
 	public final int xWidth;
 
 	public final int zWidth;
-
-	public final int xBlockWidth;
-
-	public final int zBlockWidth;
 
 	public final int centerX;
 
@@ -63,7 +34,7 @@ public class WorldTransformer {
 
 	public static final int invalidPos = ChunkPos.getX(ChunkPos.INVALID_CHUNK_POS)+10000;
 
-	public static final WorldTransformer INVALID = new WorldTransformer(invalidPos, true);
+	public static final WorldTransformer INVALID = new WorldTransformer(new DimensionWrappingSettings(-invalidPos, invalidPos, -invalidPos, invalidPos), false);
 
 	//Accessor constants for various standard object operations
 	public final CoordMethods Coord;
@@ -73,52 +44,26 @@ public class WorldTransformer {
 	public final BlockMethods Block;
 	public final AABBMethods AABB;
 
-	public WorldTransformer(int x1, int z1, int x2, int z2, int xShift, int zShift, boolean isClientSide) {
+	public final DimensionWrappingSettings wrappingSettings;
+
+	public WorldTransformer(DimensionWrappingSettings wrappingSettings, boolean isClientSide) {
+		this.wrappingSettings = wrappingSettings;
 		this.isClientSide = isClientSide;
 
-		//Not a wrapped world. Don't wrap.
-		if(Math.abs(x1) == invalidPos || Math.abs(z1) == invalidPos || Math.abs(x2) == invalidPos || Math.abs(z2) == invalidPos) {
-			//Set all values to impossibilities so no wrapping can take place
-			this.xChunkBoundMin = this.zChunkBoundMin = -invalidPos;
-			this.xChunkBoundMax = this.zChunkBoundMax = invalidPos;
-			xShift = zShift = 0;
-
+		if(this.wrappingSettings.xChunkBoundMax() == invalidPos || this.wrappingSettings.zChunkBoundMax() == invalidPos) {
 			this.xTransformer = new FakeCoordinateTransformers();
 			this.zTransformer = new FakeCoordinateTransformers();
 		}
-		//Wrapped world. Wrap it.
 		else {
-			this.xChunkBoundMin = Math.min(x1, x2);
-			this.zChunkBoundMin = Math.min(z1, z2);
-			this.xChunkBoundMax = Math.max(x1, x2);
-			this.zChunkBoundMax = Math.max(z1, z2);
-
-
-			this.xTransformer = new CoordinateTransformers(this.xChunkBoundMin, this.xChunkBoundMax);
-			this.zTransformer = new CoordinateTransformers(this.zChunkBoundMin, this.zChunkBoundMax);
+			this.xTransformer = new CoordinateTransformers(wrappingSettings.xChunkBoundMin(), wrappingSettings.xChunkBoundMax());
+			this.zTransformer = new CoordinateTransformers(wrappingSettings.zChunkBoundMin(), wrappingSettings.zChunkBoundMax());
 		}
-
-		this.xCoordBoundMin = this.xChunkBoundMin * chunkWidth;
-		this.xCoordBoundMax = this.xChunkBoundMax * chunkWidth;
-		this.zCoordBoundMin = this.zChunkBoundMin * chunkWidth;
-		this.zCoordBoundMax = this.zChunkBoundMax * chunkWidth;
-
-		this.xBlockBoundMin = this.xChunkBoundMin * chunkWidth;
-		this.xBlockBoundMax = this.xChunkBoundMax * chunkWidth - 1;
-		this.zBlockBoundMin = this.zChunkBoundMin * chunkWidth;
-		this.zBlockBoundMax = this.zChunkBoundMax * chunkWidth - 1;
-
-		this.xShift = xShift;
-		this.zShift = zShift;
 
 		this.xWidth = xTransformer.Chunk.domainLength;
 		this.zWidth = zTransformer.Chunk.domainLength;
 
-		this.xBlockWidth = this.xWidth*chunkWidth - 1;
-		this.zBlockWidth = this.zWidth*chunkWidth - 1;
-
-		this.centerX = (this.xChunkBoundMax + this.xChunkBoundMin) / 2;
-		this.centerZ = (this.zChunkBoundMax + this.zChunkBoundMin) / 2;
+		this.centerX = (wrappingSettings.xChunkBoundMax() + wrappingSettings.xChunkBoundMin()) / 2;
+		this.centerZ = (wrappingSettings.zChunkBoundMax() + wrappingSettings.zChunkBoundMin()) / 2;
 
 		this.Coord = new CoordMethods();
 		this.Chunk = new ChunkMethods();
@@ -126,39 +71,6 @@ public class WorldTransformer {
 		this.Vector3D = new Vector3DMethods();
 		this.Block = new BlockMethods();
 		this.AABB = new AABBMethods();
-	}
-
-	public WorldTransformer(DimensionWrappingSettings settings, boolean isClientSide) {
-		this(settings.xChunkBoundMin(), settings.zChunkBoundMin(), settings.xChunkBoundMax(), settings.zChunkBoundMax(), isClientSide);
-	}
-
-	/**
-	 * For bounds without chunk shifting.
-	 */
-	public WorldTransformer(int x1, int z1, int x2, int z2, boolean isClientSide) {
-		this(x1, z1, x2, z2, 0, 0, isClientSide);
-	}
-
-	/**
-	 * For bounds centered at (0,0).
-	 */
-	public WorldTransformer(int xChunkBound, int zChunkBound, boolean isClientSide) {
-		this(-xChunkBound, -zChunkBound, xChunkBound, zChunkBound, isClientSide);
-	}
-
-	/**
-	 * For equivalently bounds at (0,0).
-	 */
-	public WorldTransformer(int chunkBound, boolean isClientSide) {
-		this(chunkBound, chunkBound, isClientSide);
-	}
-
-	public WorldTransformer(ChunkPos min, ChunkPos max, int xShift, int zShift, boolean isClientSide) {
-		this(min.x, min.z, max.x, max.z, xShift, zShift, isClientSide);
-	}
-
-	public WorldTransformer(ChunkPos min, ChunkPos max, boolean isClientSide) {
-		this(min, max, 0, 0, isClientSide);
 	}
 
 	public WorldTransformer onlyServerSide() {
@@ -329,6 +241,11 @@ public class WorldTransformer {
 		 * Splits an AABB into up to 4 separate AABB depending on bounds overlap.
 		 */
 		public List<AABB> splitAcrossBounds(AABB original) {
+			int xCoordBoundMin = wrappingSettings.xChunkBoundMin() * chunkWidth;
+			int zCoordBoundMin = wrappingSettings.zChunkBoundMin() * chunkWidth;
+			int xCoordBoundMax = wrappingSettings.xChunkBoundMax() * chunkWidth;
+			int zCoordBoundMax = wrappingSettings.zChunkBoundMax() * chunkWidth;
+
 			double minX = original.minX;
 			double maxX = original.maxX;
 			double minZ = original.minZ;
@@ -392,10 +309,11 @@ public class WorldTransformer {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "[xMin: " + this.xChunkBoundMin + ", xMax: " + this.xChunkBoundMax + ", zMin: " + this.zChunkBoundMin + ", zMax: " + this.zChunkBoundMax + ", xShift: " + this.xShift + ", zShift: " + this.zShift + "]";
+		String shifting = (wrappingSettings.shiftAmount() != 0) ? (", shiftAxis: " + wrappingSettings.shiftAxis() + ", shiftAmount: " + wrappingSettings.shiftAmount()) : "";
+		return this.getClass().getSimpleName() + "[xMin: " + wrappingSettings.xChunkBoundMin() + ", xMax: " + wrappingSettings.xChunkBoundMax() + ", zMin: " + wrappingSettings.zChunkBoundMin() + ", zMax: " + wrappingSettings.zChunkBoundMax() + shifting + "]";
 	}
 
 	public boolean isWrapped() {
-		return !(xChunkBoundMin == -invalidPos || xChunkBoundMax == invalidPos || zChunkBoundMin == -invalidPos || zChunkBoundMax == invalidPos);
+		return !wrappingSettings.equals(INVALID.wrappingSettings);
 	}
 }

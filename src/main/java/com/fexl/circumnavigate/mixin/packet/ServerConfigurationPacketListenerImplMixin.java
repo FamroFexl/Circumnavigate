@@ -23,7 +23,7 @@ public class ServerConfigurationPacketListenerImplMixin {
 			if (level.getTransformer().equals(WorldTransformer.INVALID)) {
 				continue;
 			}
-			ServerConfigurationNetworking.send(thiz, new LevelWrappingPayload(level.dimension(), level.getTransformer()));
+			ServerConfigurationNetworking.send(thiz, new LevelWrappingPayload(level.dimension(), level.getTransformer().wrappingSettings));
 		}
 	}
 }

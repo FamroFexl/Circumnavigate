@@ -23,6 +23,7 @@ import java.util.Locale;
 public class DebugScreenOverlayMixin {
 	@Shadow Minecraft minecraft;
 
+
 	@Inject(method = "getGameInformation()Ljava/util/List;", at = @At("RETURN"))
 	public void getGameInformation(CallbackInfoReturnable<List<String>> cir, @Local BlockPos blockPos, @Local ChunkPos chunkPos, @Local List list) {
 		WorldTransformer transformer = minecraft.level.getTransformer();
@@ -41,8 +42,7 @@ public class DebugScreenOverlayMixin {
 			list.add(addPos++, String.format(Locale.ROOT, "Actual Chunk: %d %d %d", transformer.Chunk.X.wrapToBounds(chunkPos.x), SectionPos.blockToSectionCoord((int)blockPos.getY()), transformer.Chunk.Z.wrapToBounds(chunkPos.z)));
 		}
 		//Shows the wrapping info
-		list.add(addPos, String.format(Locale.ROOT, "Wrapping: MinX: %d, MaxX: %d, MinZ: %d, MaxZ: %d" + ((transformer.xShift != 0 || transformer.zShift != 0) ? ", Axis: %s, Shift: %d" : ""), transformer.xChunkBoundMin, transformer.xChunkBoundMax, transformer.zChunkBoundMin, transformer.zChunkBoundMax, (transformer.xShift != 0) ? "X" : "Y", (transformer.xShift != 0) ? transformer.xShift : transformer.zShift));
-
+		list.add(addPos, String.format(Locale.ROOT, transformer.toString()));
 
 	}
 }
