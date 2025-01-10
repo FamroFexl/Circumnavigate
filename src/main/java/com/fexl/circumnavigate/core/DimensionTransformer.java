@@ -45,14 +45,16 @@ public class DimensionTransformer {
 		this.wrappingSettings = wrappingSettings;
 		this.isClientSide = isClientSide;
 
-		if(this.wrappingSettings.xChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.zChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS) {
+
+		if(this.wrappingSettings.xChunkBoundMin() == -CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.xChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS)
 			this.xTransformer = new FakeCoordinateTransformers();
-			this.zTransformer = new FakeCoordinateTransformers();
-		}
-		else {
+		else
 			this.xTransformer = new CoordinateTransformers(wrappingSettings.xChunkBoundMin(), wrappingSettings.xChunkBoundMax());
+
+		if(this.wrappingSettings.zChunkBoundMin() == -CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.zChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS)
+			this.zTransformer = new FakeCoordinateTransformers();
+		else
 			this.zTransformer = new CoordinateTransformers(wrappingSettings.zChunkBoundMin(), wrappingSettings.zChunkBoundMax());
-		}
 
 		this.xWidth = xTransformer.Chunk.domainLength;
 		this.zWidth = zTransformer.Chunk.domainLength;
@@ -298,8 +300,11 @@ public class DimensionTransformer {
 	 * Adjusts a viewDistance to be within a 3 chunk boundary of a wrapped axis' radius.
 	 */
 	public int limitViewDistance(int viewDistance) {
-		int min = Math.min(this.xWidth / 2, this.zWidth / 2) - CoordinateConstants.MIN_VIEW_DISTANCE_BUFFER;
-		return Math.min(viewDistance, min);
+		return Math.min(viewDistance, getMaxViewDistance());
+	}
+
+	public int getMaxViewDistance() {
+		return Math.min(this.xWidth / 2, this.zWidth / 2) - CoordinateConstants.MIN_VIEW_DISTANCE_BUFFER;
 	}
 
 	@Override

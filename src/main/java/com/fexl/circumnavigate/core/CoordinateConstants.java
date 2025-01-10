@@ -16,4 +16,7 @@ public class CoordinateConstants {
     /** The minimum level size which still allows the minimum default 2-chunk view distance. */
     public static final int MIN_LEVEL_WIDTH = 10;
 
+	/** The minimum acceptable render distance */
+	public static final int MIN_RENDER_DISTANCE = 2;
+
 }
