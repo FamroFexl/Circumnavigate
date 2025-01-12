@@ -346,9 +346,15 @@ public class PacketTransformer {
 
 	private static ClientboundPlayerPositionPacket transformPacket(ClientboundPlayerPositionPacket packet, ServerPlayer player) {
 		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
-		buffer.writeDouble(getClientX(player, packet.getX()));
+
+		if(packet.getRelativeArguments().contains(RelativeMovement.X)) buffer.writeDouble(packet.getX());
+		else buffer.writeDouble(getClientX(player, packet.getX()));
+
 		buffer.writeDouble(packet.getY());
-		buffer.writeDouble(getClientZ(player, packet.getZ()));
+
+		if(packet.getRelativeArguments().contains(RelativeMovement.Z)) buffer.writeDouble(packet.getZ());
+		else buffer.writeDouble(getClientZ(player, packet.getZ()));
+
 		buffer.writeFloat(packet.getYRot());
 		buffer.writeFloat(packet.getXRot());
 		buffer.writeByte(RelativeMovement.pack(packet.getRelativeArguments()));
@@ -358,6 +364,7 @@ public class PacketTransformer {
 	}
 
 	private static ClientboundBlockEntityDataPacket transformPacket(ClientboundBlockEntityDataPacket packet, ServerPlayer player) {
+		System.out.println("ClientboundBlockEntitydataPacket" + getClientBlockPos(player, packet.getPos()));
 		return new ClientboundBlockEntityDataPacket(getClientBlockPos(player, packet.getPos()), packet.getType(), packet.getTag());
 	}
 
@@ -377,7 +384,10 @@ public class PacketTransformer {
 			else if(dataValue.serializer().equals(EntityDataSerializers.OPTIONAL_BLOCK_POS)) {
 				Optional<BlockPos> value = (Optional<BlockPos>) dataValue.value();
 				Optional<BlockPos> newBlockPos = Optional.empty();
-				if(value.isPresent()) newBlockPos = Optional.of(getClientBlockPos(player, value.get()));
+				if(value.isPresent()) {
+					newBlockPos = Optional.of(getClientBlockPos(player, value.get()));
+					System.out.println("Optional: " + value.get());
+				}
 
 				SynchedEntityData.DataValue<Optional<BlockPos>> newValue = new SynchedEntityData.DataValue<>(dataValue.id(), EntityDataSerializers.OPTIONAL_BLOCK_POS, newBlockPos);
 				repackedItems.add(newValue);

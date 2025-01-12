@@ -64,18 +64,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 		return new BlockHitResult(transformer.Vector3D.wrapToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.Block.wrapToBounds(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
-	/**
-	 * For when positions are forced on the client.
-	 */
-	@Inject(method = "teleport(DDDFFLjava/util/Set;)V", at = @At("HEAD"))
-	public void teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeMovement> relativeSet, CallbackInfo ci) {
-		double d = relativeSet.contains(RelativeMovement.X) ? this.player.getX() : 0.0;
-		double f = relativeSet.contains(RelativeMovement.Z) ? this.player.getZ() : 0.0;
-
-		thiz.player.setClientX(x - d);
-		thiz.player.setClientZ(z - f);
-	}
-
 	// TODO: dont override the whole method, just the part that needs to be changed
 	@Inject(method = "handleMovePlayer", at = @At("HEAD"), cancellable = true)
 	public void handleMovePlayer(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
@@ -113,7 +101,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 		//Wrap z to bounds
 		double f = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.Z.wrapToBounds(packet.getZ(thiz.player.getZ())));
 
-		//Set the client relative position
 		thiz.player.setClientX(ServerGamePacketListenerImpl.clampHorizontal(packet.getX(thiz.player.getClientX())));
 		thiz.player.setClientZ(ServerGamePacketListenerImpl.clampHorizontal(packet.getZ(thiz.player.getClientZ())));
 
@@ -200,6 +187,9 @@ public abstract class ServerGamePacketListenerImplMixin {
 
 		if (!thiz.player.noPhysics && !thiz.player.isSleeping() && (bl3 && serverLevel.noCollision(thiz.player, aABB)) || thiz.isPlayerCollidingWithAnythingNew(serverLevel, aABB, d, e, f)) {
 			thiz.teleport(i, j, k, g, h);
+			thiz.player.setClientX(thiz.player.getX());
+			thiz.player.setClientZ(thiz.player.getZ());
+
 			thiz.player.doCheckFallDamage(thiz.player.getX() - i, thiz.player.getY() - j, thiz.player.getZ() - k, packet.isOnGround());
 			return;
 		}
