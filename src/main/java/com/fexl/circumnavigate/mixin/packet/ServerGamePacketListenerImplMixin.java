@@ -20,6 +20,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
@@ -31,6 +32,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Set;
 
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin {
@@ -61,6 +64,18 @@ public abstract class ServerGamePacketListenerImplMixin {
 		return new BlockHitResult(transformer.Vector3D.wrapToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.Block.wrapToBounds(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
+	/**
+	 * For when positions are forced on the client.
+	 */
+	@Inject(method = "teleport(DDDFFLjava/util/Set;)V", at = @At("HEAD"))
+	public void teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeMovement> relativeSet, CallbackInfo ci) {
+		double d = relativeSet.contains(RelativeMovement.X) ? this.player.getX() : 0.0;
+		double f = relativeSet.contains(RelativeMovement.Z) ? this.player.getZ() : 0.0;
+
+		thiz.player.setClientX(x - d);
+		thiz.player.setClientZ(z - f);
+	}
+
 	// TODO: dont override the whole method, just the part that needs to be changed
 	@Inject(method = "handleMovePlayer", at = @At("HEAD"), cancellable = true)
 	public void handleMovePlayer(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
@@ -74,14 +89,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 			thiz.disconnect(Component.translatable("multiplayer.disconnect.invalid_player_movement"));
 			return;
 		}
-		//------------------------------------------------------
-		//Disconnect the player if they move outside of the border bounds
-		/**
-		 if(transformer.xTransformer.isCoordOverLimit(packet.getX(transformer.centerX*16)) || transformer.zTransformer.isCoordOverLimit(packet.getZ(transformer.centerZ*16))) {
-		 thiz.disconnect(Component.translatable("multiplayer.disconnect.invalid_player_movement"));
-		 return;
-		 }**/
-		//------------------------------------------------------
 		ServerLevel serverLevel = player.serverLevel();
 		if (player.wonGame) {
 			return;
@@ -151,6 +158,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 				if (p - o > (double) (r * (float) q) && !thiz.isSingleplayerOwner()) { //!thiz.isSingleplayerOwner()
 					LOGGER.warn("{} moved too quickly! {},{},{}", thiz.player.getName().getString(), l, m, n);
 					thiz.teleport(thiz.player.getX(), thiz.player.getY(), thiz.player.getZ(), thiz.player.getYRot(), thiz.player.getXRot());
+
 					return;
 				}
 			}
