@@ -364,7 +364,6 @@ public class PacketTransformer {
 	}
 
 	private static ClientboundBlockEntityDataPacket transformPacket(ClientboundBlockEntityDataPacket packet, ServerPlayer player) {
-		System.out.println("ClientboundBlockEntitydataPacket" + getClientBlockPos(player, packet.getPos()));
 		return new ClientboundBlockEntityDataPacket(getClientBlockPos(player, packet.getPos()), packet.getType(), packet.getTag());
 	}
 
@@ -386,7 +385,6 @@ public class PacketTransformer {
 				Optional<BlockPos> newBlockPos = Optional.empty();
 				if(value.isPresent()) {
 					newBlockPos = Optional.of(getClientBlockPos(player, value.get()));
-					System.out.println("Optional: " + value.get());
 				}
 
 				SynchedEntityData.DataValue<Optional<BlockPos>> newValue = new SynchedEntityData.DataValue<>(dataValue.id(), EntityDataSerializers.OPTIONAL_BLOCK_POS, newBlockPos);

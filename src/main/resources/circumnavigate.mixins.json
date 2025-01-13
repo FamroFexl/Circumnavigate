@@ -32,6 +32,7 @@
     "entity.LivingEntityMixin",
     "entity.PlayerMixin",
     "entity.ServerEntityMixin",
+    "entity.ServerPlayerMixin",
     "entity.collisions.BlockCollisionsMixin",
     "entity.collisions.EntityGetterMixin",
     "entity.collisions.HitResultMixin",

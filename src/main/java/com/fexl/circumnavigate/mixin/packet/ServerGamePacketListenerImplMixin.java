@@ -187,9 +187,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 
 		if (!thiz.player.noPhysics && !thiz.player.isSleeping() && (bl3 && serverLevel.noCollision(thiz.player, aABB)) || thiz.isPlayerCollidingWithAnythingNew(serverLevel, aABB, d, e, f)) {
 			thiz.teleport(i, j, k, g, h);
-			thiz.player.setClientX(thiz.player.getX());
-			thiz.player.setClientZ(thiz.player.getZ());
-
 			thiz.player.doCheckFallDamage(thiz.player.getX() - i, thiz.player.getY() - j, thiz.player.getZ() - k, packet.isOnGround());
 			return;
 		}
