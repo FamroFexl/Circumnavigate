@@ -10,13 +10,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+@Debug(export = true)
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin {
 	ServerPlayer thiz = (ServerPlayer) (Object) this;
@@ -32,6 +33,9 @@ public abstract class ServerPlayerMixin {
 		return this.serverLevel().getTransformer().Block.unwrapFromBounds(thiz.blockPosition(), blockPos);
 	}
 
+	/**
+	 * Client tracking required when transferring dimensions.
+	 */
 	@Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"))
 	public void changeDimension(DimensionTransition transition, CallbackInfoReturnable<Entity> cir) {
 		thiz.setClientX(transition.pos().x);

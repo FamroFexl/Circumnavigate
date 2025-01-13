@@ -10,7 +10,9 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.VibrationParticleOption;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -25,6 +27,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.gameevent.BlockPositionSource;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 
@@ -102,6 +106,10 @@ public class PacketTransformer {
 
 	private static BlockPos getClientBlockPos(ServerPlayer player, BlockPos packetBlockPos) {
 		return playerTransformer(player).Block.unwrapFromBounds(player.getClientBlock(), packetBlockPos);
+	}
+
+	private static Vec3 getClientVec3(ServerPlayer player, Vec3 packetVec3) {
+		return playerTransformer(player).Vector3D.unwrapFromBounds(player.getClientPosition(), packetVec3);
 	}
 
 	private static int getLimitedDistance(ServerPlayer player, int distance) {
@@ -249,7 +257,18 @@ public class PacketTransformer {
 		buffer.writeFloat(packet.getZDist());
 		buffer.writeFloat(packet.getMaxSpeed());
 		buffer.writeInt(packet.getCount());
-		ParticleTypes.STREAM_CODEC.encode(buffer, packet.getParticle());
+
+		ParticleOptions options = packet.getParticle();
+
+		//This particle is the only known one which uses a position.
+		if(options instanceof VibrationParticleOption particleOption) {
+			Optional<Vec3> position = particleOption.getDestination().getPosition(player.serverLevel());
+			Optional<Vec3> newPosition = Optional.empty();
+			if(position.isPresent()) newPosition = Optional.of(getClientVec3(player, position.get()));
+			if(newPosition.isPresent()) options = new VibrationParticleOption(new BlockPositionSource(new BlockPos(Mth.floor(newPosition.get().x), Mth.floor(newPosition.get().y), Mth.floor(newPosition.get().z))), particleOption.getArrivalInTicks());
+		}
+
+		ParticleTypes.STREAM_CODEC.encode(buffer, options);
 
 		return ClientboundLevelParticlesPacket.STREAM_CODEC.decode(buffer);
 	}
@@ -383,9 +402,7 @@ public class PacketTransformer {
 			else if(dataValue.serializer().equals(EntityDataSerializers.OPTIONAL_BLOCK_POS)) {
 				Optional<BlockPos> value = (Optional<BlockPos>) dataValue.value();
 				Optional<BlockPos> newBlockPos = Optional.empty();
-				if(value.isPresent()) {
-					newBlockPos = Optional.of(getClientBlockPos(player, value.get()));
-				}
+				if(value.isPresent()) newBlockPos = Optional.of(getClientBlockPos(player, value.get()));
 
 				SynchedEntityData.DataValue<Optional<BlockPos>> newValue = new SynchedEntityData.DataValue<>(dataValue.id(), EntityDataSerializers.OPTIONAL_BLOCK_POS, newBlockPos);
 				repackedItems.add(newValue);
