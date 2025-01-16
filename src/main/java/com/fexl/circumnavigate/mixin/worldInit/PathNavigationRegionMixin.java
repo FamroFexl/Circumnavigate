@@ -26,10 +26,4 @@ public class PathNavigationRegionMixin {
 
 		thiz.setTransformer(level.getTransformer().onlyServerSide());
 	}
-
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/ChunkSource;getChunkNow(II)Lnet/minecraft/world/level/chunk/LevelChunk;"))
-	public LevelChunk init(ChunkSource instance, int chunkX, int chunkZ, @Local(argsOnly = true) Level level) {
-		DimensionTransformer transformer = level.getTransformer().onlyServerSide();
-		return instance.getChunkNow(transformer.Chunk.X.wrapToBounds(chunkX), transformer.Chunk.Z.wrapToBounds(chunkZ));
-	}
 }
