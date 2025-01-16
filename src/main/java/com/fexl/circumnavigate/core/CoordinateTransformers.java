@@ -80,6 +80,10 @@ public class CoordinateTransformers {
 			return toCoordUnwrapped - fromCoord;
 		}
 
+		public Integer deltaFromBounds(Integer fromCoord, Integer toCoord) {
+			return deltaFromBounds(fromCoord.doubleValue(), toCoord.doubleValue()).intValue();
+		}
+
 		public Double sqrDistToBounds(Double dist) {
 			if(dist > upperChunkBounds * CoordinateConstants.CHUNK_WIDTH) {
 				dist -= Coord.domainLength;

@@ -218,6 +218,10 @@ public class DimensionTransformer {
 		public boolean isOverBounds(BlockPos blockPos) {
 			return Coord.X.isOverBounds(blockPos.getX()) || Coord.Z.isOverBounds(blockPos.getZ());
 		}
+
+		public BlockPos deltaFromBounds(BlockPos refBlockPos, BlockPos wrappedBlockPos) {
+			return new BlockPos(Coord.X.deltaFromBounds(refBlockPos.getX(), wrappedBlockPos.getX()), wrappedBlockPos.getY(), Coord.Z.deltaFromBounds(refBlockPos.getZ(), wrappedBlockPos.getZ()));
+		}
 	}
 
 	/**

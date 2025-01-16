@@ -23,28 +23,11 @@ public abstract class PathNavigationMixin {
         // if so then get delta though the bounds and append it to the thizPos and pass that as a target pos
 
         HashSet<BlockPos> newTargets = new HashSet<>();
-        for (BlockPos target : targets) {
-            BlockPos newTarget = transformer.Block.unwrapFromBounds(thizPos, target);
 
-            // check if the new target is in the same space as the original target
-            if (newTarget.getX() == target.getX() && newTarget.getZ() == target.getZ()) {
-                newTargets.add(target);
-                continue;
-            }
-
-            System.out.println("Wrapping path navigation target");
-
-            double deltaX = transformer.Coord.X.deltaFromBounds((double) thizPos.getX(), (double) target.getX());
-            double deltaZ = transformer.Coord.Z.deltaFromBounds((double) thizPos.getZ(), (double) target.getZ());
-
-            System.out.println("Delta X: " + deltaX + " Delta Z: " + deltaZ);
-
-            newTarget = new BlockPos((int) (thizPos.getX() + deltaX), target.getY(), (int) (thizPos.getZ() + deltaZ));
-
-            System.out.println("Original target: " + target + " New target: " + newTarget);
-
-            newTargets.add(newTarget);
-        }
+        targets.forEach(target -> {
+            newTargets.add(transformer.Block.unwrapFromBounds(thizPos, target).equals(target) ? target :
+                    transformer.Block.deltaFromBounds(thizPos, target).offset(thizPos.getX(), 0, thizPos.getZ()));
+        });
 
         return original.call(newTargets, regionOffset, offsetUpward, accuracy, followRange);
     }
