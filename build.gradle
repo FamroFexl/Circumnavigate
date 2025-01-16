@@ -137,7 +137,7 @@ jar {
 		attributes([
 				'Specification-Title'     : "Fabric Loader",
 				'Specification-Vendor'    : "FabricMC",
-				'Specification-Version'   : loader_version,
+				'Specification-Version'   : fabric_loader_version,
 				'Implementation-Title'    : mod_name,
 				'Implementation-Version'  : mod_version,
 				'Implementation-Vendor'   : "Famro Fexl",
