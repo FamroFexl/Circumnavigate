@@ -44,15 +44,24 @@ loom {
 }
 
 dependencies {
+	//Minecraft
 	minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.layered() {
+
+	//Mojang mappings
+	mappings loom.layered() {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${parchment_version}@zip")
     }
 
-	modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+	//Fabric Loader
+	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"}
+	//Fabric API
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+	//Java preprocessor
+	annotationProcessor "systems.manifold:manifold-preprocessor:${manifold_preprocessor_version}"
+}
 
 processResources {
 	filesMatching("fabric.mod.json") {
@@ -61,9 +70,9 @@ processResources {
 				"mod_name": mod_name,
 				"mod_version": mod_version,
 				"mc_version": minecraft_version,
-				"loader_version": loader_version,
+				"fabric_loader_version": fabric_loader_version,
 				"java_version": java_version,
-				"fabric_version": fabric_version
+				"fabric_api_version": fabric_api_version
 		)
 	}
 }
@@ -107,6 +116,9 @@ publishMods {
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = 'UTF-8'
 	it.options.release = JAVA_VERSION.ordinal() + 1
+
+	//For enabling java preprocessor on build
+	it.options.compilerArgs += ['-Xplugin:Manifold']
 }
 
 java {
