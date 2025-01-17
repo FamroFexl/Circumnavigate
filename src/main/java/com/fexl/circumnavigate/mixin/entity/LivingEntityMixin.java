@@ -83,7 +83,6 @@ public abstract class LivingEntityMixin {
             return false;
         }
 
-        // FIXME: This is actually wrong, we would need to make custom clip checker to properly check blocks in the wrapped space
         return level.clip(new ClipContext(thizVec, targetEntityVecWrapped, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, thiz)).getType() == BlockHitResult.Type.MISS;
     }
 }
