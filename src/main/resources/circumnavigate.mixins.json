@@ -42,6 +42,7 @@
     "entity.collisions.HitResultMixin",
     "entity.collisions.LevelMixin",
     "entity.entities.FishingHookMixin",
+    "entity.entities.LookControlMixin",
     "entity.entities.monster.AbstractSkeletonMixin",
     "entity.entities.vehicle.AbstractMinecartMixin",
     "gameevent.EuclideanGameEventListenerRegistryMixin",
