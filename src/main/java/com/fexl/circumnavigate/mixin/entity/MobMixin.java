@@ -14,22 +14,20 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(Mob.class)
 public abstract class MobMixin {
 
-    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 0)
+    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), name = "d")
     public double modifyD(double d, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
-        double deltaX = transformer.Coord.X.deltaFromBounds(thiz.getX(), entity.getX());
 
-        return thiz.getX() + deltaX;
+        return transformer.Coord.X.deltaFromBounds(thiz.getX(), entity.getX());
     }
 
-    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 1)
+    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), name = "e")
     public double modifyE(double e, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
-        double deltaZ = transformer.Coord.Z.deltaFromBounds(thiz.getZ(), entity.getZ());
 
-        return thiz.getX() + deltaZ;
+        return transformer.Coord.Z.deltaFromBounds(thiz.getZ(), entity.getZ());
     }
 
     @ModifyReturnValue(method = "isWithinMeleeAttackRange", at = @At("RETURN"))
