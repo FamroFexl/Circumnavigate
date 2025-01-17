@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(Mob.class)
 public abstract class MobMixin {
 
-    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), name = "d")
+    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 0)
     public double modifyD(double d, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
@@ -22,7 +22,7 @@ public abstract class MobMixin {
         return transformer.Coord.X.deltaFromBounds(thiz.getX(), entity.getX());
     }
 
-    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), name = "e")
+    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 1)
     public double modifyE(double e, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();

@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(AbstractSkeleton.class)
 public abstract class AbstractSkeletonMixin {
 
-    @ModifyVariable(method = "performRangedAttack", at = @At("STORE"), name = "d")
+    @ModifyVariable(method = "performRangedAttack", at = @At("STORE"), ordinal = 0)
     public double modifyD(double d, @Local(argsOnly = true) LivingEntity target) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
@@ -20,7 +20,7 @@ public abstract class AbstractSkeletonMixin {
         return transformer.Coord.X.deltaFromBounds(thiz.getX(), target.getX());
     }
 
-    @ModifyVariable(method = "performRangedAttack", at = @At("STORE"), name = "f")
+    @ModifyVariable(method = "performRangedAttack", at = @At("STORE"), ordinal = 2)
     public double modifyF(double f, @Local(argsOnly = true) LivingEntity target) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
