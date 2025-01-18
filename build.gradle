@@ -1,31 +1,25 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
 	id 'fabric-loom' version '1.8-SNAPSHOT'
-	id 'maven-publish'
+	id "me.modmuss50.mod-publish-plugin" version "0.8.3"
 }
 
-version = project.mod_version
-group = project.mod_group
+JavaVersion JAVA_VERSION = JavaVersion.toVersion(java_version)
 
 base {
-	archivesName = project.mod_id
+	archivesName = mod_id + "-" + mod_version + "+" + minecraft_version + "-fabric"
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-    repositories {
-        maven {
-            name = 'ParchmentMC'
-            url = 'https://maven.parchmentmc.org'
-        }
-    }
+	maven {
+		name = 'ParchmentMC'
+		url = 'https://maven.parchmentmc.org'
+	}
 }
 
 loom {
-    splitEnvironmentSourceSets()
+	splitEnvironmentSourceSets()
 
 	mods {
 		"circumnavigate" {
@@ -34,70 +28,123 @@ loom {
 		}
 	}
 
-    accessWidenerPath = file("src/main/resources/circumnavigate.accesswidener")
+	accessWidenerPath = file("src/main/resources/circumnavigate.accesswidener")
 
-}
+	runs {
+		client {
+			//Used for debug hot-swapping mixins
+			//vmArgs("-javaagent", "\"sponge-mixin:x.x.x.jar\"")
 
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.21:2024.11.10@zip")
-    }
+			//Used for debug hot-swapping fields, methods, and classes
+			//vmArg("-XX:+AllowEnhancedClassRedefinition")
 
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
-	// Uncomment the following line to enable the deprecated Fabric API modules. 
-	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
-
-	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
-}
-
-processResources {
-	inputs.property "mod_version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "mod_version": project.version
+			programArgs("--width", "1280", "--height", "720", "--username", "dev")
+		}
 	}
 }
 
+dependencies {
+	//Minecraft
+	minecraft "com.mojang:minecraft:${minecraft_version}"
+
+	//Mojang mappings
+	mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_version}@zip")
+    }
+
+	//Fabric Loader
+	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+
+	//Fabric API
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+	//Java preprocessor
+	annotationProcessor "systems.manifold:manifold-preprocessor:${manifold_preprocessor_version}"
+}
+
+processResources {
+	filesMatching("fabric.mod.json") {
+		expand (
+				"mod_id": mod_id,
+				"mod_name": mod_name,
+				"mod_version": mod_version,
+				"mc_version": minecraft_version,
+				"fabric_loader_version": fabric_loader_version,
+				"java_version": java_version,
+				"fabric_api_version": fabric_api_version
+		)
+	}
+}
+
+publishMods {
+	file = remapJar.archiveFile
+	displayName = mod_version + "+" + minecraft_version + "-fabric"
+	changelog = file("CHANGELOG.md").getText()
+	version = mod_version
+	type = ReleaseType.of(mod_stage)
+	modLoaders.add("fabric")
+
+	modrinth {
+		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+		projectId = "hyNSf1Ht"
+		minecraftVersions.add(minecraft_version)
+
+		requires("fabric-api")
+	}
+
+	curseforge {
+		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+		projectId = "990175"
+		minecraftVersions.add(minecraft_version)
+
+		clientRequired = false
+		serverRequired = true
+
+		requires("fabric-api")
+	}
+
+	github {
+		accessToken = providers.environmentVariable("GITHUB_TOKEN")
+		repository = "FamroFexl/Circumnavigate"
+		commitish = "develop"
+		tagName = mod_version + (mod_stage != "alpha" || mod_stage != "beta") ? "" : "-" + mod_stage
+	}
+
+}
+
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.encoding = 'UTF-8'
+	it.options.release = JAVA_VERSION.ordinal() + 1
+
+	//For enabling java preprocessor on build
+	it.options.compilerArgs += ['-Xplugin:Manifold']
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+	//withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JAVA_VERSION
+	targetCompatibility = JAVA_VERSION
 }
 
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
 	}
-}
 
-// configure the maven publication
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
+	manifest {
+		attributes([
+				'Specification-Title'     : "Fabric Loader",
+				'Specification-Vendor'    : "FabricMC",
+				'Specification-Version'   : fabric_loader_version,
+				'Implementation-Title'    : mod_name,
+				'Implementation-Version'  : mod_version,
+				'Implementation-Vendor'   : "Famro Fexl",
+				'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+				'Timestamp'               : System.currentTimeMillis(),
+				'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+				'Built-On-Minecraft'      : minecraft_version
+		])
 	}
 }
