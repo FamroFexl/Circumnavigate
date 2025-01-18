@@ -10,11 +10,12 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(Mob.class)
 public abstract class MobMixin {
 
-    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 0)
+    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 0, slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;getEyeY()D")))
     public double modifyD(double d, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
@@ -22,7 +23,7 @@ public abstract class MobMixin {
         return transformer.Coord.X.deltaFromBounds(thiz.getX(), entity.getX());
     }
 
-    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 1)
+    @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 1, slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;getEyeY()D")))
     public double modifyE(double e, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
         DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
