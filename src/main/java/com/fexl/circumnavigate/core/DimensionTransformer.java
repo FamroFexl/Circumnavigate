@@ -71,13 +71,11 @@ public class DimensionTransformer {
 	}
 
 	public DimensionTransformer onlyServerSide() {
-		if(!isClientSide) return this;
-		return DISABLED;
+		return isClientSide ? DISABLED : this;
 	}
 
 	public DimensionTransformer onlyClientSide() {
-		if(isClientSide) return this;
-		return DISABLED;
+		return isClientSide ? this : DISABLED;
 	}
 
 	/**
