@@ -26,6 +26,8 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	@Unique
 	ServerLevel serverLevel;
 
+	@Mutable @Shadow @Final private AABB box;
+
 	/**
 	 * Provides the serverLevel, if it exists.
 	 */
@@ -33,6 +35,10 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	private void wrap3DCursor(CollisionGetter collisionGetter, Entity entity, AABB box, boolean onlySuffocatingBlocks, BiFunction<BlockPos.MutableBlockPos, VoxelShape, T> resultProvider, CallbackInfo ci) {
 		serverLevel = null;
 		if(collisionGetter instanceof ServerLevel level) serverLevel = level;
+
+		if(entity != null) {
+			this.box = entity.level().getTransformer().AABB.unwrapFromBounds(entity.getBoundingBox(), box);
+		}
 	}
 
 	/**
