@@ -1,25 +1,22 @@
 package com.fexl.circumnavigate.mixin.entity;
 
 import com.fexl.circumnavigate.core.DimensionTransformer;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
+	LivingEntity thiz = (LivingEntity) (Object) this;
 
     // Fix knockback miscalculation
     @Unique private double knockbackDeltaX;
@@ -62,27 +59,8 @@ public abstract class LivingEntityMixin {
         original.call(x, z);
     }
 
-    // Required for entities to detect and attack players from wrapped space
-    @ModifyReturnValue(method = "hasLineOfSight", at = @At(value = "RETURN"))
-    public boolean hasLineOfSight(boolean original, @Local(argsOnly = true) Entity targetEntity) {
-        if (original) { // if its already true we dont need to revalidate
-            return true;
-        }
-
-        LivingEntity thiz = (LivingEntity) (Object) this;
-        Level level = thiz.level();
-        DimensionTransformer transformer = level.getTransformer().onlyServerSide();
-        double deltaX = transformer.Coord.X.deltaFromBounds(thiz.getX(), targetEntity.getX());
-        double deltaZ = transformer.Coord.Z.deltaFromBounds(thiz.getZ(), targetEntity.getZ());
-        Vec3 thizVec = new Vec3(thiz.getX(), thiz.getY(), thiz.getZ());
-        Vec3 targetEntityVecWrapped = thizVec.add(deltaX, 0, deltaZ); // add delta to the thiz vec and call it a day
-
-        boolean nearEnough = !(targetEntityVecWrapped.distanceTo(thizVec) > 128.0);
-
-        if (!nearEnough) {
-            return false;
-        }
-
-        return level.clip(new ClipContext(thizVec, targetEntityVecWrapped, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, thiz)).getType() == BlockHitResult.Type.MISS;
-    }
+	@Redirect(method = "hasLineOfSight", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceTo(Lnet/minecraft/world/phys/Vec3;)D"))
+	public double modifyDistTo(Vec3 instance, Vec3 vec) {
+		return thiz.level().getTransformer().Vector3D.unwrapFromBounds(vec, instance).distanceTo(vec);
+	}
 }
