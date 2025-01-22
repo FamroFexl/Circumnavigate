@@ -3,6 +3,7 @@
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.core.DimensionTransformer;
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import com.fexl.circumnavigate.storage.WrappingDataStorage;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -30,6 +31,7 @@ public class ServerLevelMixin {
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"))
 	public void init(MinecraftServer server, Executor dispatcher, LevelStorageSource.LevelStorageAccess levelStorageAccess, ServerLevelData serverLevelData, ResourceKey<Level> dimension, LevelStem levelStem, ChunkProgressListener progressListener, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, RandomSequences randomSequences, CallbackInfo ci) {
 		ServerLevel thiz = (ServerLevel) (Object) this;
+		TransformerRequests.noiseLevel = thiz;
 
 		if(WrappingDataStorage.settings != null && WrappingDataStorage.settings.dimensions().containsKey(dimension)) {
 			thiz.setTransformer(new DimensionTransformer(WrappingDataStorage.settings.dimensions().get(dimension), false));

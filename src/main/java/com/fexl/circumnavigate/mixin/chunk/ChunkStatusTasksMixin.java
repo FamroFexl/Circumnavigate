@@ -4,6 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.chunk;
 
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.server.level.GenerationChunkHolder;
 import net.minecraft.util.StaticCache2D;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -28,12 +29,18 @@ public class ChunkStatusTasksMixin {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
 		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
+		}
 	}
 
 	@Inject(method = "generateStructureReferences", at = @At("HEAD"), cancellable = true)
 	private static void generateStructureReferences(WorldGenContext worldGenContext, ChunkStep step, StaticCache2D<GenerationChunkHolder> cache, ChunkAccess chunk, CallbackInfoReturnable<CompletableFuture<ChunkAccess>> cir) {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
+		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
 		}
 	}
 
@@ -42,12 +49,18 @@ public class ChunkStatusTasksMixin {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
 		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
+		}
 	}
 
 	@Inject(method = "generateNoise", at = @At("HEAD"), cancellable = true)
 	private static void generateNoise(WorldGenContext worldGenContext, ChunkStep step, StaticCache2D<GenerationChunkHolder> cache, ChunkAccess chunk, CallbackInfoReturnable<CompletableFuture<ChunkAccess>> cir) {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
+		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
 		}
 	}
 
@@ -56,12 +69,18 @@ public class ChunkStatusTasksMixin {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
 		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
+		}
 	}
 
 	@Inject(method = "generateCarvers", at = @At("HEAD"), cancellable = true)
 	private static void generateCarvers(WorldGenContext worldGenContext, ChunkStep step, StaticCache2D<GenerationChunkHolder> cache, ChunkAccess chunk, CallbackInfoReturnable<CompletableFuture<ChunkAccess>> cir) {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
+		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
 		}
 	}
 
@@ -70,6 +89,9 @@ public class ChunkStatusTasksMixin {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
 		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
+		}
 	}
 
 	@Inject(method = "generateSpawn", at = @At("HEAD"), cancellable = true)
@@ -77,5 +99,16 @@ public class ChunkStatusTasksMixin {
 		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
 			cir.setReturnValue(CompletableFuture.completedFuture(chunk));
 		}
+		else {
+			TransformerRequests.noiseLevel = worldGenContext.level();
+		}
+	}
+
+	private boolean overBounds(WorldGenContext worldGenContext, ChunkAccess chunk) {
+		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) {
+			return true;
+		}
+		TransformerRequests.noiseLevel = worldGenContext.level();
+		return false;
 	}
 }
