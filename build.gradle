@@ -5,7 +5,7 @@ plugins {
 	id "me.modmuss50.mod-publish-plugin" version "0.8.3"
 }
 
-JavaVersion JAVA_VERSION = JavaVersion.toVersion(java_version)
+JavaLanguageVersion JAVA_VERSION = JavaLanguageVersion.of(java_version)
 
 base {
 	archivesName = mod_id + "-" + mod_version + "+" + minecraft_version + "-fabric"
@@ -80,7 +80,7 @@ processResources {
 publishMods {
 	file = remapJar.archiveFile
 	displayName = mod_version + "+" + minecraft_version + "-fabric"
-	changelog = file("CHANGELOG.md").getText()
+	//changelog = file("CHANGELOG.md").getText()
 	version = mod_version
 	type = ReleaseType.of(mod_stage)
 	modLoaders.add("fabric")
@@ -115,7 +115,7 @@ publishMods {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = 'UTF-8'
-	it.options.release = JAVA_VERSION.ordinal() + 1
+	it.options.release = JAVA_VERSION.asInt()
 
 	//For enabling java preprocessor on build
 	it.options.compilerArgs += ['-Xplugin:Manifold']

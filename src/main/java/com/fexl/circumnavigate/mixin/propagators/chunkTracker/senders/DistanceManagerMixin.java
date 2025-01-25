@@ -2,7 +2,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-package com.fexl.circumnavigate.mixin.chunk.propagators.ChunkTracker;
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+package com.fexl.circumnavigate.mixin.propagators.chunkTracker.senders;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
 import com.fexl.circumnavigate.core.DimensionTransformer;
@@ -10,6 +18,9 @@ import net.minecraft.server.level.DistanceManager;
 import net.minecraft.server.level.TickingTracker;
 import org.spongepowered.asm.mixin.*;
 
+/**
+ * Pass to {@link com.fexl.circumnavigate.mixin.chunk.ChunkTrackerMixin} instances
+ */
 @Mixin(DistanceManager.class)
 public abstract class DistanceManagerMixin implements TransformerAccessor {
 	@Mutable @Shadow @Final private DistanceManager.FixedPlayerDistanceChunkTracker naturalSpawnChunkCounter;

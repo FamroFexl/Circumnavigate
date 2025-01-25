@@ -4,7 +4,6 @@ package com.fexl.circumnavigate.mixin.client.worldInit;
 
 import com.fexl.circumnavigate.client.gui.screens.WorldWrappingSettingsScreen;
 import com.fexl.circumnavigate.client.storage.CreateWorldButtons;
-import com.fexl.circumnavigate.storage.WrappingDataStorage;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.CycleButton;
@@ -34,9 +33,6 @@ public class WorldTabMixin {
 		rowHelper.addChild(CreateWorldButtons.wrappingButton = wrappingButton.create(0, 0, 44, 20, (Component) Component.empty(), (cycleButton, state) -> {
 			if(cycleButton.getValue()) {
 				Minecraft.getInstance().setScreen(new WorldWrappingSettingsScreen(createWorldScreen, cycleButton));
-			}
-			else {
-				WrappingDataStorage.settings = null;
 			}
 		}), new LayoutSettings.LayoutSettingsImpl().alignHorizontallyRight());
 	}

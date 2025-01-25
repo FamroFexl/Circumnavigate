@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-package com.fexl.circumnavigate.mixin.chunk.propagators.ChunkTracker;
+package com.fexl.circumnavigate.mixin.propagators.chunkTracker.providers;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
 import com.fexl.circumnavigate.core.DimensionTransformer;

@@ -10,11 +10,11 @@ package com.fexl.circumnavigate.client.gui.screens;
 
 import com.fexl.circumnavigate.client.gui.components.MutableCycleButton;
 import com.fexl.circumnavigate.core.CoordinateConstants;
+import com.fexl.circumnavigate.accessors.WorldWrappingSettingsAccessor;
 import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import com.fexl.circumnavigate.options.WorldWrappingPresets;
 import com.fexl.circumnavigate.options.WorldWrappingSettings;
 import com.fexl.circumnavigate.options.WrappingOptions;
-import com.fexl.circumnavigate.storage.WrappingDataStorage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
@@ -26,12 +26,12 @@ import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,7 @@ import java.util.Map;
  * A screen for entering world wrapping settings during world creation.
  */
 public class WorldWrappingSettingsScreen extends Screen {
-	protected Screen lastScreen;
+	protected CreateWorldScreen createWorldScreen;
 
 	protected Tooltip doneButtonDefault = Tooltip.create(Component.literal("Save wrapping settings"));
 	protected Tooltip offsetInfo = Tooltip.create(Component.literal("Offsets wrapping from 0,0 so edges can't be detected by players"));
@@ -85,12 +85,12 @@ public class WorldWrappingSettingsScreen extends Screen {
 
 	/**
 	 *
-	 * @param lastScreen returned to when the wrapping settings are approved
+	 * @param createWorldScreen returned to when the wrapping settings are approved
 	 * @param wrappingSettingsButton set to true if wrapping settings were entered and approved. False otherwise.
 	 */
-	public WorldWrappingSettingsScreen(@Nullable Screen lastScreen, CycleButton wrappingSettingsButton) {
+	public WorldWrappingSettingsScreen(CreateWorldScreen createWorldScreen, CycleButton wrappingSettingsButton) {
 		super(Component.literal("None"));
-		this.lastScreen = lastScreen;
+		this.createWorldScreen = createWorldScreen;
 		this.wrappingSettingsButton = wrappingSettingsButton;
 	}
 
@@ -184,8 +184,8 @@ public class WorldWrappingSettingsScreen extends Screen {
 		this.shiftAmount = getNumericEditBox(-CoordinateConstants.DISABLING_CHUNK_POS, CoordinateConstants.DISABLING_CHUNK_POS);
 		this.doneButton = Button.builder(CommonComponents.GUI_DONE, button -> {
 			this.wrappingSettingsButton.setValue(true);
-			WrappingDataStorage.settings = getWrappingSettings();
-			this.minecraft.setScreen(lastScreen);
+			((WorldWrappingSettingsAccessor) (Object) createWorldScreen).setWorldWrappingSettings(getWrappingSettings());
+			this.minecraft.setScreen(createWorldScreen);
 
 		}).build();
 		this.presets = CycleButton.builder(WorldWrappingPresets.WorldWrappingPreset::getName)
@@ -389,7 +389,7 @@ public class WorldWrappingSettingsScreen extends Screen {
 
 		bottomButtons.addChild(Button.builder(CommonComponents.GUI_CANCEL, button -> {
 			this.wrappingSettingsButton.setValue(false);
-			this.minecraft.setScreen(lastScreen);
+			this.minecraft.setScreen(createWorldScreen);
 		}).build());
 
 		return bottomButtons;

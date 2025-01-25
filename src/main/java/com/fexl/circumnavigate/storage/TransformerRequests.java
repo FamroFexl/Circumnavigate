@@ -2,6 +2,7 @@
 
 package com.fexl.circumnavigate.storage;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 
 /**
@@ -9,4 +10,6 @@ import net.minecraft.server.level.ServerLevel;
  */
 public class TransformerRequests {
 	public static ServerLevel chunkMapLevel;
+	public static MinecraftServer server = null;
+	public static ServerLevel noiseLevel;
 }

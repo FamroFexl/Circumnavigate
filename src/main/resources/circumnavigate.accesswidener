@@ -21,6 +21,8 @@ accessible	field	net/minecraft/client/multiplayer/ClientPacketListener level Lne
 
 accessible class net/minecraft/server/level/ServerChunkCache$MainThreadExecutor
 
+accessible field net/minecraft/world/level/storage/DerivedLevelData wrapped Lnet/minecraft/world/level/storage/ServerLevelData;
+
 accessible method net/minecraft/client/multiplayer/ClientLevel getBlockStatePredictionHandler ()Lnet/minecraft/client/multiplayer/prediction/BlockStatePredictionHandler;
 #-----------------------------------------------------------
 accessible method net/minecraft/server/network/ServerGamePacketListenerImpl containsInvalidValues (DDDFF)Z
@@ -90,3 +92,7 @@ accessible method net/minecraft/network/protocol/game/ClientboundBlockEntityData
 accessible field net/minecraft/world/entity/ai/navigation/PathNavigation mob Lnet/minecraft/world/entity/Mob;
 accessible field net/minecraft/world/entity/ai/navigation/PathNavigation level Lnet/minecraft/world/level/Level;
 accessible method net/minecraft/world/entity/LivingEntity getHitbox ()Lnet/minecraft/world/phys/AABB;
+
+accessible class net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler
+accessible field net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler$RarityValueMapper mapper Lit/unimi/dsi/fastutil/doubles/Double2DoubleFunction;
+

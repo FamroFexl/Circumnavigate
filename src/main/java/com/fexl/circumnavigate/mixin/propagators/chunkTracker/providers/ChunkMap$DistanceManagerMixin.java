@@ -6,9 +6,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-package com.fexl.circumnavigate.mixin.chunk.propagators.ChunkTracker;
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+/*
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+package com.fexl.circumnavigate.mixin.propagators.chunkTracker.providers;
 
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
+import com.fexl.circumnavigate.mixin.propagators.chunkTracker.senders.DistanceManagerMixin;
 import net.minecraft.server.level.ChunkMap;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,6 +26,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.Executor;
 
+/**
+ * Pass to {@link DistanceManagerMixin}
+ */
 @Mixin(ChunkMap.DistanceManager.class)
 public class ChunkMap$DistanceManagerMixin extends DistanceManagerMixin {
 	@Inject(method = "<init>", at = @At("TAIL"))
