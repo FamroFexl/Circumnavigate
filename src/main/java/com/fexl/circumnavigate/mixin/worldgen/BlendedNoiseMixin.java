@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.worldgen;
 
-import com.fexl.circumnavigate.injected.NoiseScaling;
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlendedNoise.class)
 public class BlendedNoiseMixin {
@@ -45,7 +46,12 @@ public class BlendedNoiseMixin {
 	}
 
 
-	public double compute(DensityFunction.FunctionContext context) {
+	@Inject(method = "compute", at = @At("HEAD"), cancellable = true)
+	public void compute(DensityFunction.FunctionContext context, CallbackInfoReturnable<Double> cir) {
+		if(!TransformerRequests.noiseLevel.getTransformer().wrappingSettings.useWrappedWorldGen()) {
+			return;
+		}
+
 		double d = context.blockX() * this.xzMultiplier;
 		double e = context.blockY() * this.yMultiplier;
 		double f = context.blockZ() * this.xzMultiplier;
@@ -63,8 +69,6 @@ public class BlendedNoiseMixin {
 		for (int p = 0; p < 8; p++) {
 			ImprovedNoise improvedNoise = this.mainNoise.getOctaveNoise(p);
 			if (improvedNoise != null) {
-				((NoiseScaling) (Object) improvedNoise).setMul(this.xzFactor / (o * xzMultiplier));
-				//n += improvedNoise.noise(PerlinNoise.wrap(g * o), PerlinNoise.wrap(h * o), PerlinNoise.wrap(i * o), k * o, h * o) / o;
 				n += improvedNoise.noise(context.blockX(), PerlinNoise.wrap(h * o), context.blockZ(), k * o, h * o) / o;
 			}
 
@@ -84,8 +88,6 @@ public class BlendedNoiseMixin {
 			if (!bl2) {
 				ImprovedNoise improvedNoise2 = this.minLimitNoise.getOctaveNoise(r);
 				if (improvedNoise2 != null) {
-					((NoiseScaling) (Object) improvedNoise2).setMul(this.xzMultiplier * o);
-					//l += improvedNoise2.noise(s, t, u, v, e * o) / o;
 					l += improvedNoise2.noise(context.blockX(), t, context.blockZ(), v, e * o) / o;
 				}
 			}
@@ -93,8 +95,6 @@ public class BlendedNoiseMixin {
 			if (!bl3) {
 				ImprovedNoise improvedNoise2 = this.maxLimitNoise.getOctaveNoise(r);
 				if (improvedNoise2 != null) {
-					((NoiseScaling) (Object) improvedNoise2).setMul(this.xzMultiplier * o);
-					//m += improvedNoise2.noise(s, t, u, v, e * o) / o;
 					m += improvedNoise2.noise(context.blockX(), t, context.blockZ(), v, e * o) / o;
 				}
 			}
@@ -102,6 +102,6 @@ public class BlendedNoiseMixin {
 			o /= 2.0;
 		}
 
-		return Mth.clampedLerp(l / 512.0, m / 512.0, q) / 128.0;
+		cir.setReturnValue(Mth.clampedLerp(l / 512.0, m / 512.0, q) / 128.0);
 	}
 }

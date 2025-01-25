@@ -3,8 +3,9 @@
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import com.fexl.circumnavigate.core.DimensionTransformer;
+import com.fexl.circumnavigate.accessors.WorldWrappingSettingsAccessor;
+import com.fexl.circumnavigate.options.WorldWrappingSettings;
 import com.fexl.circumnavigate.storage.TransformerRequests;
-import com.fexl.circumnavigate.storage.WrappingDataStorage;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -12,7 +13,9 @@ import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.world.RandomSequences;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,20 +27,30 @@ import java.util.concurrent.Executor;
 
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
-
 	/**
 	 * Set the wrapping settings for each level when it is created as quickly as possible.
 	 */
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"))
 	public void init(MinecraftServer server, Executor dispatcher, LevelStorageSource.LevelStorageAccess levelStorageAccess, ServerLevelData serverLevelData, ResourceKey<Level> dimension, LevelStem levelStem, ChunkProgressListener progressListener, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, RandomSequences randomSequences, CallbackInfo ci) {
 		ServerLevel thiz = (ServerLevel) (Object) this;
-		TransformerRequests.noiseLevel = thiz;
 
-		if(WrappingDataStorage.settings != null && WrappingDataStorage.settings.dimensions().containsKey(dimension)) {
-			thiz.setTransformer(new DimensionTransformer(WrappingDataStorage.settings.dimensions().get(dimension), false));
+		//Get world wrapping settings from PrimaryLevelData
+		WorldWrappingSettings settings = null;
+		if(serverLevelData instanceof PrimaryLevelData primaryLevelData) {
+			settings = ((WorldWrappingSettingsAccessor) (Object) primaryLevelData).getWorldWrappingSettings();
+		}
+		else if(serverLevelData instanceof DerivedLevelData derivedLevelData) {
+			settings = ((WorldWrappingSettingsAccessor) (Object) derivedLevelData.wrapped).getWorldWrappingSettings();
+		}
+
+		//Assign transformers from world wrapping settings
+		if(settings != null && settings.dimensions().containsKey(dimension)) {
+			thiz.setTransformer(new DimensionTransformer(settings.dimensions().get(dimension), false));
 		}
 		else {
 			thiz.setTransformer(DimensionTransformer.DISABLED);
 		}
+
+		TransformerRequests.noiseLevel = thiz;
 	}
 }

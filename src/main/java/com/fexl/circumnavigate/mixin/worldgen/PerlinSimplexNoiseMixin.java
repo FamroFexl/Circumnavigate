@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.worldgen;
 
-import com.fexl.circumnavigate.injected.NoiseScaling;
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PerlinSimplexNoise.class)
 public class PerlinSimplexNoiseMixin {
@@ -30,18 +31,12 @@ public class PerlinSimplexNoiseMixin {
 	public void init(RandomSource random, IntSortedSet octaves, CallbackInfo ci) {
 		source = random.nextLong();
 	}
-	
-	public double getValue(double x, double y, boolean useNoiseOffsets) {
-		/**
-		double xa = x / (xWidth);
-		double za = y / (zWidth);
 
-		double rxa = xa * 2.0 * Math.PI;
-		double rza = za * 2.0 * Math.PI;
-
-		double noise4 = OpenSimplex2S.noise4_Fallback(source, Math.sin(rxa), Math.cos(rxa), Math.sin(rza), Math.cos(rza));
-		double noise1 = OpenSimplex2S.noise2(source, 0, y);
-		return (noise4 + noise1)/2.0;**/
+	@Inject(method = "getValue", at= @At("HEAD"), cancellable = true)
+	public void getValue(double x, double y, boolean useNoiseOffsets, CallbackInfoReturnable<Double> cir) {
+		if(!TransformerRequests.noiseLevel.getTransformer().wrappingSettings.useWrappedWorldGen()) {
+			return;
+		}
 
 		double d = 0.0;
 		double e = this.highestFreqInputFactor;
@@ -49,14 +44,14 @@ public class PerlinSimplexNoiseMixin {
 
 		for (SimplexNoise simplexNoise : this.noiseLevels) {
 			if (simplexNoise != null) {
-				((NoiseScaling) (Object) simplexNoise).setMul(e);
-				d += simplexNoise.getValue(x * e + (useNoiseOffsets ? simplexNoise.xo : 0.0), y * e + (useNoiseOffsets ? simplexNoise.yo : 0.0)) * f;
+				double finalE = e;
+				d += simplexNoise.getValue(x, y) * f;
 			}
 
 			e /= 2.0;
 			f *= 2.0;
 		}
 
-		return d;
+		cir.setReturnValue(d);
 	}
 }

@@ -4,7 +4,6 @@
 
 package com.fexl.circumnavigate.mixin.worldgen.other.densityFunctions;
 
-import com.fexl.circumnavigate.injected.NoiseScaling;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.Nullable;
@@ -12,27 +11,26 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.function.Function;
+
 @Mixin(targets = "net.minecraft.world.level.levelgen.DensityFunction$NoiseHolder")
-public class DensityFunction$NoiseHolderMixin implements NoiseScaling {
+public class DensityFunction$NoiseHolderMixin {
 	@Shadow @Final private Holder<NormalNoise.NoiseParameters> noiseData;
 	@Shadow @Final private @Nullable NormalNoise noise;
 
 	private long lastTime =0;
 
+	/**
 	public double getValue(double x, double y, double z) {
 		if(this.noise == null) {
 			return 0.0;
 		}
 		else {
-			NoiseScaling scaledNoise = ((NoiseScaling) (Object) noise);
-			scaledNoise.setXMul(xMul);
-			scaledNoise.setZMul(zMul);
-			scaledNoise.setXAdd(xAdd);
-			scaledNoise.setZAdd(zAdd);
-
 			return this.noise.getValue(x, y, z);
 		}
-	}
+	}**/
+
+	/**
 
 	double xMul = 1;
 	double zMul = 1;
@@ -57,5 +55,5 @@ public class DensityFunction$NoiseHolderMixin implements NoiseScaling {
 	@Override
 	public void setZAdd(double zAdd) {
 		this.zAdd = zAdd;
-	}
+	}**/
 }

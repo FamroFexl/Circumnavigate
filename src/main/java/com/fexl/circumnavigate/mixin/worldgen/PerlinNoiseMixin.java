@@ -8,7 +8,7 @@
 
 package com.fexl.circumnavigate.mixin.worldgen;
 
-import com.fexl.circumnavigate.injected.NoiseScaling;
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import net.minecraft.util.RandomSource;
@@ -20,9 +20,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PerlinNoise.class)
-public class PerlinNoiseMixin implements NoiseScaling {
+public class PerlinNoiseMixin {
 
 	@Shadow @Final private ImprovedNoise[] noiseLevels;
 	@Shadow @Final private int firstOctave;
@@ -43,7 +44,13 @@ public class PerlinNoiseMixin implements NoiseScaling {
 		source = random.nextLong();
 	}
 
-	public double getValue(double x, double y, double z, double yScale, double yMax, boolean useFixedY) {
+	@Inject(method = "getValue(DDDDDZ)D", at = @At("HEAD"), cancellable = true)
+	public void getValue(double x, double y, double z, double yScale, double yMax, boolean useFixedY, CallbackInfoReturnable<Double> cir) {
+		if(!TransformerRequests.noiseLevel.getTransformer().wrappingSettings.useWrappedWorldGen()) {
+			return;
+		}
+
+
 		double d = 0.0;
 		double e = this.lowestFreqInputFactor;
 		double f = this.lowestFreqValueFactor;
@@ -51,13 +58,6 @@ public class PerlinNoiseMixin implements NoiseScaling {
 		for (int i = 0; i < this.noiseLevels.length; i++) {
 			ImprovedNoise improvedNoise = this.noiseLevels[i];
 			if (improvedNoise != null) {
-				NoiseScaling scaledNoise = ((NoiseScaling) (Object) improvedNoise);
-				scaledNoise.setXMul(e * xMul);
-				scaledNoise.setZMul(e * zMul);
-				scaledNoise.setXAdd(xAdd);
-				scaledNoise.setZAdd(zAdd);
-
-				//double g = improvedNoise.noise(PerlinNoise.wrap(x * e), useFixedY ? -improvedNoise.yo : PerlinNoise.wrap(y * e), PerlinNoise.wrap(z * e), yScale * e, yMax * e);
 				double g = improvedNoise.noise(x, useFixedY ? -improvedNoise.yo : PerlinNoise.wrap(y * e), z, yScale * e, yMax * e);
 				d += this.amplitudes.getDouble(i) * g * f;
 			}
@@ -66,27 +66,6 @@ public class PerlinNoiseMixin implements NoiseScaling {
 			f /= 2.0;
 		}
 
-		return d;
-	}
-
-	double xMul = 1;
-	double zMul = 1;
-	double xAdd = 0;
-	double zAdd = 0;
-
-	public void setXMul(double xMul) {
-		this.xMul = xMul;
-	}
-
-	public void setZMul(double zMul) {
-		this.zMul = zMul;
-	}
-
-	public void setXAdd(double xAdd) {
-		this.xAdd = xAdd;
-	}
-
-	public void setZAdd(double zAdd) {
-		this.zAdd = zAdd;
+		cir.setReturnValue(d);
 	}
 }

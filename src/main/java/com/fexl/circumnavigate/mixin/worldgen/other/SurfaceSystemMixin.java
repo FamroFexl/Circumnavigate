@@ -4,7 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.worldgen.other;
 
-import com.fexl.circumnavigate.injected.NoiseScaling;
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -19,6 +19,9 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SurfaceSystem.class)
 public class SurfaceSystemMixin {
@@ -44,11 +47,18 @@ public class SurfaceSystemMixin {
 	@Shadow @Final private PositionalRandomFactory noiseRandom;
 	@Shadow @Final private NormalNoise surfaceNoise;
 	@Shadow @Final private NormalNoise surfaceSecondaryNoise;
-	
-	private void erodedBadlandsExtension(BlockColumn blockColumn, int x, int z, int height, LevelHeightAccessor level) {
+
+	@Inject(method = "erodedBadlandsExtension", at = @At("HEAD"), cancellable = true)
+	private void erodedBadlandsExtension(BlockColumn blockColumn, int x, int z, int height, LevelHeightAccessor level, CallbackInfo ci) {
+		if(!TransformerRequests.noiseLevel.getTransformer().wrappingSettings.useWrappedWorldGen()) {
+			return;
+		}
+		else {
+			ci.cancel();
+		}
+
 		double d = 0.2;
 
-		((NoiseScaling) (Object) this.badlandsPillarNoise).setMul(0.2);
 		double e = Math.min(
 			Math.abs(this.badlandsSurfaceNoise.getValue((double)x, 0.0, (double)z) * 8.25),
 			this.badlandsPillarNoise.getValue((double)x * 0.2, 0.0, (double)z * 0.2) * 15.0
@@ -56,8 +66,6 @@ public class SurfaceSystemMixin {
 		if (!(e <= 0.0)) {
 			double f = 0.75;
 			double g = 1.5;
-			((NoiseScaling) (Object) this.badlandsPillarRoofNoise).setMul(0.75);
-			//double h = Math.abs(this.badlandsPillarRoofNoise.getValue((double)x * 0.75, 0.0, (double)z * 0.75) * 1.5);
 			double h = Math.abs(this.badlandsPillarRoofNoise.getValue((double)x, 0.0, (double)z) * 1.5);
 			double i = 64.0 + Math.min(e * e * 2.5, Math.ceil(h * 50.0) + 24.0);
 			int j = Mth.floor(i);
@@ -80,17 +88,22 @@ public class SurfaceSystemMixin {
 		}
 	}
 
-	private void frozenOceanExtension(int minSurfaceLevel, Biome biome, BlockColumn blockColumn, BlockPos.MutableBlockPos topWaterPos, int x, int z, int height) {
+	@Inject(method = "frozenOceanExtension", at = @At("HEAD"), cancellable = true)
+	private void frozenOceanExtension(int minSurfaceLevel, Biome biome, BlockColumn blockColumn, BlockPos.MutableBlockPos topWaterPos, int x, int z, int height, CallbackInfo ci) {
+		if(!TransformerRequests.noiseLevel.getTransformer().wrappingSettings.useWrappedWorldGen()) {
+			return;
+		}
+		else {
+			ci.cancel();
+		}
+
 		double d = 1.28;
 
-		((NoiseScaling) (Object) this.icebergPillarNoise).setMul(1.28);
-		//double e = Math.min(Math.abs(this.icebergSurfaceNoise.getValue((double)x, 0.0, (double)z) * 8.25), this.icebergPillarNoise.getValue((double)x * 1.28, 0.0, (double)z * 1.28) * 15.0);
 		double e = Math.min(Math.abs(this.icebergSurfaceNoise.getValue((double)x, 0.0, (double)z) * 8.25), this.icebergPillarNoise.getValue((double)x, 0.0, (double)z) * 15.0);
 		if (!(e <= 1.8)) {
 			double f = 1.17;
 			double g = 1.5;
-			((NoiseScaling) (Object) this.icebergPillarRoofNoise).setMul(1.17);
-			//double h = Math.abs(this.icebergPillarRoofNoise.getValue((double)x * 1.17, 0.0, (double)z * 1.17) * 1.5);
+
 			double h = Math.abs(this.icebergPillarRoofNoise.getValue((double)x, 0.0, (double)z) * 1.5);
 			double i = Math.min(e * e * 1.2, Math.ceil(h * 40.0) + 14.0);
 			if (biome.shouldMeltFrozenOceanIcebergSlightly(topWaterPos.set(x, 63, z))) {

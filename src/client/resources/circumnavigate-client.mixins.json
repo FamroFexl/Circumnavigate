@@ -1,21 +1,20 @@
 {
-	"required": true,
-	"package": "com.fexl.circumnavigate.mixin.client",
-	"compatibilityLevel": "JAVA_21",
-	"client": [
-      "worldInit.WorldTabMixin",
-      "worldInit.ClientLevelMixin",
-      "worldInit.ConnectionMixin",
-      "chunk.SectionOcclusionGraphMixin",
-      "chunk.OptionsAccessorMixin",
-      "chunk.OptionsMixin",
-
-      "debug.ChunkBorderRendererMixin",
-      "debug.DebugScreenOverlayMixin",
-
-      "ClientToServerListener"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "com.fexl.circumnavigate.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ClientToServerListener",
+    "chunk.OptionsAccessorMixin",
+    "chunk.OptionsMixin",
+    "chunk.SectionOcclusionGraphMixin",
+    "debug.ChunkBorderRendererMixin",
+    "debug.DebugScreenOverlayMixin",
+    "worldInit.ClientLevelMixin",
+    "worldInit.ConnectionMixin",
+    "worldInit.CreateWorldScreenMixin",
+    "worldInit.WorldTabMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

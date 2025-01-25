@@ -8,7 +8,7 @@
 
 package com.fexl.circumnavigate.mixin.worldgen;
 
-import com.fexl.circumnavigate.injected.NoiseScaling;
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import net.minecraft.world.level.levelgen.synth.PerlinNoise;
@@ -18,9 +18,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(NormalNoise.class)
-public class NormalNoiseMixin implements NoiseScaling {
+public class NormalNoiseMixin {
 	@Shadow @Final private double valueFactor;
 	@Shadow @Final private PerlinNoise first;
 	@Shadow @Final private PerlinNoise second;
@@ -37,49 +38,11 @@ public class NormalNoiseMixin implements NoiseScaling {
 		source = random.nextLong();
 	}
 
-	public double getValue(double x, double y, double z) {
-
-		double multiplier = 1.0181268882175227;
-
-		double d = x * multiplier;
-		double e = y * multiplier;
-		double f = z * multiplier;
-
-		NoiseScaling scaledFirst = ((NoiseScaling) (Object) this.first);
-		NoiseScaling scaledSecond = ((NoiseScaling) (Object) this.second);
-
-		scaledFirst.setXMul(xMul);
-		scaledFirst.setZMul(zMul);
-		scaledFirst.setXAdd(xAdd);
-		scaledFirst.setZAdd(zAdd);
-		scaledSecond.setXMul(multiplier * xMul);
-		scaledSecond.setZMul(multiplier * zMul);
-		scaledSecond.setXAdd(xAdd);
-		scaledSecond.setZAdd(zAdd);
-
-		return (this.first.getValue(x, y, z) + this.second.getValue(x, y, z)) * this.valueFactor;
-		//return (this.first.getValue(x, y, z) + this.second.getValue(d, e, f)) * this.valueFactor;
-	}
-
-	double xMul = 1;
-	double zMul = 1;
-	double xAdd = 0;
-	double zAdd = 0;
-
-	public void setXMul(double xMul) {
-		this.xMul = xMul;
-	}
-
-	public void setZMul(double zMul) {
-		this.zMul = zMul;
-	}
-
-	public void setXAdd(double xAdd) {
-		this.xAdd = xAdd;
-	}
-
-	public void setZAdd(double zAdd) {
-		this.zAdd = zAdd;
+	@Inject(method = "getValue", at = @At("HEAD"), cancellable = true)
+	public void getValue(double x, double y, double z, CallbackInfoReturnable<Double> cir) {
+		if(TransformerRequests.noiseLevel.getTransformer().wrappingSettings.useWrappedWorldGen()) {
+			cir.setReturnValue((this.first.getValue(x, y, z) + this.second.getValue(x, y, z)) * this.valueFactor);
+		}
 	}
 
 

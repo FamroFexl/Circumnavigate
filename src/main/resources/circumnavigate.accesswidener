@@ -21,6 +21,8 @@ accessible	field	net/minecraft/client/multiplayer/ClientPacketListener level Lne
 
 accessible class net/minecraft/server/level/ServerChunkCache$MainThreadExecutor
 
+accessible field net/minecraft/world/level/storage/DerivedLevelData wrapped Lnet/minecraft/world/level/storage/ServerLevelData;
+
 accessible method net/minecraft/client/multiplayer/ClientLevel getBlockStatePredictionHandler ()Lnet/minecraft/client/multiplayer/prediction/BlockStatePredictionHandler;
 #-----------------------------------------------------------
 accessible method net/minecraft/server/network/ServerGamePacketListenerImpl containsInvalidValues (DDDFF)Z
