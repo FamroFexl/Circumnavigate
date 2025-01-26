@@ -4,6 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.debug;
 
+import com.fexl.circumnavigate.Circumnavigate;
 import net.minecraft.SharedConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,6 +18,8 @@ public class SharedConstantsMixin {
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void clinit(CallbackInfo ci) {
+		if(!Circumnavigate.DEV_MODE) return;
+
 		IS_RUNNING_IN_IDE = true;
 	}
 }

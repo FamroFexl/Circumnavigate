@@ -4,6 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.debug;
 
+import com.fexl.circumnavigate.Circumnavigate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.pathfinder.Node;
@@ -32,6 +33,8 @@ public class PathMixin {
 
 	@Inject(method ="writeToStream", at = @At("HEAD"))
 	private void writeToStream(FriendlyByteBuf buffer, CallbackInfo ci) {
+		if(!Circumnavigate.DEV_MODE) return;
+
 		Node[] nodes1 = nodes.stream().filter(node -> !node.closed).toArray(Node[]::new);
 		Node[] nodes2 = nodes.stream().filter(node -> node.closed).toArray(Node[]::new);
 		this.debugData = new DebugData(nodes.stream().filter(node -> !node.closed).toArray(Node[]::new), nodes.stream().filter(node -> node.closed).toArray(Node[]::new), Set.of(new Target(target.getX(), target.getY(), target.getZ())));

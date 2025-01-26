@@ -3,9 +3,11 @@
 package com.fexl.circumnavigate;
 
 import com.fexl.circumnavigate.network.packet.DimensionWrappingPayload;
+import com.fexl.circumnavigate.storage.TransformerRequests;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,11 +15,15 @@ public class Circumnavigate implements ModInitializer {
 	public static final String MOD_ID = "circumnavigate";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
+	public static final boolean DEV_MODE = System.getProperty("env", "").equals("dev");
+
 	public static int tickCount = 0;
 	@Override
 	public void onInitialize() {
 		PayloadTypeRegistry.configurationS2C().register(DimensionWrappingPayload.TYPE, DimensionWrappingPayload.STREAM_CODEC);
 		//PayloadTypeRegistry.playS2C().register(ChunkLoadingLevelsPayload.TYPE, ChunkLoadingLevelsPayload.STREAM_CODEC);
+
+		Properties
 
 		/**
 		ServerTickEvents.END_SERVER_TICK.register((server -> {

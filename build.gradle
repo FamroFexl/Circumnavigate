@@ -38,6 +38,8 @@ loom {
 			//Used for debug hot-swapping fields, methods, and classes
 			//vmArg("-XX:+AllowEnhancedClassRedefinition")
 
+            vmArgs("-Denv=dev")
+
 			programArgs("--width", "1280", "--height", "720", "--username", "dev")
 		}
 	}

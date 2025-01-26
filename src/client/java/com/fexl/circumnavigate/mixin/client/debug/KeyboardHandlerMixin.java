@@ -6,6 +6,7 @@ package com.fexl.circumnavigate.mixin.client.debug;
 
 import static com.fexl.circumnavigate.client.storage.DebugVariables.*;
 
+import com.fexl.circumnavigate.Circumnavigate;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
@@ -37,6 +38,8 @@ public abstract class KeyboardHandlerMixin {
 	 */
 	@Inject(method = "handleDebugKeys", at = @At("HEAD"), cancellable = true)
 	public void handleDebugKeys(int key, CallbackInfoReturnable<Boolean> cir) {
+		if(!Circumnavigate.DEV_MODE) return;
+
 		if(handleChunkDebugKeys(key)) cir.setReturnValue(true);
 	}
 
@@ -45,6 +48,8 @@ public abstract class KeyboardHandlerMixin {
 	 */
 	@Inject(method = "keyPress", at = @At("HEAD"), cancellable = true)
 	public void keyPress(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
+		if(!Circumnavigate.DEV_MODE) return;
+
 		if (windowPointer == minecraft.getWindow().getWindow()) {
 			boolean F6_DOWN = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_F6);
 
