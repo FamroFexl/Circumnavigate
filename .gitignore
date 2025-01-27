@@ -9,6 +9,9 @@ classes/
 
 *.launch
 
+#Manifold run config
+build.properties
+
 # idea
 
 .idea/
