@@ -4,6 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.debug;
 
+import com.fexl.circumnavigate.Circumnavigate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.NeighborUpdatesDebugPayload;
@@ -33,16 +34,22 @@ public abstract class DebugPacketsMixin {
 
 	@Inject(method = "sendNeighborsUpdatePacket", at = @At("HEAD"))
 	private static void sendNeighborsUpdatePacket(Level level, BlockPos pos, CallbackInfo ci) {
+		if(!Circumnavigate.DEV_MODE) return;
+
 		sendPacketToAllPlayers((ServerLevel) level, new NeighborUpdatesDebugPayload(level.getGameTime(), pos));
 	}
 
 	@Inject(method = "sendPathFindingPacket", at = @At("HEAD"))
 	private static void sendPathFindingPacket(Level level, Mob mob, @Nullable Path path, float maxDistanceToWaypoint, CallbackInfo ci) {
+		if(!Circumnavigate.DEV_MODE) return;
+
 		if(path != null) sendPacketToAllPlayers((ServerLevel) level, new PathfindingDebugPayload(mob.getId(), path, maxDistanceToWaypoint));
 	}
 
 	@Inject(method = "sendStructurePacket", at = @At("HEAD"))
 	private static void sendStructurePacket(WorldGenLevel level, StructureStart structureStart, CallbackInfo ci) {
+		if(!Circumnavigate.DEV_MODE) return;
+
 		List<StructuresDebugPayload.PieceInfo> pieces = new ArrayList<>();
 
 		structureStart.getPieces().forEach(structurePiece -> pieces.add(new StructuresDebugPayload.PieceInfo(structurePiece.getBoundingBox(), pieces.isEmpty())));

@@ -20,11 +20,11 @@ public class Cursor3DWrapped extends Cursor3D {
 
 	@Override
 	public int nextX() {
-		return transformer.Coord.X.wrapToBounds(super.nextX());
+		return transformer.Coord.X.wrap(super.nextX());
 	}
 
 	@Override
 	public int nextZ() {
-		return transformer.Coord.Z.wrapToBounds(super.nextZ());
+		return transformer.Coord.Z.wrap(super.nextZ());
 	}
 }

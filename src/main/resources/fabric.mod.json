@@ -38,9 +38,14 @@
         }
     },
 	"mixins": [
-		"circumnavigate.mixins.json",
+		"minecraft.mixins.json",
+		"compat.mixins.json",
 		{
-			"config": "circumnavigate-client.mixins.json",
+			"config": "minecraft-client.mixins.json",
+			"environment": "client"
+		},
+		{
+			"config": "compat-client.mixins.json",
 			"environment": "client"
 		}
 	],

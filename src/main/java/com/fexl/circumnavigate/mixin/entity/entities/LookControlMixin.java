@@ -16,9 +16,9 @@ public abstract class LookControlMixin {
 
     @WrapMethod(method = "setLookAt(DDDFF)V")
     public void wrapLookAt(double x, double y, double z, float deltaYaw, float deltaPitch, Operation<Void> original) {
-        DimensionTransformer transformer = mob.level().getTransformer().onlyServerSide();
-        double unwrappedX = transformer.Coord.X.unwrapFromBounds(mob.getX(), x);
-        double unwrappedZ = transformer.Coord.Z.unwrapFromBounds(mob.getZ(), z);
+        DimensionTransformer transformer = mob.level().getTransformer().SSO();
+        double unwrappedX = transformer.Coord.X.unwrap(mob.getX(), x);
+        double unwrappedZ = transformer.Coord.Z.unwrap(mob.getZ(), z);
 
         if (unwrappedX != x) {
             x = mob.getX() + transformer.Coord.X.deltaFromBounds(mob.getX(), x);

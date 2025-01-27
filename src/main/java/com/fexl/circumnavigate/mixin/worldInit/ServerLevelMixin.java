@@ -51,6 +51,7 @@ public class ServerLevelMixin {
 			thiz.setTransformer(DimensionTransformer.DISABLED);
 		}
 
+		//Set the initial noise level so it can be used when objects are set up.
 		TransformerRequests.noiseLevel = thiz;
 	}
 }

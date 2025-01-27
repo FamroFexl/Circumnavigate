@@ -1,30 +1,67 @@
 accessWidener	v2	named
-accessible	class	net/minecraft/client/renderer/chunk/RenderChunk
-accessible	field	net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint levelCount I
-accessible	method	net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint checkNeighbor (JJIZ)V
+
+#Chunk modification
+accessible class net/minecraft/server/level/ChunkMap$TrackedEntity
+accessible class net/minecraft/server/level/ChunkMap$DistanceManager
+accessible method net/minecraft/server/level/ChunkMap isChunkTracked (Lnet/minecraft/server/level/ServerPlayer;II)Z
+accessible field net/minecraft/server/level/ChunkMap level Lnet/minecraft/server/level/ServerLevel;
+
+accessible class net/minecraft/server/level/DistanceManager$ChunkTicketTracker
+accessible class net/minecraft/server/level/DistanceManager$FixedPlayerDistanceChunkTracker
+accessible class net/minecraft/server/level/DistanceManager$PlayerTicketTracker
 
 accessible method net/minecraft/server/level/ChunkTrackingView$Positioned minX ()I
 accessible method net/minecraft/server/level/ChunkTrackingView$Positioned maxX ()I
 accessible method net/minecraft/server/level/ChunkTrackingView$Positioned minZ ()I
 accessible method net/minecraft/server/level/ChunkTrackingView$Positioned maxZ ()I
+
+accessible method net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint checkNeighbor (JJIZ)V
+
+accessible field net/minecraft/world/level/chunk/storage/SectionStorage levelHeightAccessor Lnet/minecraft/world/level/LevelHeightAccessor;
+
+#World creation GUI inject
 accessible	method net/minecraft/client/gui/screens/worldselection/CreateWorldScreen$GameTab <init> (Lnet/minecraft/client/gui/screens/worldselection/CreateWorldScreen;)V
 accessible	class	net/minecraft/client/gui/screens/worldselection/SwitchGrid
 
-accessible field net/minecraft/world/level/chunk/ChunkAccess unsaved Z
-accessible field net/minecraft/world/level/chunk/LevelChunk level Lnet/minecraft/world/level/Level;
-accessible field net/minecraft/world/level/chunk/ChunkAccess heightmaps Ljava/util/Map;
-accessible field net/minecraft/world/level/chunk/ChunkAccess skyLightSources Lnet/minecraft/world/level/lighting/ChunkSkyLightSources;
-
-accessible field net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
-accessible	field	net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl minecraft Lnet/minecraft/client/Minecraft;
-accessible	field	net/minecraft/client/multiplayer/ClientPacketListener level Lnet/minecraft/client/multiplayer/ClientLevel;
-
-accessible class net/minecraft/server/level/ServerChunkCache$MainThreadExecutor
-
+#Embedded level data access
 accessible field net/minecraft/world/level/storage/DerivedLevelData wrapped Lnet/minecraft/world/level/storage/ServerLevelData;
 
-accessible method net/minecraft/client/multiplayer/ClientLevel getBlockStatePredictionHandler ()Lnet/minecraft/client/multiplayer/prediction/BlockStatePredictionHandler;
-#-----------------------------------------------------------
+#Networking
+accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
+
+accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket sectionPos Lnet/minecraft/core/SectionPos;
+accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket positions [S
+accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket states [Lnet/minecraft/world/level/block/state/BlockState;
+
+accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket action Lnet/minecraft/network/protocol/game/ServerboundInteractPacket$Action;
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$Action
+accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction hand Lnet/minecraft/world/InteractionHand;
+accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction location Lnet/minecraft/world/phys/Vec3;
+
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket x D
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket y D
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket z D
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket entity I
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket toAnchor Lnet/minecraft/commands/arguments/EntityAnchorArgument$Anchor;
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket atEntity Z
+
+#Worldgen
+accessible class net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler
+accessible field net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler$RarityValueMapper mapper Lit/unimi/dsi/fastutil/doubles/Double2DoubleFunction;
+
+accessible method net/minecraft/world/level/levelgen/synth/SimplexNoise getCornerNoise3D (IDDDD)D
+accessible method net/minecraft/world/level/levelgen/synth/SimplexNoise p (I)I
+
+#For debugging
+accessible method net/minecraft/world/level/pathfinder/Path setDebug ([Lnet/minecraft/world/level/pathfinder/Node;[Lnet/minecraft/world/level/pathfinder/Node;Ljava/util/Set;)V
+accessible field net/minecraft/world/level/pathfinder/Target bestHeuristic F
+accessible field net/minecraft/world/level/pathfinder/Target reached Z
+
+accessible field net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
+accessible field net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl minecraft Lnet/minecraft/client/Minecraft;
+
+#Dev prototyping (delete later)
 accessible method net/minecraft/server/network/ServerGamePacketListenerImpl containsInvalidValues (DDDFF)Z
 accessible method net/minecraft/server/network/ServerGamePacketListenerImpl clampHorizontal (D)D
 accessible method net/minecraft/server/network/ServerGamePacketListenerImpl clampVertical (D)D
@@ -54,45 +91,6 @@ accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehic
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleLastGoodZ D
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl clientVehicleIsFloating Z
 
-accessible field net/minecraft/world/level/chunk/LevelChunk postLoad Lnet/minecraft/world/level/chunk/LevelChunk$PostLoadProcessor;
-accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
-accessible class net/minecraft/server/level/ChunkMap$TrackedEntity
-accessible method net/minecraft/server/level/ChunkMap getPlayerViewDistance (Lnet/minecraft/server/level/ServerPlayer;)I
-accessible method net/minecraft/server/level/ChunkMap isChunkTracked (Lnet/minecraft/server/level/ServerPlayer;II)Z
-
-accessible field net/minecraft/server/level/ServerEntity entity Lnet/minecraft/world/entity/Entity;
-accessible field net/minecraft/server/level/ChunkMap level Lnet/minecraft/server/level/ServerLevel;
-accessible field net/minecraft/network/protocol/game/VecDeltaCodec base Lnet/minecraft/world/phys/Vec3;
-
-accessible method net/minecraft/world/level/levelgen/synth/SimplexNoise getCornerNoise3D (IDDDD)D
-accessible method net/minecraft/world/level/levelgen/synth/SimplexNoise p (I)I
-
-#SectionBlocks packet necessary
-accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket sectionPos Lnet/minecraft/core/SectionPos;
-accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket positions [S
-accessible field net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket states [Lnet/minecraft/world/level/block/state/BlockState;
-
-accessible method net/minecraft/server/level/DistanceManager getChunk (J)Lnet/minecraft/server/level/ChunkHolder;
-accessible method net/minecraft/server/level/DistanceManager updateChunkScheduling (JILnet/minecraft/server/level/ChunkHolder;I)Lnet/minecraft/server/level/ChunkHolder;
-accessible field net/minecraft/server/level/DistanceManager chunksToUpdateFutures Ljava/util/Set;
-accessible class net/minecraft/server/level/DistanceManager$FixedPlayerDistanceChunkTracker
-accessible class net/minecraft/server/level/DistanceManager$PlayerTicketTracker
-accessible method net/minecraft/server/level/ChunkTracker update (JIZ)V
-accessible field net/minecraft/server/level/ChunkMap$TrackedEntity entity Lnet/minecraft/world/entity/Entity;
-accessible class net/minecraft/server/level/ChunkMap$DistanceManager
-accessible method net/minecraft/server/level/DistanceManager removePlayer (Lnet/minecraft/core/SectionPos;Lnet/minecraft/server/level/ServerPlayer;)V
-accessible method net/minecraft/server/level/DistanceManager addPlayer (Lnet/minecraft/core/SectionPos;Lnet/minecraft/server/level/ServerPlayer;)V
-
-accessible class net/minecraft/server/level/DistanceManager$ChunkTicketTracker
-
-accessible field net/minecraft/world/level/chunk/storage/SectionStorage levelHeightAccessor Lnet/minecraft/world/level/LevelHeightAccessor;
-
-accessible method net/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket <init> (Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntityType;Lnet/minecraft/nbt/CompoundTag;)V
-
 accessible field net/minecraft/world/entity/ai/navigation/PathNavigation mob Lnet/minecraft/world/entity/Mob;
 accessible field net/minecraft/world/entity/ai/navigation/PathNavigation level Lnet/minecraft/world/level/Level;
 accessible method net/minecraft/world/entity/LivingEntity getHitbox ()Lnet/minecraft/world/phys/AABB;
-
-accessible class net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler
-accessible field net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler$RarityValueMapper mapper Lit/unimi/dsi/fastutil/doubles/Double2DoubleFunction;
-

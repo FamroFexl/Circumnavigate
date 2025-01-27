@@ -35,10 +35,6 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	private void wrap3DCursor(CollisionGetter collisionGetter, Entity entity, AABB box, boolean onlySuffocatingBlocks, BiFunction<BlockPos.MutableBlockPos, VoxelShape, T> resultProvider, CallbackInfo ci) {
 		serverLevel = null;
 		if(collisionGetter instanceof ServerLevel level) serverLevel = level;
-
-		if(entity != null) {
-			this.box = entity.level().getTransformer().AABB.unwrapFromBounds(entity.getBoundingBox(), box);
-		}
 	}
 
 	/**
@@ -48,7 +44,7 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	public BlockGetter getChunk(BlockCollisions<?> instance, int x, int z, Operation<BlockGetter> original) {
 		if(serverLevel == null) return original.call(instance, x, z);
 		DimensionTransformer transformer = serverLevel.getTransformer();
-		return original.call(instance, (int) transformer.Coord.X.wrapToBounds(x), (int) transformer.Coord.Z.wrapToBounds(z));
+		return original.call(instance, (int) transformer.Coord.X.wrap(x), (int) transformer.Coord.Z.wrap(z));
 	}
 
 	/**
@@ -58,6 +54,6 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	public BlockPos.MutableBlockPos setPos(BlockPos.MutableBlockPos instance, int x, int y, int z, Operation<BlockPos.MutableBlockPos> original) {
 		if(serverLevel == null) return original.call(instance, x, y, z);
 		DimensionTransformer transformer = serverLevel.getTransformer();
-		return original.call(instance, (int) transformer.Coord.X.wrapToBounds(x), y, (int) transformer.Coord.Z.wrapToBounds(z));
+		return original.call(instance, (int) transformer.Coord.X.wrap(x), y, (int) transformer.Coord.Z.wrap(z));
 	}
 }

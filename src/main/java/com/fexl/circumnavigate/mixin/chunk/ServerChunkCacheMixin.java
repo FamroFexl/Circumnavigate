@@ -16,14 +16,14 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class ServerChunkCacheMixin {
 	@Shadow @Final ServerLevel level;
 
-	//TODO: See if is very slow.
+	//TODO: Very slow, but optimal injection
 	@ModifyVariable(method = "getChunkNow", at = @At("HEAD"), argsOnly = true, index = 1)
 	public int modifyX(int chunkX) {
-		return level.getTransformer().Chunk.X.wrapToBounds(chunkX);
+		return level.getTransformer().Chunk.X.wrap(chunkX);
 	}
 
 	@ModifyVariable(method = "getChunkNow", at = @At("HEAD"), argsOnly = true, index = 2)
 	public int modifyZ(int chunkZ) {
-		return level.getTransformer().Chunk.Z.wrapToBounds(chunkZ);
+		return level.getTransformer().Chunk.Z.wrap(chunkZ);
 	}
 }

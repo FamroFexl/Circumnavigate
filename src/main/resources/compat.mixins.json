@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.fexl.circumnavigate.compat.mixin",
+  "plugin": "com.fexl.circumnavigate.compat.CompatMixinConfigPlugin",
+  "refmap": "circumnavigate.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

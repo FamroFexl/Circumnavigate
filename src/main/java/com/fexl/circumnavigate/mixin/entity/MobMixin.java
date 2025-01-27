@@ -18,7 +18,7 @@ public abstract class MobMixin {
     @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 0, slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;getEyeY()D")))
     public double modifyD(double d, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
-        DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
+        DimensionTransformer transformer = thiz.level().getTransformer().SSO();
 
         return transformer.Coord.X.deltaFromBounds(thiz.getX(), entity.getX());
     }
@@ -26,7 +26,7 @@ public abstract class MobMixin {
     @ModifyVariable(method = "lookAt", at = @At(value = "STORE"), ordinal = 1, slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;getEyeY()D")))
     public double modifyE(double e, @Local(argsOnly = true) Entity entity) {
         Mob thiz = (Mob) (Object) this;
-        DimensionTransformer transformer = thiz.level().getTransformer().onlyServerSide();
+        DimensionTransformer transformer = thiz.level().getTransformer().SSO();
 
         return transformer.Coord.Z.deltaFromBounds(thiz.getZ(), entity.getZ());
     }
@@ -39,8 +39,8 @@ public abstract class MobMixin {
 
         Mob thiz = (Mob) (Object) this;
         Level level = thiz.level();
-        DimensionTransformer transformer = level.getTransformer().onlyServerSide();
+        DimensionTransformer transformer = level.getTransformer().SSO();
 
-        return transformer.AABB.unwrapFromBounds(thiz.getBoundingBox(), entity.getHitbox()).intersects(thiz.getBoundingBox());
+        return transformer.AABoundingBox.unwrap(thiz.getBoundingBox(), entity.getHitbox()).intersects(thiz.getBoundingBox());
     }
 }

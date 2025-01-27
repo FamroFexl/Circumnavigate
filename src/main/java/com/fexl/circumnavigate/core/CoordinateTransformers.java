@@ -8,26 +8,33 @@ public class CoordinateTransformers {
 	public final int lowerChunkBounds;
 	public final int upperChunkBounds;
 
+	public final int lowerBlockBounds;
+	public final int upperBlockBounds;
+
 	public CoordMethods Coord;
 	public ChunkMethods Chunk;
 
 	public CoordinateTransformers(int lowerChunkBounds, int upperChunkBounds) {
 		this.lowerChunkBounds = lowerChunkBounds;
 		this.upperChunkBounds = upperChunkBounds;
+
+		this.lowerBlockBounds = lowerChunkBounds * CoordinateConstants.CHUNK_WIDTH;
+		this.upperBlockBounds = upperChunkBounds * CoordinateConstants.CHUNK_WIDTH;
 		
 		Coord = new CoordMethods();
 		Chunk = new ChunkMethods();
 	}
 
-	public class CoordMethods extends BasicPositionOperations<Double> {
-		public final int domainLength = Math.abs(upperChunkBounds - lowerChunkBounds) * CoordinateConstants.CHUNK_WIDTH;
+	public class CoordMethods {
+		public final int domainLength = Math.abs(upperBlockBounds - lowerBlockBounds);
 
-		@Override
-		public Double wrapToBounds(Double coord) {
+		private final int domainStart = lowerBlockBounds;
+		private final int domainRadius = domainLength / 2;
+
+		public double wrap(double coord) {
 			//Short-circuit
-			if(!isOverBounds(coord)) return coord;
+			if(!isOver(coord)) return coord;
 
-			double domainStart = lowerChunkBounds * CoordinateConstants.CHUNK_WIDTH;
 			double wrappedCoord = (coord - domainStart) % domainLength;
 
 			// If wrappedCoord is negative, adjust it by adding domainLength
@@ -38,88 +45,132 @@ public class CoordinateTransformers {
 			return domainStart + wrappedCoord;
 		}
 
-		public Integer wrapToBounds(Integer coord) {
-			return wrapToBounds(coord.doubleValue()).intValue();
+		public int wrap(int coord) {
+			//Short-circuit
+			if(!isOver(coord)) return coord;
+
+			int wrappedCoord = (coord - domainStart) % domainLength;
+
+			// If wrappedCoord is negative, adjust it by adding domainLength
+			if (wrappedCoord < 0) {
+				wrappedCoord += domainLength;
+			}
+
+			return domainStart + wrappedCoord;
 		}
 
-		@Override
-		public Double unwrapFromBounds(Double refCoord, Double wrappedCoord) {
-			double wrappedRefCoord = wrapToBounds(refCoord);
-
-			double diff = wrappedCoord - wrappedRefCoord;
-
-			double unwrappedCoord = refCoord + diff;
+		public double unwrap(double refCoord, double wrappedCoord) {
+			double unwrappedCoord = refCoord + wrappedCoord - wrap(refCoord);
 
 			// Adjust to ensure the unwrapped coordinate is correct
-			if (unwrappedCoord < refCoord - (double) domainLength / 2) {
+			if (unwrappedCoord < refCoord - domainRadius) {
 				unwrappedCoord += domainLength;
 			}
-			if (unwrappedCoord > refCoord + (double) domainLength / 2) {
+			else if (unwrappedCoord > refCoord + domainRadius) {
 				unwrappedCoord -= domainLength;
 			}
 
 			return unwrappedCoord;
 		}
 
-		public Integer unwrapFromBounds(Integer refCoord, Integer wrappedCoord) {
-			return unwrapFromBounds(refCoord.doubleValue(), wrappedCoord.doubleValue()).intValue();
+		public int unwrap(int refCoord, int wrappedCoord) {
+			int unwrappedCoord = refCoord + wrappedCoord - wrap(refCoord);
+
+			// Adjust to ensure the unwrapped coordinate is correct
+			if (unwrappedCoord < refCoord - domainRadius) {
+				unwrappedCoord += domainLength;
+			}
+			else if (unwrappedCoord > refCoord + domainRadius) {
+				unwrappedCoord -= domainLength;
+			}
+
+			return unwrappedCoord;
 		}
 
-		@Override
-		public boolean isOverBounds(Double coord) {
-			return coord >= upperChunkBounds * CoordinateConstants.CHUNK_WIDTH || coord < lowerChunkBounds * CoordinateConstants.CHUNK_WIDTH;
+		public boolean isOver(double coord) {
+			return coord >= upperBlockBounds || coord < lowerBlockBounds;
 		}
 
-		public boolean isOverBounds(Integer coord) {
-			return isOverBounds(coord.doubleValue());
+		public boolean isOver(int coord) {
+			return coord >= upperBlockBounds || coord < lowerBlockBounds;
 		}
 
-		public Double deltaFromBounds(Double fromCoord, Double toCoord) {
-			double toCoordUnwrapped = unwrapFromBounds(fromCoord, toCoord);
+		public double deltaFromBounds(double fromCoord, double toCoord) {
+			double toCoordUnwrapped = unwrap(fromCoord, toCoord);
 
 			return toCoordUnwrapped - fromCoord;
 		}
 
-		public Integer deltaFromBounds(Integer fromCoord, Integer toCoord) {
-			return deltaFromBounds(fromCoord.doubleValue(), toCoord.doubleValue()).intValue();
-		}
-
-		public Double sqrDistToBounds(Double dist) {
-			if(dist > upperChunkBounds * CoordinateConstants.CHUNK_WIDTH) {
-				dist -= Coord.domainLength;
+		public double sqrDistToBounds(double dist) {
+			if(dist > upperBlockBounds) {
+				dist -= domainLength;
 			}
-			else if (dist < lowerChunkBounds * CoordinateConstants.CHUNK_WIDTH) {
-				dist += Coord.domainLength;
+			else if (dist < lowerBlockBounds) {
+				dist += domainLength;
 			}
 
 			return dist * dist;
 		}
 
-		public Integer sqrDistToBounds(Integer dist) {
-			return sqrDistToBounds(dist.doubleValue()).intValue();
+		public int sqrDistToBounds(int dist) {
+			if(dist > upperBlockBounds) {
+				dist -= domainLength;
+			}
+			else if (dist < lowerBlockBounds) {
+				dist += domainLength;
+			}
+
+			return dist * dist;
 		}
 	}
 
-	public class ChunkMethods extends BasicPositionOperations<Integer> {
-		public final int domainLength = Coord.domainLength/16;
+	public class ChunkMethods {
+		public final int domainLength = Math.abs(upperChunkBounds - lowerChunkBounds);
 
-		@Override
-		public Integer wrapToBounds(Integer chunkCoord) {
-			return Coord.wrapToBounds(chunkCoord*16)/16;
+		private final int domainStart = lowerChunkBounds;
+		private final int domainRadius = domainLength / 2;
+
+		public int wrap(int chunkCoord) {
+			//Short-circuit
+			if(!isOver(chunkCoord)) return chunkCoord;
+
+			int wrappedCoord = (chunkCoord - domainStart) % domainLength;
+
+			// If wrappedCoord is negative, adjust it by adding domainLength
+			if (wrappedCoord < 0) {
+				wrappedCoord += domainLength;
+			}
+
+			return domainStart + wrappedCoord;
 		}
 
-		@Override
-		public Integer unwrapFromBounds(Integer refChunkCoord, Integer wrappedChunkCoord) {
-			return Coord.unwrapFromBounds(refChunkCoord*16, wrappedChunkCoord*16)/16;
+		public int unwrap(int refChunkCoord, int wrappedChunkCoord) {
+			int unwrappedCoord = refChunkCoord + wrappedChunkCoord - wrap(refChunkCoord);
+
+			// Adjust to ensure the unwrapped coordinate is correct
+			if (unwrappedCoord < refChunkCoord - domainRadius) {
+				unwrappedCoord += domainLength;
+			}
+			else if (unwrappedCoord > refChunkCoord + domainRadius) {
+				unwrappedCoord -= domainLength;
+			}
+
+			return unwrappedCoord;
 		}
 
-		@Override
-		public boolean isOverBounds(Integer chunkCoord) {
-			return Coord.isOverBounds(chunkCoord*16);
+		public boolean isOver(int chunkCoord) {
+			return chunkCoord >= upperChunkBounds || chunkCoord < lowerChunkBounds;
 		}
 
 		public int sqrDistToBounds(int chunkDist) {
-			return Coord.sqrDistToBounds(chunkDist*16)/16;
+			if(chunkDist > upperChunkBounds) {
+				chunkDist -= domainLength;
+			}
+			else if (chunkDist < lowerChunkBounds) {
+				chunkDist += domainLength;
+			}
+
+			return chunkDist * chunkDist;
 		}
 	}
 }

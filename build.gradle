@@ -5,16 +5,29 @@ plugins {
 	id "me.modmuss50.mod-publish-plugin" version "0.8.3"
 }
 
-JavaLanguageVersion JAVA_VERSION = JavaLanguageVersion.of(java_version)
+//Assign properties based on manifold's configuration and turn them into bindings
+ext.props = getBindings(getManifold())
+
+JavaLanguageVersion JAVA_VERSION = JavaLanguageVersion.of(props.java_version);
 
 base {
-	archivesName = mod_id + "-" + mod_version + "+" + minecraft_version + "-fabric"
+	archivesName = mod_id + "-" + mod_version + "+" + props.minecraft_version + "-fabric"
 }
 
 repositories {
 	maven {
 		name = 'ParchmentMC'
 		url = 'https://maven.parchmentmc.org'
+	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		} filter {
+			includeGroup "maven.modrinth"
+		}
 	}
 }
 
@@ -28,13 +41,15 @@ loom {
 		}
 	}
 
+	mixin {
+		useLegacyMixinAp = true
+		defaultRefmapName = "circumnavigate.refmap.json"
+	}
+
 	accessWidenerPath = file("src/main/resources/circumnavigate.accesswidener")
 
 	runs {
 		client {
-			//Used for debug hot-swapping mixins
-			//vmArgs("-javaagent", "\"sponge-mixin:x.x.x.jar\"")
-
 			//Used for debug hot-swapping fields, methods, and classes
 			//vmArg("-XX:+AllowEnhancedClassRedefinition")
 
@@ -43,21 +58,40 @@ loom {
 	}
 }
 
+afterEvaluate {
+	loom.runs.configureEach {
+		//Environment variable for enabling extra debugging features
+		vmArg("-Denv=dev")
+
+		//Used for debug hot-swapping mixins
+		vmArg("-javaagent:${ configurations.compileClasspath.find() { it.name.contains("sponge-mixin") } }")
+	}
+}
+
 dependencies {
 	//Minecraft
-	minecraft "com.mojang:minecraft:${minecraft_version}"
+	minecraft "com.mojang:minecraft:${props.minecraft_version}"
 
 	//Mojang mappings
 	mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_version}@zip")
+        parchment("org.parchmentmc.data:parchment-${props.parchment_version}@zip")
     }
 
 	//Fabric Loader
-	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+	modImplementation "net.fabricmc:fabric-loader:${props.fabric_loader_version}"
 
 	//Fabric API
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}"
+
+	//Sodium
+	modImplementation "maven.modrinth:sodium:${props.sodium_version}"
+
+	//Iris Shaders
+	modImplementation "org.antlr:antlr4-runtime:4.13.1"
+	modImplementation "io.github.douira:glsl-transformer:2.0.1"
+	modImplementation "org.anarres:jcpp:1.4.14"
+	modImplementation "maven.modrinth:iris:${props.iris_shaders_version}"
 
 	//Java preprocessor
 	annotationProcessor "systems.manifold:manifold-preprocessor:${manifold_preprocessor_version}"
@@ -69,18 +103,18 @@ processResources {
 				"mod_id": mod_id,
 				"mod_name": mod_name,
 				"mod_version": mod_version,
-				"mc_version": minecraft_version,
-				"fabric_loader_version": fabric_loader_version,
-				"java_version": java_version,
-				"fabric_api_version": fabric_api_version
-		)
+				"mc_version": props.minecraft_version,
+				"fabric_loader_version": props.fabric_loader_version,
+				"java_version": props.java_version,
+				"fabric_api_version": props.fabric_api_version
+        )
 	}
 }
 
 publishMods {
 	file = remapJar.archiveFile
-	displayName = mod_version + "+" + minecraft_version + "-fabric"
-	//changelog = file("CHANGELOG.md").getText()
+	displayName = mod_version + "+" + props.minecraft_version + "-fabric"
+	changelog = new File("CHANGELOG.md").exists() ? new File("CHANGELOG.md").getText() : "Changelog not provided"
 	version = mod_version
 	type = ReleaseType.of(mod_stage)
 	modLoaders.add("fabric")
@@ -88,7 +122,7 @@ publishMods {
 	modrinth {
 		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
 		projectId = "hyNSf1Ht"
-		minecraftVersions.add(minecraft_version)
+		minecraftVersions.add(props.minecraft_version.toString())
 
 		requires("fabric-api")
 	}
@@ -96,7 +130,7 @@ publishMods {
 	curseforge {
 		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
 		projectId = "990175"
-		minecraftVersions.add(minecraft_version)
+		minecraftVersions.add(props.minecraft_version.toString())
 
 		clientRequired = false
 		serverRequired = true
@@ -121,6 +155,95 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.compilerArgs += ['-Xplugin:Manifold']
 }
 
+//References to properties can be made using the dot operator
+static def getBindings(Properties props) {
+    Binding bindings = new Binding()
+
+    props.each { (key, value) ->
+        bindings.setVariable(key, value)
+    }
+}
+
+static def getProperties(File inFile) {
+    Properties outputProperties = new Properties()
+
+    //Feed properties  from inFile to outputProperties
+    inFile.withInputStream { stream -> outputProperties.load(stream) }
+
+    return outputProperties
+}
+
+def getManifold() {
+    File manifoldPropertiesFile = new File("${rootDir}/build.properties")
+
+    //Get the properties pointed to by manifold
+    if(manifoldPropertiesFile.exists()) return getProperties(new File("versions/" + numToSemVers(Integer.parseInt(getProperties(manifoldPropertiesFile).getProperty("MC_VERSION"))) + "/gradle.properties"))
+
+    //Get default properties
+    else {
+        //List of all directories in the versions root folder
+        def versionsDirs = file("versions").listFiles().findAll { file -> file.isDirectory() }
+
+        Properties newProperties = getProperties(new File("${versionsDirs.last()}/gradle.properties"))
+        setManifold(newProperties)
+        return newProperties
+    }
+}
+
+def setManifold(Properties props) {
+    File manifoldPropertiesFile = file("${rootDir}/build.properties")
+    Properties manifoldProperties = new Properties()
+
+    //Set manifold's MC_VERSION to inFile properties
+    manifoldProperties.setProperty("MC_VERSION", semVersToNum(props.getProperty("minecraft_version")).toString())
+
+    //Create manifold properties file
+    manifoldPropertiesFile.withOutputStream { stream ->
+        manifoldProperties.store(stream, "Manifold preprocessor directives (DON'T CHANGE!)")
+    }
+}
+
+//Convert a semantic version to a number (used for preprocessor comparisons)
+static def semVersToNum(String version) {
+    //Major must be single digit, minor must be 1-2 digits, patch must be 1-2 digits
+    String[] numbers = version.split("\\.");
+
+    int major = Integer.parseInt(numbers[0])
+    int minor = Integer.parseInt(numbers[1])
+    int patch = Integer.parseInt(numbers[2])
+
+    return major * 10000 + minor * 100 + patch;
+}
+
+//Convert a number to a semantic version (used to obtain the active version)
+static def numToSemVers(int number) {
+    int major = number / 10000;
+    int minor = (number % 10000) / 100;
+    int patch = number % 100;
+
+    return String.format("%d.%d.%d", major, minor, patch);
+}
+
+gradle.projectsEvaluated {
+    //List of all directories in the versions root folder
+    def versionsDirs = file("versions").listFiles().findAll { file -> file.isDirectory() }
+
+    //Create version assignment tasks for each version
+    versionsDirs.each { versionDir ->
+        File propertiesFile = file("${versionDir}/gradle.properties")
+        if(propertiesFile.exists()) {
+            tasks.register(versionDir.name) {
+                group = "versions"
+
+                Properties props = getProperties(propertiesFile)
+                ext.props = props
+                setManifold(props)
+            }
+        }
+        else logger.error("Version " + versionDir.name + " doesn't have a gradle.properties. Ignoring.")
+    }
+}
+
 java {
 	//withSourcesJar()
 
@@ -137,14 +260,14 @@ jar {
 		attributes([
 				'Specification-Title'     : "Fabric Loader",
 				'Specification-Vendor'    : "FabricMC",
-				'Specification-Version'   : fabric_loader_version,
+				'Specification-Version'   : props.fabric_loader_version,
 				'Implementation-Title'    : mod_name,
 				'Implementation-Version'  : mod_version,
 				'Implementation-Vendor'   : "Famro Fexl",
 				'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
 				'Timestamp'               : System.currentTimeMillis(),
 				'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-				'Built-On-Minecraft'      : minecraft_version
+				'Built-On-Minecraft'      : props.minecraft_version
 		])
 	}
 }

@@ -14,6 +14,6 @@ public class RailStateMixin {
 
     @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true, index = 2)
     private static BlockPos wrapBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-        return new BlockPosWrapped(blockPos, level.getTransformer().onlyServerSide());
+        return new BlockPosWrapped(blockPos, level.getTransformer().SSO());
     }
 }

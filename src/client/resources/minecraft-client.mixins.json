@@ -4,9 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ClientToServerListener",
-    "chunk.OptionsAccessorMixin",
-    "chunk.OptionsMixin",
-    "chunk.SectionOcclusionGraphMixin",
+    "OptionsMixin",
+    "SectionOcclusionGraphMixin",
     "debug.ChunkBorderRendererMixin",
     "debug.DebugRendererMixin",
     "debug.DebugScreenOverlayMixin",

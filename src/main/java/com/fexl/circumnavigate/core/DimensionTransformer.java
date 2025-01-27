@@ -6,6 +6,7 @@ import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -37,7 +38,8 @@ public class DimensionTransformer {
 	public final SectionMethods Section;
 	public final Vector3DMethods Vector3D;
 	public final BlockMethods Block;
-	public final AABBMethods AABB;
+	public final AABBMethods AABoundingBox;
+	public final BoundingBoxMethods BoundingBox;
 
 	public final DimensionWrappingSettings wrappingSettings;
 
@@ -67,14 +69,17 @@ public class DimensionTransformer {
 		this.Section = new SectionMethods();
 		this.Vector3D = new Vector3DMethods();
 		this.Block = new BlockMethods();
-		this.AABB = new AABBMethods();
+		this.AABoundingBox = new AABBMethods();
+		this.BoundingBox = new BoundingBoxMethods();
 	}
 
-	public DimensionTransformer onlyServerSide() {
+	/** Server-side only transformer **/
+	public DimensionTransformer SSO() {
 		return isClientSide ? DISABLED : this;
 	}
 
-	public DimensionTransformer onlyClientSide() {
+	/** Client-Side only transformer **/
+	public DimensionTransformer CSO() {
 		return isClientSide ? this : DISABLED;
 	}
 
@@ -109,18 +114,22 @@ public class DimensionTransformer {
 		public final CoordinateTransformers.ChunkMethods Z = zTransformer.Chunk;
 
 		@Override
-		public ChunkPos wrapToBounds(ChunkPos chunkPos) {
-			return new ChunkPos(X.wrapToBounds(chunkPos.x), Z.wrapToBounds(chunkPos.z));
+		public ChunkPos wrap(ChunkPos chunkPos) {
+			return new ChunkPos(X.wrap(chunkPos.x), Z.wrap(chunkPos.z));
+		}
+
+		public ChunkPos wrap(long chunkPos) {
+			return wrap(new ChunkPos(ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos)));
 		}
 
 		@Override
-		public ChunkPos unwrapFromBounds(ChunkPos refChunkPos, ChunkPos wrappedChunkPos) {
-			return new ChunkPos(X.unwrapFromBounds(refChunkPos.x, wrappedChunkPos.x), Z.unwrapFromBounds(refChunkPos.z, wrappedChunkPos.z));
+		public ChunkPos unwrap(ChunkPos refChunkPos, ChunkPos wrappedChunkPos) {
+			return new ChunkPos(X.unwrap(refChunkPos.x, wrappedChunkPos.x), Z.unwrap(refChunkPos.z, wrappedChunkPos.z));
 		}
 
 		@Override
-		public boolean isOverBounds(ChunkPos chunkPos) {
-			return X.isOverBounds(chunkPos.x) || Z.isOverBounds(chunkPos.z);
+		public boolean isOver(ChunkPos chunkPos) {
+			return X.isOver(chunkPos.x) || Z.isOver(chunkPos.z);
 		}
 
 		private int sqrDistToBounds(int x, int z) {
@@ -151,18 +160,18 @@ public class DimensionTransformer {
 	 */
 	public final class SectionMethods extends BasicPositionOperations<SectionPos> {
 		@Override
-		public SectionPos wrapToBounds(SectionPos sectionPos) {
-			return SectionPos.of(Chunk.X.wrapToBounds(sectionPos.x()), sectionPos.y(), Chunk.Z.wrapToBounds(sectionPos.z()));
+		public SectionPos wrap(SectionPos sectionPos) {
+			return SectionPos.of(Chunk.X.wrap(sectionPos.x()), sectionPos.y(), Chunk.Z.wrap(sectionPos.z()));
 		}
 
 		@Override
-		public SectionPos unwrapFromBounds(SectionPos refCoord, SectionPos wrappedCoord) {
-			return SectionPos.of(Chunk.X.unwrapFromBounds(refCoord.x(), wrappedCoord.x()), wrappedCoord.y(), Chunk.Z.unwrapFromBounds(refCoord.z(), wrappedCoord.z()));
+		public SectionPos unwrap(SectionPos refCoord, SectionPos wrappedCoord) {
+			return SectionPos.of(Chunk.X.unwrap(refCoord.x(), wrappedCoord.x()), wrappedCoord.y(), Chunk.Z.unwrap(refCoord.z(), wrappedCoord.z()));
 		}
 
 		@Override
-		public boolean isOverBounds(SectionPos sectionPos) {
-			return Chunk.X.isOverBounds(sectionPos.x()) || Chunk.Z.isOverBounds(sectionPos.z());
+		public boolean isOver(SectionPos sectionPos) {
+			return Chunk.X.isOver(sectionPos.x()) || Chunk.Z.isOver(sectionPos.z());
 		}
 	}
 
@@ -171,18 +180,18 @@ public class DimensionTransformer {
 	 */
 	public final class Vector3DMethods extends BasicPositionOperations<Vec3> {
 		@Override
-		public Vec3 wrapToBounds(Vec3 vec3) {
-			return new Vec3(Coord.X.wrapToBounds(vec3.x), vec3.y, Coord.Z.wrapToBounds(vec3.z));
+		public Vec3 wrap(Vec3 vec3) {
+			return new Vec3(Coord.X.wrap(vec3.x), vec3.y, Coord.Z.wrap(vec3.z));
 		}
 
 		@Override
-		public Vec3 unwrapFromBounds(Vec3 refVec3, Vec3 wrappedVec3) {
-			return new Vec3(Coord.X.unwrapFromBounds(refVec3.x, wrappedVec3.x), wrappedVec3.y, Coord.Z.unwrapFromBounds(refVec3.z, wrappedVec3.z));
+		public Vec3 unwrap(Vec3 refVec3, Vec3 wrappedVec3) {
+			return new Vec3(Coord.X.unwrap(refVec3.x, wrappedVec3.x), wrappedVec3.y, Coord.Z.unwrap(refVec3.z, wrappedVec3.z));
 		}
 
 		@Override
-		public boolean isOverBounds(Vec3 vec3) {
-			return Coord.X.isOverBounds(vec3.x) || Coord.Z.isOverBounds(vec3.z);
+		public boolean isOver(Vec3 vec3) {
+			return Coord.X.isOver(vec3.x) || Coord.Z.isOver(vec3.z);
 		}
 
 		public double sqrDistToBounds(Vec3 from, Vec3 to) {
@@ -199,22 +208,22 @@ public class DimensionTransformer {
 	 */
 	public final class BlockMethods extends BasicPositionOperations<BlockPos> {
 		@Override
-		public BlockPos wrapToBounds(BlockPos blockPos) {
-			return new BlockPos(Coord.X.wrapToBounds(blockPos.getX()), blockPos.getY(), Coord.Z.wrapToBounds(blockPos.getZ()));
+		public BlockPos wrap(BlockPos blockPos) {
+			return new BlockPos(Coord.X.wrap(blockPos.getX()), blockPos.getY(), Coord.Z.wrap(blockPos.getZ()));
 		}
 
-		public long wrapToBounds(long blockPos) {
-			return wrapToBounds(new BlockPos(BlockPos.getX(blockPos), BlockPos.getY(blockPos), BlockPos.getZ(blockPos))).asLong();
-		}
-
-		@Override
-		public BlockPos unwrapFromBounds(BlockPos refBlockPos, BlockPos wrappedBlockPos) {
-			return new BlockPos(Coord.X.unwrapFromBounds(refBlockPos.getX(), wrappedBlockPos.getX()), wrappedBlockPos.getY(), Coord.Z.unwrapFromBounds(refBlockPos.getZ(), wrappedBlockPos.getZ()));
+		public long wrap(long blockPos) {
+			return wrap(new BlockPos(BlockPos.getX(blockPos), BlockPos.getY(blockPos), BlockPos.getZ(blockPos))).asLong();
 		}
 
 		@Override
-		public boolean isOverBounds(BlockPos blockPos) {
-			return Coord.X.isOverBounds(blockPos.getX()) || Coord.Z.isOverBounds(blockPos.getZ());
+		public BlockPos unwrap(BlockPos refBlockPos, BlockPos wrappedBlockPos) {
+			return new BlockPos(Coord.X.unwrap(refBlockPos.getX(), wrappedBlockPos.getX()), wrappedBlockPos.getY(), Coord.Z.unwrap(refBlockPos.getZ(), wrappedBlockPos.getZ()));
+		}
+
+		@Override
+		public boolean isOver(BlockPos blockPos) {
+			return Coord.X.isOver(blockPos.getX()) || Coord.Z.isOver(blockPos.getZ());
 		}
 
 		public BlockPos deltaFromBounds(BlockPos refBlockPos, BlockPos wrappedBlockPos) {
@@ -227,11 +236,11 @@ public class DimensionTransformer {
 	 */
 	public final class AABBMethods extends BasicPositionOperations<AABB> {
 		@Override
-		public AABB unwrapFromBounds(AABB refAABB, AABB wrappedAABB) {
-			double minX = Coord.X.unwrapFromBounds(refAABB.minX , wrappedAABB.minX);
-			double maxX = Coord.X.unwrapFromBounds(refAABB.maxX , wrappedAABB.maxX);
-			double minZ = Coord.Z.unwrapFromBounds(refAABB.minZ , wrappedAABB.minZ);
-			double maxZ = Coord.Z.unwrapFromBounds(refAABB.maxZ , wrappedAABB.maxZ);
+		public AABB unwrap(AABB refAABB, AABB wrappedAABB) {
+			double minX = Coord.X.unwrap(refAABB.minX , wrappedAABB.minX);
+			double maxX = Coord.X.unwrap(refAABB.maxX , wrappedAABB.maxX);
+			double minZ = Coord.Z.unwrap(refAABB.minZ , wrappedAABB.minZ);
+			double maxZ = Coord.Z.unwrap(refAABB.maxZ , wrappedAABB.maxZ);
 
 			return new AABB(minX, wrappedAABB.minY, minZ, maxX, wrappedAABB.maxY, maxZ);
 		}
@@ -251,12 +260,12 @@ public class DimensionTransformer {
 			double maxZ = original.maxZ;
 
 			//Guard clause
-			if(!(Coord.X.isOverBounds(minX) || Coord.X.isOverBounds(maxX) || Coord.X.isOverBounds(minZ) || Coord.X.isOverBounds(maxZ))) return List.of(original);
+			if(!(Coord.X.isOver(minX) || Coord.X.isOver(maxX) || Coord.X.isOver(minZ) || Coord.X.isOver(maxZ))) return List.of(original);
 
-			double minXWrapped = Coord.X.wrapToBounds(minX);
-			double maxXWrapped = Coord.X.wrapToBounds(maxX);
-			double minZWrapped = Coord.Z.wrapToBounds(minZ);
-			double maxZWrapped = Coord.Z.wrapToBounds(maxZ);
+			double minXWrapped = Coord.X.wrap(minX);
+			double maxXWrapped = Coord.X.wrap(maxX);
+			double minZWrapped = Coord.Z.wrap(minZ);
+			double maxZWrapped = Coord.Z.wrap(maxZ);
 
 			List<AABB> list = new ArrayList<>();
 
@@ -285,8 +294,24 @@ public class DimensionTransformer {
 		}
 
 		@Override
-		public boolean isOverBounds(AABB aabb) {
-			return (Coord.X.isOverBounds(aabb.minX) || Coord.X.isOverBounds(aabb.maxX) || Coord.Z.isOverBounds(aabb.minZ) || Coord.Z.isOverBounds(aabb.maxZ));
+		public boolean isOver(AABB aabb) {
+			return (Coord.X.isOver(aabb.minX) || Coord.X.isOver(aabb.maxX) || Coord.Z.isOver(aabb.minZ) || Coord.Z.isOver(aabb.maxZ));
+		}
+	}
+
+	public final class BoundingBoxMethods extends BasicPositionOperations<BoundingBox> {
+		public BoundingBox unwrap(AABB refAABB, AABB originalAABB) {
+			AABB out = AABoundingBox.unwrap(refAABB, originalAABB);
+
+			return new BoundingBox((int) Math.floor(out.minX), (int) Math.floor(out.minY), (int) Math.floor(out.minZ), (int) Math.floor(out.maxX), (int) Math.floor(out.maxY),(int) Math.floor(out.maxZ));
+		}
+
+		@Override
+		public BoundingBox unwrap(BoundingBox refBoundingBox, BoundingBox originalBoundingBox) {
+			AABB refAABB = new AABB(refBoundingBox.minX(), refBoundingBox.minY(), refBoundingBox.minZ(), refBoundingBox.maxX(), refBoundingBox.maxY(), refBoundingBox.maxZ());
+			AABB originalAABB = new AABB(originalBoundingBox.minX(), originalBoundingBox.minY(), originalBoundingBox.minZ(), originalBoundingBox.maxX(), originalBoundingBox.maxY(), originalBoundingBox.maxZ());
+
+			return unwrap(refAABB, originalAABB);
 		}
 	}
 

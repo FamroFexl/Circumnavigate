@@ -14,35 +14,34 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// Fix knockback miscalculation
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
-	LivingEntity thiz = (LivingEntity) (Object) this;
 
-    // Fix knockback miscalculation
-    @Unique private double knockbackDeltaX;
-    @Unique private double knockbackDeltaZ;
+    @Unique private double deltaX;
+    @Unique private double deltaZ;
 
     @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
     public void wrapDelta(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         Entity thiz = (Entity) (Object) this;
         Entity enemy = source.getEntity();
-        DimensionTransformer transformer = enemy.level().getTransformer().onlyServerSide();
-        knockbackDeltaX = transformer.Coord.X.deltaFromBounds(thiz.getX(), enemy.getX());
-        knockbackDeltaZ = transformer.Coord.Z.deltaFromBounds(thiz.getZ(), enemy.getZ());
+        DimensionTransformer transformer = enemy.level().getTransformer().SSO();
+        deltaX = transformer.Coord.X.deltaFromBounds(thiz.getX(), enemy.getX());
+        deltaZ = transformer.Coord.Z.deltaFromBounds(thiz.getZ(), enemy.getZ());
 
         // Vanilla parity code
-        while (knockbackDeltaX * knockbackDeltaX + knockbackDeltaZ * knockbackDeltaZ < 1.0E-4) {
-            knockbackDeltaX = (Math.random() - Math.random()) * 0.01;
-            knockbackDeltaZ = (Math.random() - Math.random()) * 0.01;
+        while (deltaX * deltaX + deltaZ * deltaZ < 1.0E-4) {
+            deltaX = (Math.random() - Math.random()) * 0.01;
+            deltaZ = (Math.random() - Math.random()) * 0.01;
         }
     }
 
     @WrapMethod(method = "knockback")
     public void wrapDistance1(double strength, double x, double z, Operation<Void> original) {
         // In case this method would be called from somewhere else
-        if (knockbackDeltaX != 0 || knockbackDeltaZ != 0) {
-            x = knockbackDeltaX;
-            z = knockbackDeltaZ;
+        if (deltaX != 0 || deltaZ != 0) {
+            x = deltaX;
+            z = deltaZ;
         }
 
         original.call(strength, x, z);
@@ -51,9 +50,9 @@ public abstract class LivingEntityMixin {
     @WrapMethod(method = "indicateDamage")
     public void wrapDistance2(double x, double z, Operation<Void> original) {
         // In case this method would be called from somewhere else
-        if (knockbackDeltaX != 0 || knockbackDeltaZ != 0) {
-            x = knockbackDeltaX;
-            z = knockbackDeltaZ;
+        if (deltaX != 0 || deltaZ != 0) {
+            x = deltaX;
+            z = deltaZ;
         }
 
         original.call(x, z);
@@ -61,6 +60,7 @@ public abstract class LivingEntityMixin {
 
 	@Redirect(method = "hasLineOfSight", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceTo(Lnet/minecraft/world/phys/Vec3;)D"))
 	public double modifyDistTo(Vec3 instance, Vec3 vec) {
-		return thiz.level().getTransformer().Vector3D.unwrapFromBounds(vec, instance).distanceTo(vec);
+		LivingEntity thiz = (LivingEntity) (Object) this;
+		return thiz.level().getTransformer().Vector3D.unwrap(vec, instance).distanceTo(vec);
 	}
 }

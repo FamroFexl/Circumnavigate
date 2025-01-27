@@ -16,44 +16,42 @@ public class FakeCoordinateTransformers extends CoordinateTransformers {
 		public final int domainLength = CoordinateConstants.DISABLING_CHUNK_POS*2 * 16;
 
 		@Override
-		public Double wrapToBounds(Double coord) {
+		public double wrap(double coord) {
 			return coord;
 		}
 
-		public Integer wrapToBounds(Integer coord) {
-			return wrapToBounds(coord.doubleValue()).intValue();
+		public int wrap(int coord) {
+			return coord;
 		}
 
 		@Override
-		public Double unwrapFromBounds(Double refCoord, Double wrappedCoord) {
+		public double unwrap(double refCoord, double wrappedCoord) {
 			return wrappedCoord;
 		}
 
-		public Integer unwrapFromBounds(Integer refCoord, Integer wrappedCoord) {
-			return unwrapFromBounds(refCoord.doubleValue(), wrappedCoord.doubleValue()).intValue();
+		public int unwrap(int refCoord, int wrappedCoord) {
+			return wrappedCoord;
 		}
 
 		@Override
-		public boolean isOverBounds(Double coord) {
+		public boolean isOver(double coord) {
 			return false;
 		}
 
-		public boolean isOverBounds(Integer coord) {
-			return isOverBounds(coord.doubleValue());
+		public boolean isOver(int coord) {
+			return false;
 		}
 
-		public Double deltaFromBounds(Double fromCoord, Double toCoord) {
-			double toCoordUnwrapped = unwrapFromBounds(fromCoord, toCoord);
-
-			return toCoordUnwrapped - fromCoord;
+		public double deltaFromBounds(double fromCoord, double toCoord) {
+			return toCoord - fromCoord;
 		}
 
-		public Double sqrDistToBounds(Double dist) {
+		public double sqrDistToBounds(double dist) {
 			return dist * dist;
 		}
 
-		public Integer sqrDistToBounds(Integer dist) {
-			return sqrDistToBounds(dist.doubleValue()).intValue();
+		public int sqrDistToBounds(int dist) {
+			return dist * dist;
 		}
 	}
 }

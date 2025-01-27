@@ -4,6 +4,7 @@
 
 package com.fexl.circumnavigate.mixin.entity;
 
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -13,27 +14,37 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 	@Shadow private Level level;
 
-	@Shadow public abstract double getX();
-
 	Entity thiz = (Entity) (Object) this;
+
+	/**
+	 * @author Famro Fexl
+	 * @reason wrapping
+	 */
+	@Overwrite
+	public boolean closerThan(Entity entity, double horizontalDistance, double verticalDistance) {
+		DimensionTransformer transformer = level.getTransformer();
+
+		double d = entity.getX() - transformer.SSO().Coord.X.unwrap(entity.getX(), thiz.getX());
+		double e = entity.getY() - thiz.getY();
+		double f = entity.getZ() - transformer.SSO().Coord.Z.unwrap(entity.getZ(), thiz.getZ());
+		return Mth.lengthSquared(d, f) < Mth.square(horizontalDistance) && Mth.square(e) < Mth.square(verticalDistance);
+	}
 
 	/**
 	 * Modifies the inputted X position of the entity to be within the wrapping bounds
 	 */
 	@ModifyVariable(method = "setPosRaw", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 	public double wrapX(double x) {
-		return level.getTransformer().onlyServerSide().Coord.X.wrapToBounds(x);
+		return level.getTransformer().SSO().Coord.X.wrap(x);
 	}
 
 	/**
@@ -41,7 +52,23 @@ public abstract class EntityMixin {
 	 */
 	@ModifyVariable(method = "setPosRaw", at = @At("HEAD"), ordinal = 2, argsOnly = true)
 	public double wrapZ(double z) {
-		return level.getTransformer().onlyServerSide().Coord.Z.wrapToBounds(z);
+		return level.getTransformer().SSO().Coord.Z.wrap(z);
+	}
+
+	/**
+	 * @author Famro Fexl
+	 * @reason wrapping
+	 */
+	@Overwrite
+	public void absMoveTo(double x, double y, double z) {
+		DimensionTransformer transformer = level.getTransformer();
+
+		double d = Mth.clamp(x, -3.0E7, 3.0E7);
+		double e = Mth.clamp(z, -3.0E7, 3.0E7);
+		thiz.xo = transformer.SSO().Coord.X.wrap(d);
+		thiz.yo = y;
+		thiz.zo = transformer.SSO().Coord.Z.wrap(e);
+		thiz.setPos(d, y, e);
 	}
 
 	/**
@@ -50,23 +77,35 @@ public abstract class EntityMixin {
 	@Redirect(method = "isColliding", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/shapes/Shapes;joinIsNotEmpty(Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/BooleanOp;)Z"))
 	public boolean wrapAABB(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator) {
 		AABB empty = new AABB(0, 0, 0, 0, 0, 0);
-		VoxelShape result = Shapes.create(level.getTransformer().onlyServerSide().AABB.unwrapFromBounds(shape1.isEmpty() ? empty : shape1.bounds(), shape2.isEmpty() ? empty : shape2.bounds()));
+		VoxelShape result = Shapes.create(level.getTransformer().SSO().AABoundingBox.unwrap(shape1.isEmpty() ? empty : shape1.bounds(), shape2.isEmpty() ? empty : shape2.bounds()));
 		return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 	}
 
 	@Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
 	public void wrapDistanceSquared1(Entity entity, CallbackInfoReturnable<Float> cir) {
-		cir.setReturnValue(Mth.sqrt((float)level.getTransformer().onlyServerSide().Coord.sqrDistToBounds(entity.getX(), entity.getY(), entity.getZ(), thiz.getX(), thiz.getY(), thiz.getZ())));
+		cir.setReturnValue(Mth.sqrt((float)level.getTransformer().SSO().Coord.sqrDistToBounds(entity.getX(), entity.getY(), entity.getZ(), thiz.getX(), thiz.getY(), thiz.getZ())));
 	}
 
 	@Inject(method = "distanceToSqr(DDD)D", at = @At("HEAD"), cancellable = true)
 	public void wrapDistanceSquared2(double x, double y, double z, CallbackInfoReturnable<Double> cir) {
-		cir.setReturnValue(level.getTransformer().onlyServerSide().Coord.sqrDistToBounds(x, y, z, thiz.getX(), thiz.getY(), thiz.getZ()));
+		cir.setReturnValue(level.getTransformer().SSO().Coord.sqrDistToBounds(x, y, z, thiz.getX(), thiz.getY(), thiz.getZ()));
 	}
 
 	@Inject(method = "distanceToSqr(Lnet/minecraft/world/phys/Vec3;)D", at = @At("HEAD"), cancellable = true)
 	public void wrapDistanceSquared3(Vec3 vec, CallbackInfoReturnable<Double> cir) {
-		cir.setReturnValue(level.getTransformer().onlyServerSide().Vector3D.sqrDistToBounds(vec, new Vec3(thiz.getX(), thiz.getY(), thiz.getZ())));
+		cir.setReturnValue(level.getTransformer().SSO().Vector3D.sqrDistToBounds(vec, new Vec3(thiz.getX(), thiz.getY(), thiz.getZ())));
+	}
+
+	@Redirect(method = "push(Lnet/minecraft/world/entity/Entity;)V", at = @At(value="INVOKE", target ="Lnet/minecraft/world/entity/Entity;getX()D", ordinal = 0))
+	public double modifyGetX(Entity entity) {
+		DimensionTransformer transformer = level.getTransformer();
+		return transformer.Coord.X.unwrap(thiz.getX(), entity.getX());
+	}
+
+	@Redirect(method = "push(Lnet/minecraft/world/entity/Entity;)V", at = @At(value="INVOKE", target ="Lnet/minecraft/world/entity/Entity;getZ()D", ordinal = 0))
+	public double modifyGetZ(Entity entity) {
+		DimensionTransformer transformer = level.getTransformer();
+		return transformer.Coord.Z.unwrap(thiz.getZ(), entity.getZ());
 	}
 
 

@@ -36,9 +36,9 @@ public class DebugScreenOverlayMixin {
 			addPos = 12;
 
 		//Provides the server-side chunk & block position if the player is past the range where they are identical
-		if(transformer.Coord.X.isOverBounds(blockPos.getX()) || transformer.Coord.Z.isOverBounds(blockPos.getZ())) {
-			list.add(addPos++, String.format(Locale.ROOT, "Actual Block: %d %d %d", transformer.Coord.X.wrapToBounds(blockPos.getX()), blockPos.getY(), transformer.Coord.Z.wrapToBounds(blockPos.getZ())));
-			list.add(addPos++, String.format(Locale.ROOT, "Actual Chunk: %d %d %d", transformer.Chunk.X.wrapToBounds(chunkPos.x), SectionPos.blockToSectionCoord((int)blockPos.getY()), transformer.Chunk.Z.wrapToBounds(chunkPos.z)));
+		if(transformer.Coord.X.isOver(blockPos.getX()) || transformer.Coord.Z.isOver(blockPos.getZ())) {
+			list.add(addPos++, String.format(Locale.ROOT, "Actual Block: %d %d %d", transformer.Coord.X.wrap(blockPos.getX()), blockPos.getY(), transformer.Coord.Z.wrap(blockPos.getZ())));
+			list.add(addPos++, String.format(Locale.ROOT, "Actual Chunk: %d %d %d", transformer.Chunk.X.wrap(chunkPos.x), SectionPos.blockToSectionCoord((int)blockPos.getY()), transformer.Chunk.Z.wrap(chunkPos.z)));
 		}
 		//Shows the wrapping info
 		list.add(addPos, String.format(Locale.ROOT, transformer.toString()));

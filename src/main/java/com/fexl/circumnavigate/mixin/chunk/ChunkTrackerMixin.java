@@ -24,7 +24,6 @@ public abstract class ChunkTrackerMixin extends DynamicGraphMinFixedPoint {
 	}
 
 	@Shadow protected abstract int computeLevelFromNeighbor(long startPos, long endPos, int startLevel);
-	@Shadow protected abstract int getLevelFromSource(long pos);
 
 	/**
 	 * Modifies ChunkPos to use wrapped chunks
@@ -39,7 +38,7 @@ public abstract class ChunkTrackerMixin extends DynamicGraphMinFixedPoint {
 	    DimensionTransformer transformer = thiz.getTransformer();
 
 	    ChunkPos chunkPos = new ChunkPos(startPos);
-	    ChunkPos wrappedChunkPos = transformer.Chunk.wrapToBounds(chunkPos);
+	    ChunkPos wrappedChunkPos = transformer.Chunk.wrap(chunkPos);
 	    long wrappedPos = wrappedChunkPos.toLong();
 	    if (wrappedPos == endPos) {
 	        wrappedPos = ChunkPos.INVALID_CHUNK_POS;
@@ -62,8 +61,8 @@ public abstract class ChunkTrackerMixin extends DynamicGraphMinFixedPoint {
 	private long wrapChunkPos(int x, int z, Operation<Long> original, @Local(argsOnly = true) long pos, @Local(argsOnly = true) int level, @Local(argsOnly = true) boolean isDecreasing) {
 		DimensionTransformer transformer = thiz.getTransformer();
 
-		int wrappedX = transformer.Chunk.X.wrapToBounds(x);
-		int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
+		int wrappedX = transformer.Chunk.X.wrap(x);
+		int wrappedZ = transformer.Chunk.Z.wrap(z);
 		long chunkLong = original.call(wrappedX, wrappedZ);
 
 		if (chunkLong != pos) {

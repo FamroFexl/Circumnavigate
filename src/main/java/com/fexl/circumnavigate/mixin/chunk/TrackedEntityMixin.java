@@ -20,6 +20,6 @@ public abstract class TrackedEntityMixin {
 	 */
 	@Redirect(method = "updatePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"))
 	public Vec3 unwrapVec(Vec3 playerPos, Vec3 entityPos, @Local(argsOnly = true) ServerPlayer player) {
-		return playerPos.subtract(player.level().getTransformer().Vector3D.unwrapFromBounds(playerPos, entityPos));
+		return playerPos.subtract(player.level().getTransformer().Vector3D.unwrap(playerPos, entityPos));
 	}
 }

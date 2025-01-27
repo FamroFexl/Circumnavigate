@@ -14,8 +14,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.Optional;
-
 @Mixin(EuclideanGameEventListenerRegistry.class)
 public class EuclideanGameEventListenerRegistryMixin {
 	/**
@@ -23,7 +21,7 @@ public class EuclideanGameEventListenerRegistryMixin {
 	 */
 	@Redirect(method = "getPostableListenerPosition", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;distSqr(Lnet/minecraft/core/Vec3i;)D"))
 	private static double modifySqr(BlockPos instance, Vec3i vec3i, @Local(argsOnly = true) ServerLevel level) {
-		return new Vec3iWrapped(instance.getX(), instance.getY(), instance.getZ(), level.getTransformer().onlyServerSide()).distSqr(vec3i);
+		return new Vec3iWrapped(instance.getX(), instance.getY(), instance.getZ(), level.getTransformer().SSO()).distSqr(vec3i);
 	}
 
 }

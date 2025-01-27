@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.fexl.circumnavigate.compat.mixin.client",
+  "plugin": "com.fexl.circumnavigate.compat.CompatMixinConfigPlugin",
+  "refmap": "circumnavigate.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "iris.CommonUniformsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -4,10 +4,14 @@
 build/
 out/
 classes/
+lib/
 
 # eclipse
 
 *.launch
+
+#Manifold run config
+build.properties
 
 # idea
 

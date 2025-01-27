@@ -7,7 +7,6 @@ package com.fexl.circumnavigate.mixin.worldInit;
 import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.chunk.ChunkSource;
@@ -24,6 +23,6 @@ public class PathNavigationRegionMixin {
 	public void init(Level level, BlockPos centerPos, BlockPos offsetPos, CallbackInfo ci) {
 		PathNavigationRegion thiz = (PathNavigationRegion) (Object) this;
 
-		thiz.setTransformer(level.getTransformer().onlyServerSide());
+		thiz.setTransformer(level.getTransformer().SSO());
 	}
 }
