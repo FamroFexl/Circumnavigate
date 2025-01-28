@@ -23,8 +23,6 @@ public class Circumnavigate implements ModInitializer {
 		PayloadTypeRegistry.configurationS2C().register(DimensionWrappingPayload.TYPE, DimensionWrappingPayload.STREAM_CODEC);
 		//PayloadTypeRegistry.playS2C().register(ChunkLoadingLevelsPayload.TYPE, ChunkLoadingLevelsPayload.STREAM_CODEC);
 
-		Properties
-
 		/**
 		ServerTickEvents.END_SERVER_TICK.register((server -> {
 			if (tickCount++ >= 10) {

@@ -50,7 +50,7 @@ loom {
 
 dependencies {
 	//Minecraft
-	minecraft "com.mojang:minecraft:${props.getProperty("minecraft_version")}"
+	minecraft "com.mojang:minecraft:${props.minecraft_version}"
 
 	//Mojang mappings
 	mappings loom.layered() {
