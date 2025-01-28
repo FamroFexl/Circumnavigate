@@ -77,8 +77,8 @@ public abstract class KeyboardHandlerMixin {
 				this.debugFeedback("NeighborUpdates: {0}", renderNeighborUpdates ? "shown" : "hidden");
 				break;
 			case GLFW.GLFW_KEY_S:
-				this.debugFeedback("StructurePieces: {0}", renderStructurePieces ? "shown" : "hidden");
 				renderStructurePieces = !renderStructurePieces;
+				this.debugFeedback("StructurePieces: {0}", renderStructurePieces ? "shown" : "hidden");
 				break;
 			case GLFW.GLFW_KEY_P:
 				renderPathfinding = !renderPathfinding;

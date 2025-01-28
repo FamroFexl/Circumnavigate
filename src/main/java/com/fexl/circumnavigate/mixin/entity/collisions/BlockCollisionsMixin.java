@@ -37,7 +37,7 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 		if(collisionGetter instanceof ServerLevel level) serverLevel = level;
 
 		if(entity != null) {
-			this.box = entity.level().getTransformer().AABB.unwrapFromBounds(entity.getBoundingBox(), box);
+			this.box = entity.level().getTransformer().AABoundingBox.unwrapFromBounds(entity.getBoundingBox(), box);
 		}
 	}
 

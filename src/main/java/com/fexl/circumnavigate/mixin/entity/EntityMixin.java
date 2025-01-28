@@ -50,7 +50,7 @@ public abstract class EntityMixin {
 	@Redirect(method = "isColliding", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/shapes/Shapes;joinIsNotEmpty(Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/BooleanOp;)Z"))
 	public boolean wrapAABB(VoxelShape shape1, VoxelShape shape2, BooleanOp resultOperator) {
 		AABB empty = new AABB(0, 0, 0, 0, 0, 0);
-		VoxelShape result = Shapes.create(level.getTransformer().onlyServerSide().AABB.unwrapFromBounds(shape1.isEmpty() ? empty : shape1.bounds(), shape2.isEmpty() ? empty : shape2.bounds()));
+		VoxelShape result = Shapes.create(level.getTransformer().onlyServerSide().AABoundingBox.unwrapFromBounds(shape1.isEmpty() ? empty : shape1.bounds(), shape2.isEmpty() ? empty : shape2.bounds()));
 		return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 	}
 

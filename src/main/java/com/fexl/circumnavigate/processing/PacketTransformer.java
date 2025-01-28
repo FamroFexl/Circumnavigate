@@ -18,6 +18,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.common.custom.NeighborUpdatesDebugPayload;
+import net.minecraft.network.protocol.common.custom.PathfindingDebugPayload;
+import net.minecraft.network.protocol.common.custom.StructuresDebugPayload;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -25,9 +30,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.RelativeMovement;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.BlockPositionSource;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.Target;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
@@ -110,6 +121,14 @@ public class PacketTransformer {
 
 	private static Vec3 getClientVec3(ServerPlayer player, Vec3 packetVec3) {
 		return playerTransformer(player).Vector3D.unwrapFromBounds(player.getClientPosition(), packetVec3);
+	}
+
+	private static AABB getClientAABB(ServerPlayer player, AABB packetAABB) {
+		return playerTransformer(player).AABoundingBox.unwrapFromBounds(new AABB(player.getClientBlock()), packetAABB);
+	}
+
+	private static BoundingBox getClientBB(ServerPlayer player, BoundingBox packetBB) {
+		return playerTransformer(player).BoundingBoxes.unwrapFromBounds(new AABB(player.getClientBlock()), AABB.of(packetBB));
 	}
 
 	private static int getLimitedDistance(ServerPlayer player, int distance) {
@@ -479,7 +498,6 @@ public class PacketTransformer {
 		return ClientboundTeleportEntityPacket.STREAM_CODEC.decode(buffer);
 	}
 
-
 	private static ClientboundBundlePacket transformPacket(ClientboundBundlePacket packet, ServerPlayer player) {
 		List<Packet<? super ClientGamePacketListener>> outputPackets = new ArrayList<>();
 		packet.subPackets().forEach((subPacket) -> {
@@ -487,7 +505,81 @@ public class PacketTransformer {
 		});
 
 		return new ClientboundBundlePacket(outputPackets);
+	}
+
+	private static ClientboundCustomPayloadPacket transformPacket(ClientboundCustomPayloadPacket packet, ServerPlayer player) {
+		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
+
+		CustomPacketPayload outputPayload = packet.payload();
+
+		if(packet.payload() instanceof NeighborUpdatesDebugPayload payload) {
+			outputPayload = new NeighborUpdatesDebugPayload(payload.time(), getClientBlockPos(player, payload.pos()));
+		}
+		else if(packet.payload() instanceof PathfindingDebugPayload payload) {
+			outputPayload = pathfindingDebugPayload(payload, player);
+		}
+
+		return new ClientboundCustomPayloadPacket(outputPayload);
+	}
+
+	private static PathfindingDebugPayload pathfindingDebugPayload(PathfindingDebugPayload payload, ServerPlayer player) {
+		Path inputPath = payload.path();
+
+		List<Node> outputNodes = new ArrayList<>();
+
+		//Wrap node positions
+		for(int i = 0; i < inputPath.getNodeCount(); i++) {
+			Node inputNode = inputPath.getNode(i);
+			outputNodes.add(wrapNode(player, inputNode));
+		}
+
+		Path outputPath = new Path(outputNodes, getClientBlockPos(player, inputPath.getTarget()), inputPath.canReach());
+
+		//Wrap debugData
+		if(inputPath.debugData() != null) {
+			Node[] inputOpenNodes = inputPath.debugData().openSet();
+			Node[] outputOpenNodes = new Node[inputOpenNodes.length];
+
+			for(int i = 0; i < inputOpenNodes.length; i++) {
+				outputOpenNodes[i] = wrapNode(player, inputOpenNodes[i]);
+			}
+
+			Node[] inputClosedNodes = inputPath.debugData().closedSet();
+			Node[] outputClosedNodes = new Node[inputClosedNodes.length];
+
+			for(int i = 0; i < inputClosedNodes.length; i++) {
+				outputClosedNodes[i] = wrapNode(player, inputClosedNodes[i]);
+			}
 
 
+			Set<Target> inputTargets = inputPath.debugData().targetNodes();
+			Set<Target> outputTargets = new HashSet<>();
+
+			 inputTargets.forEach(target -> {
+			 Target newTarget = new Target(wrapNode(player, target));
+			 newTarget.updateBest(target.bestHeuristic, target.getBestNode());
+			 newTarget.reached = target.isReached();
+			 outputTargets.add(newTarget);
+			 });
+
+			outputPath.setDebug(outputOpenNodes, outputClosedNodes, inputTargets);
+		}
+
+		return new PathfindingDebugPayload(payload.entityId(), outputPath, payload.maxNodeDistance());
+	}
+
+	private static Node wrapNode(ServerPlayer player, Node node) {
+
+		RegistryFriendlyByteBuf nodeBuffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
+		nodeBuffer.writeInt(getClientX(player, node.x));
+		nodeBuffer.writeInt(node.y);
+		nodeBuffer.writeInt(getClientZ(player, node.z));
+		nodeBuffer.writeFloat(node.walkedDistance);
+		nodeBuffer.writeFloat(node.costMalus);
+		nodeBuffer.writeBoolean(node.closed);
+		nodeBuffer.writeEnum(node.type);
+		nodeBuffer.writeFloat(node.f);
+
+		return Node.createFromStream(nodeBuffer);
 	}
 }

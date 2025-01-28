@@ -28,6 +28,7 @@
     "chunk.TrackedEntityMixin",
     "debug.DebugPacketsMixin",
     "debug.PathMixin",
+    "debug.ServerLevelMixin",
     "debug.SharedConstantsMixin",
     "entity.EntityMixin",
     "entity.LivingEntityMixin",

@@ -42,7 +42,7 @@ public interface EntityGetterMixin {
 
 		if(this instanceof ServerLevel level) {
 			DimensionTransformer transformer = level.getTransformer();
-			VoxelShape result = Shapes.create(transformer.AABB.unwrapFromBounds(shape1.bounds(), shape2.bounds()));
+			VoxelShape result = Shapes.create(transformer.AABoundingBox.unwrapFromBounds(shape1.bounds(), shape2.bounds()));
 
 			return Shapes.joinIsNotEmpty(shape1, result, resultOperator);
 		}

@@ -45,7 +45,7 @@ public abstract class LevelMixin<T extends Entity> {
 		DimensionTransformer transformer = thiz.getTransformer();
 
 		this.getProfiler().incrementCounter("getEntities");
-		List<AABB> boxes = transformer.AABB.splitAcrossBounds(bounds);
+		List<AABB> boxes = transformer.AABoundingBox.splitAcrossBounds(bounds);
 		for(AABB box : boxes) {
 			this.getEntities().get(entityTypeTest, box, entity -> {
 				if (predicate.test(entity)) {

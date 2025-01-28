@@ -6,6 +6,7 @@ import com.fexl.circumnavigate.options.DimensionWrappingSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -37,7 +38,8 @@ public class DimensionTransformer {
 	public final SectionMethods Section;
 	public final Vector3DMethods Vector3D;
 	public final BlockMethods Block;
-	public final AABBMethods AABB;
+	public final AABBMethods AABoundingBox;
+	public final BoundingBoxMethods BoundingBoxes;
 
 	public final DimensionWrappingSettings wrappingSettings;
 
@@ -67,7 +69,8 @@ public class DimensionTransformer {
 		this.Section = new SectionMethods();
 		this.Vector3D = new Vector3DMethods();
 		this.Block = new BlockMethods();
-		this.AABB = new AABBMethods();
+		this.AABoundingBox = new AABBMethods();
+		this.BoundingBoxes = new BoundingBoxMethods();
 	}
 
 	public DimensionTransformer onlyServerSide() {
@@ -283,6 +286,19 @@ public class DimensionTransformer {
 		@Override
 		public boolean isOverBounds(AABB aabb) {
 			return (Coord.X.isOverBounds(aabb.minX) || Coord.X.isOverBounds(aabb.maxX) || Coord.Z.isOverBounds(aabb.minZ) || Coord.Z.isOverBounds(aabb.maxZ));
+		}
+	}
+
+	public final class BoundingBoxMethods extends BasicPositionOperations<BoundingBox> {
+		public BoundingBox unwrapFromBounds(AABB refAABB, AABB originalAABB) {
+			AABB out = AABoundingBox.unwrapFromBounds(refAABB, originalAABB);
+
+			return new BoundingBox((int) Math.floor(out.minX), (int) Math.floor(out.minY), (int) Math.floor(out.minZ), (int) Math.floor(out.maxX), (int) Math.floor(out.maxY),(int) Math.floor(out.maxZ));
+		}
+
+		@Override
+		public BoundingBox unwrapFromBounds(BoundingBox refBoundingBox, BoundingBox originalBoundingBox) {
+			return unwrapFromBounds(AABB.of(refBoundingBox), AABB.of(originalBoundingBox));
 		}
 	}
 
