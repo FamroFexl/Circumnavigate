@@ -11,6 +11,8 @@
     "debug.DebugRendererMixin",
     "debug.DebugScreenOverlayMixin",
     "debug.KeyboardHandlerMixin",
+    "shader.ProgramMixin",
+    "shader.ShaderInstanceMixin",
     "worldInit.ClientLevelMixin",
     "worldInit.ConnectionMixin",
     "worldInit.CreateWorldScreenMixin",
