@@ -3,7 +3,6 @@
 package com.fexl.circumnavigate.mixin.client.worldInit;
 
 import com.fexl.circumnavigate.client.gui.screens.WorldWrappingSettingsScreen;
-import com.fexl.circumnavigate.client.storage.CreateWorldButtons;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.CycleButton;
@@ -30,7 +29,7 @@ public class WorldTabMixin {
 		wrappingButton.withTooltip(boolean_ -> tooltip);
 		wrappingButton.displayOnlyValue();
 		rowHelper.addChild(new StringWidget(Component.literal("Wrap World"), Minecraft.getInstance().font), new LayoutSettings.LayoutSettingsImpl().alignVerticallyMiddle());
-		rowHelper.addChild(CreateWorldButtons.wrappingButton = wrappingButton.create(0, 0, 44, 20, (Component) Component.empty(), (cycleButton, state) -> {
+		rowHelper.addChild(wrappingButton.create(0, 0, 44, 20, (Component) Component.empty(), (cycleButton, state) -> {
 			if(cycleButton.getValue()) {
 				Minecraft.getInstance().setScreen(new WorldWrappingSettingsScreen(createWorldScreen, cycleButton));
 			}

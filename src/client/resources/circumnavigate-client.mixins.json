@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ClientToServerListener",
+    "ShaderInstanceMixin",
     "chunk.OptionsAccessorMixin",
     "chunk.OptionsMixin",
     "chunk.SectionOcclusionGraphMixin",
@@ -11,8 +12,7 @@
     "debug.DebugRendererMixin",
     "debug.DebugScreenOverlayMixin",
     "debug.KeyboardHandlerMixin",
-    "shader.ProgramMixin",
-    "shader.ShaderInstanceMixin",
+    "options.VideoSettingsScreenMixin",
     "worldInit.ClientLevelMixin",
     "worldInit.ConnectionMixin",
     "worldInit.CreateWorldScreenMixin",

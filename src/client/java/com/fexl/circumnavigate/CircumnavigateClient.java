@@ -14,6 +14,8 @@ import java.util.HashMap;
 public class CircumnavigateClient implements ClientModInitializer {
 	public static HashMap<ChunkPos, Integer> chunkLoadingLevels = new HashMap<>();
 
+	public static boolean USE_INTERNAL_CURVATURE_SHADER = true;
+
 	@Override
 	public void onInitializeClient() {
 		//Read an incoming transformer from the server. Received during server configuration.
