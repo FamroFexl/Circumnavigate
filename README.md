@@ -36,17 +36,3 @@ Watch [this video](https://www.youtube.com/watch?v=bmkUSeLEE7Y) or read the [wik
 5. Developer API? 
 6. Datapack coordinate wrapping?
 
-
-## Tools
-**Debugging:**
-1. Coordinates and wrapping information can be seen in the debug menu. Actual coordinates will only show up if the client is past a bounds. <br><br>
-   _Wrapping Settings:_<br>
-   ![Wrapping Settings](https://cdn.modrinth.com/data/cached_images/63223899ff1dc90d88d9f2d3d2a92dc5fff77a52.png)<br>
-   _Actual Coordinates:_<br>
-   ![Actual Coordinates](https://cdn.modrinth.com/data/cached_images/8459b9c4cbc31029cf8bacc6859c6d18fbdfabab.png)<br><br>
-2. Chunk boundaries now show purple and pink lines to visualize chunk borders.<br><br>
-   _Purple Lines Showing Distant Chunk Border:_<br>
-   ![Purple Lines](https://cdn.modrinth.com/data/cached_images/d6c82034730d44ada5b072dded8c4a639dd66d7f.png)<br>
-   _Pink Lines Showing Immediate Chunk Border:_<br>
-   ![Pink Lines](https://cdn.modrinth.com/data/cached_images/657bbd9156a338134939835d84534ce13040be1a.png)
-
