@@ -35,10 +35,6 @@ public abstract class BlockCollisionsMixin<T> extends AbstractIterator<T> {
 	private void wrap3DCursor(CollisionGetter collisionGetter, Entity entity, AABB box, boolean onlySuffocatingBlocks, BiFunction<BlockPos.MutableBlockPos, VoxelShape, T> resultProvider, CallbackInfo ci) {
 		serverLevel = null;
 		if(collisionGetter instanceof ServerLevel level) serverLevel = level;
-
-		if(entity != null) {
-			this.box = entity.level().getTransformer().AABoundingBox.unwrapFromBounds(entity.getBoundingBox(), box);
-		}
 	}
 
 	/**
