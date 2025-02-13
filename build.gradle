@@ -19,6 +19,16 @@ repositories {
 		name = 'ParchmentMC'
 		url = 'https://maven.parchmentmc.org'
 	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		} filter {
+			includeGroup "maven.modrinth"
+		}
+	}
 }
 
 loom {
@@ -29,6 +39,11 @@ loom {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
+	}
+
+	mixin {
+		useLegacyMixinAp = true
+		defaultRefmapName = "circumnavigate.refmap.json"
 	}
 
 	accessWidenerPath = file("src/main/resources/circumnavigate.accesswidener")
@@ -63,6 +78,12 @@ dependencies {
 
 	//Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}"
+
+	//Sodium
+	modImplementation "maven.modrinth:sodium:${props.sodium_version}"
+
+	//Iris Shaders
+	modImplementation "maven.modrinth:iris:${props.iris_shaders_version}"
 
 	//Java preprocessor
 	annotationProcessor "systems.manifold:manifold-preprocessor:${manifold_preprocessor_version}"
