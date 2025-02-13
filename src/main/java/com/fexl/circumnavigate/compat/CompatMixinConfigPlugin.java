@@ -28,7 +28,6 @@ public class CompatMixinConfigPlugin implements IMixinConfigPlugin {
                 modid = elements[6];
             else
                 modid = elements[5];
-            System.out.println(modid + ": " + FabricLoader.getInstance().isModLoaded(modid));
             return FabricLoader.getInstance().isModLoaded(modid);
         }
         return false;
