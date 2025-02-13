@@ -21,8 +21,14 @@ public class CompatMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if(mixinClassName.contains("com.fexl.circumnavigate.compat")) {
-            String modid = mixinClassName.split("\\.")[4];
+        if(mixinClassName.contains("com.fexl.circumnavigate.compat.mixin")) {
+            String[] elements = mixinClassName.split("\\.");
+            String modid;
+            if(elements[5].equals("client"))
+                modid = elements[6];
+            else
+                modid = elements[5];
+            System.out.println(modid + ": " + FabricLoader.getInstance().isModLoaded(modid));
             return FabricLoader.getInstance().isModLoaded(modid);
         }
         return false;
