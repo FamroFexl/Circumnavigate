@@ -1,9 +1,0 @@
-{ "name": "DimensionBounds", "type": "int", "count": 2, "values": [60322112, 60322112] },
-
-//Circumnavigate curvature shader imports
-#moj_import <curvature.glsl>
-uniform ivec2 DimensionBounds;
-
-//Circumnavigate curvature shader modifications
-vec3 pos = Position;
-pos.y -= curve_dimension(DimensionBounds, pos.xz);

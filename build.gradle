@@ -15,20 +15,20 @@ base {
 }
 
 repositories {
-	maven {
-		name = 'ParchmentMC'
-		url = 'https://maven.parchmentmc.org'
-	}
-	exclusiveContent {
-		forRepository {
-			maven {
-				name = "Modrinth"
-				url = "https://api.modrinth.com/maven"
-			}
-		} filter {
-			includeGroup "maven.modrinth"
-		}
-	}
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org'
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        } filter {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 loom {
@@ -79,11 +79,17 @@ dependencies {
 	//Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}"
 
+
 	//Sodium
-	modImplementation "maven.modrinth:sodium:${props.sodium_version}"
+	modClientImplementation "maven.modrinth:sodium:${props.sodium_version}"
 
 	//Iris Shaders
-	modImplementation "maven.modrinth:iris:${props.iris_shaders_version}"
+    modClientImplementation "maven.modrinth:iris:${props.iris_shaders_version}"
+    modClientRuntimeOnly("org.antlr:antlr4-runtime:${props.antlr4_runtime_version}")
+    modClientRuntimeOnly("io.github.douira:glsl-transformer:${props.glsl_transformer_version}")
+    modClientRuntimeOnly("org.anarres:jcpp:${props.anarres_jcpp_version}")
+
+
 
 	//Java preprocessor
 	annotationProcessor "systems.manifold:manifold-preprocessor:${manifold_preprocessor_version}"
