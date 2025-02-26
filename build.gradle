@@ -50,16 +50,21 @@ loom {
 
 	runs {
 		client {
-			//Used for debug hot-swapping mixins
-			//vmArgs("-javaagent", "\"sponge-mixin:x.x.x.jar\"")
-
 			//Used for debug hot-swapping fields, methods, and classes
 			//vmArg("-XX:+AllowEnhancedClassRedefinition")
 
-            vmArgs("-Denv=dev")
-
 			programArgs("--width", "1280", "--height", "720", "--username", "dev")
 		}
+	}
+}
+
+afterEvaluate {
+	loom.runs.configureEach {
+		//Environment variable for enabling extra debugging features
+		vmArg("-Denv=dev")
+
+		//Used for debug hot-swapping mixins
+		vmArg("-javaagent:${ configurations.compileClasspath.find() { it.name.contains("sponge-mixin") } }")
 	}
 }
 
@@ -83,6 +88,9 @@ dependencies {
 	modImplementation "maven.modrinth:sodium:${props.sodium_version}"
 
 	//Iris Shaders
+	modImplementation "org.antlr:antlr4-runtime:4.13.1"
+	modImplementation "io.github.douira:glsl-transformer:2.0.1"
+	modImplementation "org.anarres:jcpp:1.4.14"
 	modImplementation "maven.modrinth:iris:${props.iris_shaders_version}"
 
 	//Java preprocessor
