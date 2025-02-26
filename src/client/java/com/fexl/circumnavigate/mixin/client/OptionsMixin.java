@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only */
 
-package com.fexl.circumnavigate.mixin.client.chunk;
+package com.fexl.circumnavigate.mixin.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
@@ -19,6 +19,8 @@ public abstract class OptionsMixin {
 
 	@Inject(method = "getEffectiveRenderDistance", at = @At("HEAD"), cancellable = true)
 	public void getEffectiveRenderDistance(CallbackInfoReturnable<Integer> cir) {
+		if(Minecraft.getInstance().level == null) return;
+
 		int renderDistance = serverRenderDistance > 0 ? Math.min(this.renderDistance.get(), serverRenderDistance) : this.renderDistance.get();
 		cir.setReturnValue(Minecraft.getInstance().level.getTransformer().limitViewDistance(renderDistance));
 	}

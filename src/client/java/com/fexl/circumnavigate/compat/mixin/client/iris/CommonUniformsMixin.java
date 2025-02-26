@@ -21,7 +21,7 @@ public class CommonUniformsMixin {
     }
 
     private static Vector2i getDimensionBounds() {
-        DimensionTransformer transformer = Minecraft.getInstance().level.getTransformer();
-        return new Vector2i(transformer.xWidth, transformer.zWidth);
+		DimensionTransformer transformer = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getTransformer() : DimensionTransformer.DISABLED;
+	    return new Vector2i(transformer.xWidth, transformer.zWidth);
     }
 }

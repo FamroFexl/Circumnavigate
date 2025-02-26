@@ -1,9 +1,0 @@
-{
-    "vertex": "blit_screen",
-    "fragment": "blit_screen",
-    "samplers": [
-        { "name": "DiffuseSampler" }
-    ],
-    "uniforms": [
-    ]
-}
