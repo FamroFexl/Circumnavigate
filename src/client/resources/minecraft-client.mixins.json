@@ -5,6 +5,7 @@
   "client": [
     "ClientToServerListener",
     "OptionsMixin",
+    "SectionOcclusionGraphMixin",
     "debug.ChunkBorderRendererMixin",
     "debug.DebugRendererMixin",
     "debug.DebugScreenOverlayMixin",

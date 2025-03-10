@@ -2,7 +2,7 @@
 
 package com.fexl.circumnavigate.storage;
 
-import net.minecraft.core.BlockPos;
+import com.fexl.circumnavigate.core.DimensionTransformer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 
@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerLevel;
  * Storage for context propagation down call stacks.
  */
 public class TransformerRequests {
-	public static ServerLevel chunkMapLevel;
+	public static DimensionTransformer chunkMapTransformer;
 	public static MinecraftServer server = null;
 	public static ServerLevel noiseLevel;
 }

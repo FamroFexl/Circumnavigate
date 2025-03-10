@@ -22,13 +22,15 @@ public abstract class ChunkMapMixin {
 	@Final @Shadow public ServerLevel level;
 
 	/**
-	 * Stores the serverLevel for usage further down the call chain where it was not passed.
-	 * Modifies the parameters to use client-wrapped chunks.
+	 * Players will track wrapped chunks as part of their tracking view.
 	 */
 	@Inject(method = "isChunkTracked", at = @At("HEAD"), cancellable = true)
-	public void unwrapChunkPosForCheck(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
-		TransformerRequests.chunkMapLevel = player.serverLevel();
+	public void isChunkTracked(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
 		DimensionTransformer transformer = player.serverLevel().getTransformer();
+
+		//Stores the serverLevel for usage further down the call chain where it was not passed.
+		TransformerRequests.chunkMapTransformer = transformer;
+
 		cir.setReturnValue(player.getChunkTrackingView().contains(x, z) && !player.connection.chunkSender.isPending(ChunkPos.asLong(transformer.Chunk.X.unwrapFromBounds(player.getClientChunk().x, x), transformer.Chunk.Z.unwrapFromBounds(player.getClientChunk().z, z))));
 	}
 
@@ -36,7 +38,7 @@ public abstract class ChunkMapMixin {
 	 * Gives ChunkTrackingView.Positioned instances a WorldTransformer when they are created (this is the only place they are created)
 	 */
 	@Redirect(method = "updateChunkTracking", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ChunkTrackingView;of(Lnet/minecraft/world/level/ChunkPos;I)Lnet/minecraft/server/level/ChunkTrackingView;"))
-	public ChunkTrackingView updateChunkTracking(ChunkPos center, int viewDistance) {
+	public ChunkTrackingView setChunkTransformer(ChunkPos center, int viewDistance) {
 		ChunkTrackingView.Positioned newView = (ChunkTrackingView.Positioned) ChunkTrackingView.of(center, viewDistance);
 		((TransformerAccessor) (Object) newView).setTransformer(level.getTransformer());
 		return newView;
@@ -47,11 +49,14 @@ public abstract class ChunkMapMixin {
 	 */
 	@Inject(method = "applyChunkTrackingView", at = @At("HEAD"))
 	public void captureLevel(ServerPlayer player, ChunkTrackingView chunkTrackingView, CallbackInfo ci) {
-		TransformerRequests.chunkMapLevel = player.serverLevel();
+		TransformerRequests.chunkMapTransformer = player.serverLevel().getTransformer();
 	}
 
+	/**
+	 * Support wrapped distances as closest Euclidean distance.
+	 */
 	@Inject(method = "euclideanDistanceSquared", at = @At("HEAD"), cancellable = true)
-    private static void wrapDistanceToSquare(ChunkPos chunkPos, Entity entity, CallbackInfoReturnable<Double> cir) {
+    private static void euclideanDistanceSquared(ChunkPos chunkPos, Entity entity, CallbackInfoReturnable<Double> cir) {
 		double d = SectionPos.sectionToBlockCoord(chunkPos.x, 8);
 		double e = SectionPos.sectionToBlockCoord(chunkPos.z, 8);
 		cir.setReturnValue(entity.level().getTransformer().Coord.sqrDistToBounds(entity.getX(), 0, entity.getY(), d, 0, e));

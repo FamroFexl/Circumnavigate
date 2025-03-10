@@ -5,12 +5,14 @@ package com.fexl.circumnavigate.mixin.chunk;
 import com.fexl.circumnavigate.accessors.TransformerAccessor;
 import com.fexl.circumnavigate.core.DimensionTransformer;
 import com.fexl.circumnavigate.storage.TransformerRequests;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ChunkTrackingView;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Consumer;
@@ -23,70 +25,76 @@ public interface ChunkTrackingViewMixin {
 	@Inject(method = "isWithinDistance", at = @At("HEAD"), cancellable = true)
 	private static void checkWrappedChunks(int centerX, int centerZ, int viewDistance, int x, int z, boolean serachAllChunks, CallbackInfoReturnable<Boolean> cir) {
 		//Because isWithinDistance is a static method, it requires an exterior transformer instance that can't be passed down.
-		DimensionTransformer transformer = TransformerRequests.chunkMapLevel.getTransformer();
+		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.onlyServerSide();
 
 		//Don't include chunks that extend past the bounds.
-		if(transformer.Chunk.X.isOverBounds(x) || transformer.Chunk.Z.isOverBounds(z)) { cir.setReturnValue(false); return; }
-
-		int unwrappedX = transformer.Chunk.X.unwrapFromBounds(centerX, x);
-		int unwrappedZ = transformer.Chunk.Z.unwrapFromBounds(centerZ, z);
-
-		int i = Math.max(0, Math.abs(unwrappedX - centerX) - 1);
-		int j = Math.max(0, Math.abs(unwrappedZ - centerZ) - 1);
-
-		long l = Math.max(0, Math.max(i, j) - (serachAllChunks ? 1 : 0));
-		long m = Math.min(i, j);
-		long n = m * m + l * l;
-		int k = viewDistance * viewDistance;
-		cir.setReturnValue(n < (long)k);
+		if(transformer.Chunk.X.isOverBounds(x) || transformer.Chunk.Z.isOverBounds(z)) cir.setReturnValue(false);
 	}
 
 	/**
-	 * Functional method which outputs chunks to remove and chunks to add. Modified to support wrapping.
+	 * Unwrap X Chunk position
 	 */
-	@Inject(method = "difference", at = @At("HEAD"), cancellable = true)
-	private static void includeWrappedChunks(ChunkTrackingView oldChunkTrackingView, ChunkTrackingView newChunkTrackingView, Consumer<ChunkPos> chunkDropper, Consumer<ChunkPos> chunkMarker, CallbackInfo ci) {
-		ci.cancel();
+	@ModifyVariable(method = "isWithinDistance", at = @At("HEAD"), index = 3, argsOnly = true)
+	private static int modifyX(int x, @Local(index = 0, argsOnly = true) int centerX) {
+		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.onlyServerSide();
 
+		return transformer.Chunk.X.unwrapFromBounds(centerX, x);
+	}
+
+	/**
+	 * Unwrap Z Chunk position
+	 */
+	@ModifyVariable(method = "isWithinDistance", at = @At("HEAD"), index = 4, argsOnly = true)
+	private static int modifyZ(int z, @Local(index = 1, argsOnly = true) int centerZ) {
+		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.onlyServerSide();
+
+		return transformer.Chunk.Z.unwrapFromBounds(centerZ, z);
+	}
+
+	/**
+	 * @author Famro Fexl
+	 * @reason World wrapping includes wrapped chunks, and each chunk must be wrapped in order to be properly checked.
+	 */
+	@Overwrite
+	static void difference(ChunkTrackingView oldChunkTrackingView, ChunkTrackingView newChunkTrackingView, Consumer<ChunkPos> chunkMarker, Consumer<ChunkPos> chunkDropper) {
 		if (oldChunkTrackingView.equals(newChunkTrackingView)) return;
 
 		if (oldChunkTrackingView instanceof ChunkTrackingView.Positioned positioned
-			&& newChunkTrackingView instanceof ChunkTrackingView.Positioned positioned2
-			&& ((PositionedAccessorMixin) (Object) positioned).squareIntersectsAM(positioned2))
-		{
+			&& newChunkTrackingView instanceof ChunkTrackingView.Positioned positioned2)
+			if (((PositionedAccessorMixin) (Object) positioned).squareIntersectsAM(positioned2)) {
 
-			DimensionTransformer transformer = ((TransformerAccessor) (Object) positioned).getTransformer();
+				DimensionTransformer transformer = ((TransformerAccessor) (Object) positioned).getTransformer();
 
-			//This prevents mass calculation of unneeded chunks and keeps chunk bandwidth predictable when crossing borders
-			int i = Math.min(positioned.minX(), transformer.Chunk.X.unwrapFromBounds(positioned.minX(), positioned2.minX()));
-			int j = Math.min(positioned.minZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.minZ(), positioned2.minZ()));
-			int k = Math.max(positioned.maxX(), transformer.Chunk.X.unwrapFromBounds(positioned.maxX(), positioned2.maxX()));
-			int l = Math.max(positioned.maxZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.maxZ(), positioned2.maxZ()));
+				//This prevents mass calculation of unneeded chunks and keeps chunk bandwidth predictable when crossing borders
+				int minX = Math.min(positioned.minX(), transformer.Chunk.X.unwrapFromBounds(positioned.minX(), positioned2.minX()));
+				int minZ = Math.min(positioned.minZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.minZ(), positioned2.minZ()));
+				int maxX = Math.max(positioned.maxX(), transformer.Chunk.X.unwrapFromBounds(positioned.maxX(), positioned2.maxX()));
+				int maxZ = Math.max(positioned.maxZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.maxZ(), positioned2.maxZ()));
 
-			for (int x = i; x <= k; x++) {
-				for (int z = j; z <= l; z++) {
+				for (int x = minX; x <= maxX; x++) {
+					for (int z = minZ; z <= maxZ; z++) {
 
-					int wrappedX = transformer.Chunk.X.wrapToBounds(x);
-					int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
+						int wrappedX = transformer.Chunk.X.wrapToBounds(x);
+						int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
 
-					boolean bl = positioned.contains(wrappedX, wrappedZ);
-					boolean bl2 = positioned2.contains(wrappedX, wrappedZ);
-					if (bl != bl2) {
-						if (bl2) {
-							//Chunk exists in new
-							chunkDropper.accept(new ChunkPos(wrappedX, wrappedZ));
-						} else {
-							//Chunk exists in old
-							chunkMarker.accept(new ChunkPos(wrappedX, wrappedZ));
+						boolean inOld = positioned.contains(wrappedX, wrappedZ);
+						boolean inNew = positioned2.contains(wrappedX, wrappedZ);
+						if (inOld != inNew) {
+							if (inNew) {
+								//Chunk exists in new
+								chunkMarker.accept(new ChunkPos(wrappedX, wrappedZ));
+							} else {
+								//Chunk exists in old
+								chunkDropper.accept(new ChunkPos(wrappedX, wrappedZ));
+							}
 						}
 					}
 				}
+
+				return;
 			}
 
-			return;
-		}
-
-		oldChunkTrackingView.forEach(chunkMarker);
-		newChunkTrackingView.forEach(chunkDropper);
+		oldChunkTrackingView.forEach(chunkDropper);
+		newChunkTrackingView.forEach(chunkMarker);
 	}
 }
