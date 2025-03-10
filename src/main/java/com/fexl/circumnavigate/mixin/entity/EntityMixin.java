@@ -24,8 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class EntityMixin {
 	@Shadow private Level level;
 
-	@Shadow public abstract double getX();
-
 	Entity thiz = (Entity) (Object) this;
 
 	/**

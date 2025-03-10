@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class BlockLightEngineMixin {
 	@Unique
 	BlockGetter level = ((LightEngineAccessor) this).getChunkSource().getLevel();
-	
+
     @ModifyVariable(method = "propagateIncrease", at = @At("HEAD"), index = 1, argsOnly = true)
-    public long wrapBlockPos(long pos) {
+    public long wrapBlockPosLong(long pos) {
 		if(level instanceof ServerChunkCache cache) {
 			DimensionTransformer transformer = cache.getLevel().getTransformer();
 			return transformer.Block.wrapToBounds(pos);
@@ -27,22 +27,13 @@ public class BlockLightEngineMixin {
 		return pos;
     }
 
-    @Redirect(method = "propagateIncrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
-    public long wrapBlockPos2(long pos, Direction direction) {
+    @Redirect(method = {"propagateIncrease", "propagateDecrease"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
+    public long wrapBlockPosOffsets(long pos, Direction direction) {
 	    if(level instanceof ServerChunkCache cache) {
 		    DimensionTransformer transformer = cache.getLevel().getTransformer();
 		    return transformer.Block.wrapToBounds(BlockPos.offset(pos, direction));
 	    }
 
-		return BlockPos.offset(pos, direction);
-    }
-
-    @Redirect(method = "propagateDecrease", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;offset(JLnet/minecraft/core/Direction;)J"))
-    public long wrapBlockPos3(long pos, Direction direction) {
-	    if(level instanceof ServerChunkCache cache) {
-		    DimensionTransformer transformer = cache.getLevel().getTransformer();
-		    return transformer.Block.wrapToBounds(BlockPos.offset(pos, direction));
-	    }
 		return BlockPos.offset(pos, direction);
     }
 }

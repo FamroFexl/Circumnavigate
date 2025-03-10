@@ -24,7 +24,6 @@ public abstract class ChunkTrackerMixin extends DynamicGraphMinFixedPoint {
 	}
 
 	@Shadow protected abstract int computeLevelFromNeighbor(long startPos, long endPos, int startLevel);
-	@Shadow protected abstract int getLevelFromSource(long pos);
 
 	/**
 	 * Modifies ChunkPos to use wrapped chunks

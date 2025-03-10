@@ -32,8 +32,6 @@ import java.util.List;
 public abstract class GameEventDispatcherMixin {
 	@Shadow @Final private ServerLevel level;
 
-	@Shadow abstract protected void handleGameEventMessagesInQueue(List<GameEvent.ListenerInfo> listenerInfos);
-
 	/**
 	 * Wrap distance calculation for game events dependent on minimum distances.
 	 */

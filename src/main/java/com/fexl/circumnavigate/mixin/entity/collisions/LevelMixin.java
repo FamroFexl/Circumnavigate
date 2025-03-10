@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.AABB;
@@ -32,8 +33,12 @@ public abstract class LevelMixin<T extends Entity> {
 	@Shadow protected abstract LevelEntityGetter<Entity> getEntities();
 	@Shadow public abstract ProfilerFiller getProfiler();
 
-	@Shadow @Final public boolean isClientSide;
 	Level thiz = (Level) (Object) this;
+
+	@ModifyVariable(method = {"getBlockState", "getFluidState", "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", "removeBlock", "destroyBlock"}, at = @At("HEAD"), argsOnly = true, index = 1)
+	public BlockPos modifyBlockPos(BlockPos blockPos) {
+		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
+	}
 
 	/**
 	 * Returns all entities within the bounds of a wrapped bounding box.
@@ -70,47 +75,5 @@ public abstract class LevelMixin<T extends Entity> {
 				return AbortableIterationConsumer.Continuation.CONTINUE;
 			});
 		}
-	}
-
-
-	@ModifyVariable(method = "getBlockState", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos wrapBlockState(BlockPos blockPos) {
-		return wrapBlockPos(blockPos);
-	}
-
-	@ModifyVariable(method = "getFluidState", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos wrapFluidState(BlockPos blockPos) {
-		return wrapBlockPos(blockPos);
-	}
-
-	@ModifyVariable(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos modifyBlockPos2(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
-	}
-
-	@ModifyVariable(method = "removeBlock", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos modifyBlockPos3(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
-	}
-
-	@ModifyVariable(method = "destroyBlock", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos modifyBlockPos4(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
-	}
-
-	/**
-	@ModifyVariable(method = "getBlockEntity", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos getBlockEntity(BlockPos blockPos) {
-		return wrapBlockPos(blockPos);
-	}
-
-	@ModifyVariable(method = "removeBlockEntity", at = @At("HEAD"), argsOnly = true, index = 1)
-	public BlockPos removeBlockEntity(BlockPos blockPos) {
-		return wrapBlockPos(blockPos);
-	}**/
-
-	@Unique
-	private BlockPos wrapBlockPos(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
 	}
 }
