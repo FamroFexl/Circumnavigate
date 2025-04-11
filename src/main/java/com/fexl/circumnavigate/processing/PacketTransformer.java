@@ -572,10 +572,20 @@ public class PacketTransformer {
 		});
 	}
 
-	/**
+
 	private static ClientboundPlayerLookAtPacket transformPacket(ClientboundPlayerLookAtPacket packet, ServerPlayer player) {
-		RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.getServer().registryAccess());
-	}**/
+		return newBuffer(ClientboundPlayerLookAtPacket.STREAM_CODEC, buffer -> {
+			buffer.writeEnum(packet.getFromAnchor());
+			buffer.writeDouble(getClientX(player, packet.x));
+			buffer.writeDouble(packet.y);
+			buffer.writeDouble(getClientZ(player, packet.z));
+			buffer.writeBoolean(packet.atEntity);
+			if (packet.atEntity) {
+				buffer.writeVarInt(packet.entity);
+				buffer.writeEnum(packet.toAnchor);
+			}
+		});
+	}
 
 	private static ClientboundLevelEventPacket transformPacket(ClientboundLevelEventPacket packet, ServerPlayer player) {
 		return newBuffer(ClientboundLevelEventPacket.STREAM_CODEC, buffer -> {

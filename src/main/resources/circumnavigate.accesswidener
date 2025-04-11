@@ -100,6 +100,13 @@ accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$A
 accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction hand Lnet/minecraft/world/InteractionHand;
 accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction location Lnet/minecraft/world/phys/Vec3;
 
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket x D
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket y D
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket z D
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket entity I
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket toAnchor Lnet/minecraft/commands/arguments/EntityAnchorArgument$Anchor;
+accessible field net/minecraft/network/protocol/game/ClientboundPlayerLookAtPacket atEntity Z
+
 #Worldgen noise
 accessible class net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler
 accessible field net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler$RarityValueMapper mapper Lit/unimi/dsi/fastutil/doubles/Double2DoubleFunction;
