@@ -94,6 +94,12 @@ accessible field net/minecraft/world/entity/ai/navigation/PathNavigation mob Lne
 accessible field net/minecraft/world/entity/ai/navigation/PathNavigation level Lnet/minecraft/world/level/Level;
 accessible method net/minecraft/world/entity/LivingEntity getHitbox ()Lnet/minecraft/world/phys/AABB;
 
+accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket action Lnet/minecraft/network/protocol/game/ServerboundInteractPacket$Action;
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$Action
+accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction hand Lnet/minecraft/world/InteractionHand;
+accessible field net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAtLocationAction location Lnet/minecraft/world/phys/Vec3;
+
 #Worldgen noise
 accessible class net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler
 accessible field net/minecraft/world/level/levelgen/DensityFunctions$WeirdScaledSampler$RarityValueMapper mapper Lit/unimi/dsi/fastutil/doubles/Double2DoubleFunction;

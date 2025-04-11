@@ -93,16 +93,9 @@ public abstract class ServerGamePacketListenerImplMixin {
 		}
 		thiz.awaitingTeleportTime = thiz.tickCount;
 
-		//Wrap x to bounds
-		double d = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.X.wrapToBounds(packet.getX(thiz.player.getX())));
-
+		double d = ServerGamePacketListenerImpl.clampHorizontal(packet.getX(thiz.player.getX()));
 		double e = ServerGamePacketListenerImpl.clampVertical(packet.getY(thiz.player.getY()));
-
-		//Wrap z to bounds
-		double f = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.Z.wrapToBounds(packet.getZ(thiz.player.getZ())));
-
-		thiz.player.setClientX(ServerGamePacketListenerImpl.clampHorizontal(packet.getX(thiz.player.getClientX())));
-		thiz.player.setClientZ(ServerGamePacketListenerImpl.clampHorizontal(packet.getZ(thiz.player.getClientZ())));
+		double f = ServerGamePacketListenerImpl.clampHorizontal(packet.getZ(thiz.player.getZ()));
 
 		float g = Mth.wrapDegrees(packet.getYRot(thiz.player.getYRot()));
 		float h = Mth.wrapDegrees(packet.getXRot(thiz.player.getXRot()));
@@ -223,9 +216,9 @@ public abstract class ServerGamePacketListenerImplMixin {
 			double e = entity.getY();
 			double f = entity.getZ();
 			// Warp x and z to bounds
-			double g = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.X.wrapToBounds(packet.getX()));
+			double g = ServerGamePacketListenerImpl.clampHorizontal(packet.getX());
 			double h = ServerGamePacketListenerImpl.clampVertical(packet.getY());
-			double i = ServerGamePacketListenerImpl.clampHorizontal(transformer.Coord.Z.wrapToBounds(packet.getZ()));
+			double i = ServerGamePacketListenerImpl.clampHorizontal(packet.getZ());
 			float j = Mth.wrapDegrees(packet.getYRot());
 			float k = Mth.wrapDegrees(packet.getXRot());
 			double l = g - thiz.vehicleFirstGoodX;
