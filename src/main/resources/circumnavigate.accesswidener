@@ -88,8 +88,6 @@ accessible class net/minecraft/server/level/DistanceManager$ChunkTicketTracker
 accessible field net/minecraft/world/level/chunk/storage/SectionStorage levelHeightAccessor Lnet/minecraft/world/level/LevelHeightAccessor;
 
 #Networking
-accessible method net/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket <init> (Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntityType;Lnet/minecraft/nbt/CompoundTag;)V
-
 accessible field net/minecraft/world/entity/ai/navigation/PathNavigation mob Lnet/minecraft/world/entity/Mob;
 accessible field net/minecraft/world/entity/ai/navigation/PathNavigation level Lnet/minecraft/world/level/Level;
 accessible method net/minecraft/world/entity/LivingEntity getHitbox ()Lnet/minecraft/world/phys/AABB;
