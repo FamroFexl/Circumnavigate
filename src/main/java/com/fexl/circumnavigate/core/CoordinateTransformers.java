@@ -115,7 +115,7 @@ public class CoordinateTransformers {
 		}
 
 		public int sqrDistToBounds(int chunkDist) {
-			return Coord.sqrDistToBounds(chunkDist*16)/16;
+			return Coord.sqrDistToBounds(chunkDist*16)/(16*16);
 		}
 	}
 }
