@@ -32,13 +32,4 @@ public abstract class ServerPlayerMixin {
 	public BlockPos modifyBlockPos(BlockPos blockPos) {
 		return this.serverLevel().getTransformer().Block.unwrapFromBounds(thiz.blockPosition(), blockPos);
 	}
-
-	/**
-	 * Client tracking required when transferring dimensions.
-	 */
-	@Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;teleport(DDDFF)V"))
-	public void changeDimension(DimensionTransition transition, CallbackInfoReturnable<Entity> cir) {
-		thiz.setClientX(transition.pos().x);
-		thiz.setClientZ(transition.pos().z);
-	}
 }
