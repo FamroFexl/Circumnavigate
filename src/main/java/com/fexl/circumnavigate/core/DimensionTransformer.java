@@ -116,6 +116,10 @@ public class DimensionTransformer {
 			return new ChunkPos(X.wrapToBounds(chunkPos.x), Z.wrapToBounds(chunkPos.z));
 		}
 
+		public ChunkPos wrapToBounds(long chunkPos) {
+			return wrapToBounds(new ChunkPos(ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos)));
+		}
+
 		@Override
 		public ChunkPos unwrapFromBounds(ChunkPos refChunkPos, ChunkPos wrappedChunkPos) {
 			return new ChunkPos(X.unwrapFromBounds(refChunkPos.x, wrappedChunkPos.x), Z.unwrapFromBounds(refChunkPos.z, wrappedChunkPos.z));
@@ -298,7 +302,10 @@ public class DimensionTransformer {
 
 		@Override
 		public BoundingBox unwrapFromBounds(BoundingBox refBoundingBox, BoundingBox originalBoundingBox) {
-			return unwrapFromBounds(AABB.of(refBoundingBox), AABB.of(originalBoundingBox));
+			AABB refAABB = new AABB(refBoundingBox.minX(), refBoundingBox.minY(), refBoundingBox.minZ(), refBoundingBox.maxX(), refBoundingBox.maxY(), refBoundingBox.maxZ());
+			AABB originalAABB = new AABB(originalBoundingBox.minX(), originalBoundingBox.minY(), originalBoundingBox.minZ(), originalBoundingBox.maxX(), originalBoundingBox.maxY(), originalBoundingBox.maxZ());
+
+			return unwrapFromBounds(refAABB, originalAABB);
 		}
 	}
 
