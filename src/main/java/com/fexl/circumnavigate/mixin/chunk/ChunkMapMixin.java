@@ -59,6 +59,6 @@ public abstract class ChunkMapMixin {
     private static void euclideanDistanceSquared(ChunkPos chunkPos, Entity entity, CallbackInfoReturnable<Double> cir) {
 		double d = SectionPos.sectionToBlockCoord(chunkPos.x, 8);
 		double e = SectionPos.sectionToBlockCoord(chunkPos.z, 8);
-		cir.setReturnValue(entity.level().getTransformer().Coord.sqrDistToBounds(entity.getX(), 0, entity.getY(), d, 0, e));
+		cir.setReturnValue(entity.level().getTransformer().Coord.sqrDistToBounds(entity.getX(), 0, entity.getZ(), d, 0, e));
 	}
 }
