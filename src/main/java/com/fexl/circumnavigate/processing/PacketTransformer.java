@@ -112,63 +112,63 @@ public class PacketTransformer {
 	}
 
 	private static double getClientX(ServerPlayer player, double packetX) {
-		return playerTransformer(player).Coord.X.unwrapFromBounds(player.getClientX(), packetX);
+		return playerTransformer(player).Coord.X.unwrap(player.getClientX(), packetX);
 	}
 
 	private static double getServerX(ServerPlayer player, double packetX) {
-		return playerTransformer(player).Coord.X.wrapToBounds(packetX);
+		return playerTransformer(player).Coord.X.wrap(packetX);
 	}
 
 	private static double getClientZ(ServerPlayer player, double packetZ) {
-		return playerTransformer(player).Coord.Z.unwrapFromBounds(player.getClientZ(), packetZ);
+		return playerTransformer(player).Coord.Z.unwrap(player.getClientZ(), packetZ);
 	}
 
 	private static double getServerZ(ServerPlayer player, double packetZ) {
-		return playerTransformer(player).Coord.Z.wrapToBounds(packetZ);
+		return playerTransformer(player).Coord.Z.wrap(packetZ);
 	}
 
 	private static int getClientX(ServerPlayer player, int packetX) {
-		return playerTransformer(player).Coord.X.unwrapFromBounds(player.getClientBlock().getX(), packetX);
+		return playerTransformer(player).Coord.X.unwrap(player.getClientBlock().getX(), packetX);
 	}
 
 	private static int getServerX(ServerPlayer player, int packetX) {
-		return playerTransformer(player).Coord.X.wrapToBounds(packetX);
+		return playerTransformer(player).Coord.X.wrap(packetX);
 	}
 
 	private static int getClientZ(ServerPlayer player, int packetZ) {
-		return playerTransformer(player).Coord.Z.unwrapFromBounds(player.getClientBlock().getZ(), packetZ);
+		return playerTransformer(player).Coord.Z.unwrap(player.getClientBlock().getZ(), packetZ);
 	}
 
 	private static int getServerZ(ServerPlayer player, int packetZ) {
-		return playerTransformer(player).Coord.Z.wrapToBounds(packetZ);
+		return playerTransformer(player).Coord.Z.wrap(packetZ);
 	}
 
 	private static ChunkPos getClientChunkPos(ServerPlayer player, ChunkPos packetChunkPos) {
-		return playerTransformer(player).Chunk.unwrapFromBounds(player.getClientChunk(), packetChunkPos);
+		return playerTransformer(player).Chunk.unwrap(player.getClientChunk(), packetChunkPos);
 	}
 
 	private static BlockPos getClientBlockPos(ServerPlayer player, BlockPos packetBlockPos) {
-		return playerTransformer(player).Block.unwrapFromBounds(player.getClientBlock(), packetBlockPos);
+		return playerTransformer(player).Block.unwrap(player.getClientBlock(), packetBlockPos);
 	}
 
 	private static BlockPos getServerBlockPos(ServerPlayer player, BlockPos packetBlockPos) {
-		return playerTransformer(player).Block.wrapToBounds(packetBlockPos);
+		return playerTransformer(player).Block.wrap(packetBlockPos);
 	}
 
 	private static Vec3 getClientVec3(ServerPlayer player, Vec3 packetVec3) {
-		return playerTransformer(player).Vector3D.unwrapFromBounds(player.getClientPosition(), packetVec3);
+		return playerTransformer(player).Vector3D.unwrap(player.getClientPosition(), packetVec3);
 	}
 
 	private static Vec3 getServerVec3(ServerPlayer player, Vec3 packetVec3) {
-		return playerTransformer(player).Vector3D.wrapToBounds(packetVec3);
+		return playerTransformer(player).Vector3D.wrap(packetVec3);
 	}
 
 	private static AABB getClientAABB(ServerPlayer player, AABB packetAABB) {
-		return playerTransformer(player).AABoundingBox.unwrapFromBounds(new AABB(player.getClientBlock()), packetAABB);
+		return playerTransformer(player).AABoundingBox.unwrap(new AABB(player.getClientBlock()), packetAABB);
 	}
 
 	private static BoundingBox getClientBB(ServerPlayer player, BoundingBox packetBB) {
-		return playerTransformer(player).BoundingBoxes.unwrapFromBounds(new AABB(player.getClientBlock()), AABB.of(packetBB));
+		return playerTransformer(player).BoundingBox.unwrap(new AABB(player.getClientBlock()), AABB.of(packetBB));
 	}
 
 	private static int getLimitedDistance(ServerPlayer player, int distance) {

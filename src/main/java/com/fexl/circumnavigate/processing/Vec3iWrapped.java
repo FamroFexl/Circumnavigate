@@ -13,18 +13,18 @@ public class Vec3iWrapped extends Vec3i {
 	final DimensionTransformer transformer;
 
 	public Vec3iWrapped(int x, int y, int z, DimensionTransformer transformer) {
-		super(transformer.Coord.X.wrapToBounds(x), y, transformer.Coord.Z.wrapToBounds(z));
+		super(transformer.Coord.X.wrap(x), y, transformer.Coord.Z.wrap(z));
 		this.transformer = transformer;
 	}
 
 	@Override
 	protected @NotNull Vec3iWrapped setX(int x) {
-		return (Vec3iWrapped) super.setX(transformer.Coord.X.wrapToBounds(x));
+		return (Vec3iWrapped) super.setX(transformer.Coord.X.wrap(x));
 	}
 
 	@Override
 	protected @NotNull Vec3iWrapped setZ(int z) {
-		return (Vec3iWrapped) super.setZ(transformer.Coord.Z.wrapToBounds(z));
+		return (Vec3iWrapped) super.setZ(transformer.Coord.Z.wrap(z));
 	}
 
 	@Override
@@ -82,9 +82,9 @@ public class Vec3iWrapped extends Vec3i {
 
 	@Override
 	public int distManhattan(Vec3i vector) {
-		float f = transformer.Coord.X.wrapToBounds(Math.abs(vector.getX() - this.getX()));
+		float f = transformer.Coord.X.wrap(Math.abs(vector.getX() - this.getX()));
 		float g = (float)Math.abs(vector.getY() - this.getY());
-		float h = transformer.Coord.Z.wrapToBounds(Math.abs(vector.getZ() - this.getZ()));
+		float h = transformer.Coord.Z.wrap(Math.abs(vector.getZ() - this.getZ()));
 		return (int)(f + g + h);
 	}
 }

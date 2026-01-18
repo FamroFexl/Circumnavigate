@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ChunkMapMixin {
 
 	@Final @Shadow public ServerLevel level;
-
+	
 	/**
 	 * Players will track wrapped chunks as part of their tracking view.
 	 */
@@ -31,7 +31,7 @@ public abstract class ChunkMapMixin {
 		//Stores the serverLevel for usage further down the call chain where it was not passed.
 		TransformerRequests.chunkMapTransformer = transformer;
 
-		cir.setReturnValue(player.getChunkTrackingView().contains(x, z) && !player.connection.chunkSender.isPending(ChunkPos.asLong(transformer.Chunk.X.unwrapFromBounds(player.getClientChunk().x, x), transformer.Chunk.Z.unwrapFromBounds(player.getClientChunk().z, z))));
+		cir.setReturnValue(player.getChunkTrackingView().contains(x, z) && !player.connection.chunkSender.isPending(ChunkPos.asLong(transformer.Chunk.X.unwrap(player.getClientChunk().x, x), transformer.Chunk.Z.unwrap(player.getClientChunk().z, z))));
 	}
 
 	/**

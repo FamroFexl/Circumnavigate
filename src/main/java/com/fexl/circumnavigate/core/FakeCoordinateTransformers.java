@@ -16,29 +16,29 @@ public class FakeCoordinateTransformers extends CoordinateTransformers {
 		public final int domainLength = CoordinateConstants.DISABLING_CHUNK_POS*2 * 16;
 
 		@Override
-		public double wrapToBounds(double coord) {
+		public double wrap(double coord) {
 			return coord;
 		}
 
-		public int wrapToBounds(int coord) {
+		public int wrap(int coord) {
 			return coord;
 		}
 
 		@Override
-		public double unwrapFromBounds(double refCoord, double wrappedCoord) {
+		public double unwrap(double refCoord, double wrappedCoord) {
 			return wrappedCoord;
 		}
 
-		public int unwrapFromBounds(int refCoord, int wrappedCoord) {
+		public int unwrap(int refCoord, int wrappedCoord) {
 			return wrappedCoord;
 		}
 
 		@Override
-		public boolean isOverBounds(double coord) {
+		public boolean isOver(double coord) {
 			return false;
 		}
 
-		public boolean isOverBounds(int coord) {
+		public boolean isOver(int coord) {
 			return false;
 		}
 

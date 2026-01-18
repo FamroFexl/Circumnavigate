@@ -23,8 +23,8 @@ public class SectionTrackerMixin implements TransformerAccessor {
 	private long wrapChunkPos(long pos, int x, int y, int z, Operation<Long> original, @Local(argsOnly = true) int level, @Local(argsOnly = true) boolean isDecreasing) {
 		DimensionTransformer transformer = getTransformer();
 
-		int wrappedX = transformer.Chunk.X.wrapToBounds(x);
-		int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
+		int wrappedX = transformer.Chunk.X.wrap(x);
+		int wrappedZ = transformer.Chunk.Z.wrap(z);
 		long chunkLong = original.call(pos, wrappedX, y, wrappedZ);
 
 		if (chunkLong != pos) {

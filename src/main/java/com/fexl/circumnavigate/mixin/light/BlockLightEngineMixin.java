@@ -21,7 +21,7 @@ public class BlockLightEngineMixin {
     public long wrapBlockPosLong(long pos) {
 		if(level instanceof ServerChunkCache cache) {
 			DimensionTransformer transformer = cache.getLevel().getTransformer();
-			return transformer.Block.wrapToBounds(pos);
+			return transformer.Block.wrap(pos);
 		}
 
 		return pos;
@@ -31,7 +31,7 @@ public class BlockLightEngineMixin {
     public long wrapBlockPosOffsets(long pos, Direction direction) {
 	    if(level instanceof ServerChunkCache cache) {
 		    DimensionTransformer transformer = cache.getLevel().getTransformer();
-		    return transformer.Block.wrapToBounds(BlockPos.offset(pos, direction));
+		    return transformer.Block.wrap(BlockPos.offset(pos, direction));
 	    }
 
 		return BlockPos.offset(pos, direction);

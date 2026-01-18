@@ -29,6 +29,7 @@ public class ChunkStatusTasksMixin {
 		//Set the noise level for world transformers
 		TransformerRequests.noiseLevel = worldGenContext.level();
 
-		if(worldGenContext.level().getTransformer().Chunk.isOverBounds(chunk.getPos())) cir.setReturnValue(CompletableFuture.completedFuture(chunk));
+		System.out.println(cache.toString());
+		if(worldGenContext.level().getTransformer().Chunk.isOver(chunk.getPos())) cir.setReturnValue(CompletableFuture.completedFuture(chunk));
 	}
 }

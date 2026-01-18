@@ -25,10 +25,10 @@ public interface ChunkTrackingViewMixin {
 	@Inject(method = "isWithinDistance", at = @At("HEAD"), cancellable = true)
 	private static void checkWrappedChunks(int centerX, int centerZ, int viewDistance, int x, int z, boolean serachAllChunks, CallbackInfoReturnable<Boolean> cir) {
 		//Because isWithinDistance is a static method, it requires an exterior transformer instance that can't be passed down.
-		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.onlyServerSide();
+		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.SSO();
 
 		//Don't include chunks that extend past the bounds.
-		if(transformer.Chunk.X.isOverBounds(x) || transformer.Chunk.Z.isOverBounds(z)) cir.setReturnValue(false);
+		if(transformer.Chunk.X.isOver(x) || transformer.Chunk.Z.isOver(z)) cir.setReturnValue(false);
 	}
 
 	/**
@@ -36,9 +36,9 @@ public interface ChunkTrackingViewMixin {
 	 */
 	@ModifyVariable(method = "isWithinDistance", at = @At("HEAD"), index = 3, argsOnly = true)
 	private static int modifyX(int x, @Local(index = 0, argsOnly = true) int centerX) {
-		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.onlyServerSide();
+		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.SSO();
 
-		return transformer.Chunk.X.unwrapFromBounds(centerX, x);
+		return transformer.Chunk.X.unwrap(centerX, x);
 	}
 
 	/**
@@ -46,9 +46,9 @@ public interface ChunkTrackingViewMixin {
 	 */
 	@ModifyVariable(method = "isWithinDistance", at = @At("HEAD"), index = 4, argsOnly = true)
 	private static int modifyZ(int z, @Local(index = 1, argsOnly = true) int centerZ) {
-		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.onlyServerSide();
+		DimensionTransformer transformer = TransformerRequests.chunkMapTransformer.SSO();
 
-		return transformer.Chunk.Z.unwrapFromBounds(centerZ, z);
+		return transformer.Chunk.Z.unwrap(centerZ, z);
 	}
 
 	/**
@@ -66,16 +66,16 @@ public interface ChunkTrackingViewMixin {
 				DimensionTransformer transformer = ((TransformerAccessor) (Object) positioned).getTransformer();
 
 				//This prevents mass calculation of unneeded chunks and keeps chunk bandwidth predictable when crossing borders
-				int minX = Math.min(positioned.minX(), transformer.Chunk.X.unwrapFromBounds(positioned.minX(), positioned2.minX()));
-				int minZ = Math.min(positioned.minZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.minZ(), positioned2.minZ()));
-				int maxX = Math.max(positioned.maxX(), transformer.Chunk.X.unwrapFromBounds(positioned.maxX(), positioned2.maxX()));
-				int maxZ = Math.max(positioned.maxZ(), transformer.Chunk.Z.unwrapFromBounds(positioned.maxZ(), positioned2.maxZ()));
+				int minX = Math.min(positioned.minX(), transformer.Chunk.X.unwrap(positioned.minX(), positioned2.minX()));
+				int minZ = Math.min(positioned.minZ(), transformer.Chunk.Z.unwrap(positioned.minZ(), positioned2.minZ()));
+				int maxX = Math.max(positioned.maxX(), transformer.Chunk.X.unwrap(positioned.maxX(), positioned2.maxX()));
+				int maxZ = Math.max(positioned.maxZ(), transformer.Chunk.Z.unwrap(positioned.maxZ(), positioned2.maxZ()));
 
 				for (int x = minX; x <= maxX; x++) {
 					for (int z = minZ; z <= maxZ; z++) {
 
-						int wrappedX = transformer.Chunk.X.wrapToBounds(x);
-						int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
+						int wrappedX = transformer.Chunk.X.wrap(x);
+						int wrappedZ = transformer.Chunk.Z.wrap(z);
 
 						boolean inOld = positioned.contains(wrappedX, wrappedZ);
 						boolean inNew = positioned2.contains(wrappedX, wrappedZ);

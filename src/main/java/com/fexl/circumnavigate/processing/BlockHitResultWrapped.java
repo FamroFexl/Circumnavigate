@@ -21,7 +21,7 @@ public class BlockHitResultWrapped extends BlockHitResult {
 	private final boolean inside;
 
 	private BlockHitResultWrapped(boolean miss, Vec3 location, Direction direction, BlockPos blockPos, boolean inside, DimensionTransformer transformer) {
-		super(transformer.Vector3D.wrapToBounds(location), direction, transformer.Block.wrapToBounds(blockPos), inside);
+		super(transformer.Vector3D.wrap(location), direction, transformer.Block.wrap(blockPos), inside);
 		this.miss = miss;
 		this.location = location;
 		this.direction = direction;

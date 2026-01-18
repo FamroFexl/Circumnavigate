@@ -10,10 +10,6 @@ import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Consumer;
 
@@ -32,8 +28,8 @@ public abstract class ChunkTrackingView$PositionedMixin implements TransformerAc
 		for (int x = thiz.minX(); x <= thiz.maxX(); x++) {
 			for (int z = thiz.minZ(); z <= thiz.maxZ(); z++) {
 
-				int wrappedX = transformer.Chunk.X.wrapToBounds(x);
-				int wrappedZ = transformer.Chunk.Z.wrapToBounds(z);
+				int wrappedX = transformer.Chunk.X.wrap(x);
+				int wrappedZ = transformer.Chunk.Z.wrap(z);
 
 				if (((Positioned)(Object)this).contains(wrappedX, wrappedZ)) {
 					action.accept(new ChunkPos(wrappedX, wrappedZ));

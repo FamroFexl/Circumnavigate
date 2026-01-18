@@ -17,6 +17,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class PistonBaseBlockMixin {
 	@ModifyVariable(method = "triggerEvent", at = @At("HEAD"), index = 3, argsOnly = true)
 	public BlockPos modifyBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-		return new BlockPosWrapped(blockPos, level.getTransformer().onlyServerSide());
+		return new BlockPosWrapped(blockPos, level.getTransformer().SSO());
 	}
 }

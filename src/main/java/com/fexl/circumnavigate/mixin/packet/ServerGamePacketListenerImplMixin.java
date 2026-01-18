@@ -20,7 +20,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
@@ -32,8 +31,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Set;
 
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin {
@@ -48,12 +45,12 @@ public abstract class ServerGamePacketListenerImplMixin {
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;subtract(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;", ordinal = 0))
 	public Vec3 unwrapVec(Vec3 instance, Vec3 vec) {
 		DimensionTransformer transformer = player.serverLevel().getTransformer();
-		return instance.subtract(transformer.Vector3D.unwrapFromBounds(instance, vec));
+		return instance.subtract(transformer.Vector3D.unwrap(instance, vec));
 	}
 
 	@ModifyArg(method = "handlePlayerAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;handleBlockBreakAction(Lnet/minecraft/core/BlockPos;Lnet/minecraft/network/protocol/game/ServerboundPlayerActionPacket$Action;Lnet/minecraft/core/Direction;II)V"), index = 0)
 	public BlockPos wrapBlockPos(BlockPos pos) {
-		return player.serverLevel().getTransformer().Block.wrapToBounds(pos);
+		return player.serverLevel().getTransformer().Block.wrap(pos);
 	}
 
 	@Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundUseItemOnPacket;getHitResult()Lnet/minecraft/world/phys/BlockHitResult;"))
@@ -61,7 +58,7 @@ public abstract class ServerGamePacketListenerImplMixin {
 		DimensionTransformer transformer = player.serverLevel().getTransformer();
 		BlockHitResult blockHit = instance.getHitResult();
 
-		return new BlockHitResult(transformer.Vector3D.wrapToBounds(blockHit.getLocation()), blockHit.getDirection(), transformer.Block.wrapToBounds(blockHit.getBlockPos()), blockHit.isInside());
+		return new BlockHitResult(transformer.Vector3D.wrap(blockHit.getLocation()), blockHit.getDirection(), transformer.Block.wrap(blockHit.getBlockPos()), blockHit.isInside());
 	}
 
 	// TODO: dont override the whole method, just the part that needs to be changed

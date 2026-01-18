@@ -12,14 +12,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.AABB;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -37,7 +34,7 @@ public abstract class LevelMixin<T extends Entity> {
 
 	@ModifyVariable(method = {"getBlockState", "getFluidState", "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", "removeBlock", "destroyBlock"}, at = @At("HEAD"), argsOnly = true, index = 1)
 	public BlockPos modifyBlockPos(BlockPos blockPos) {
-		return thiz.getTransformer().onlyServerSide().Block.wrapToBounds(blockPos);
+		return thiz.getTransformer().SSO().Block.wrap(blockPos);
 	}
 
 	/**

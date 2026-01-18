@@ -5,7 +5,6 @@
 package com.fexl.circumnavigate.mixin.worldInit;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.PathNavigationRegion;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +18,6 @@ public class PathNavigationRegionMixin {
 	public void init(Level level, BlockPos centerPos, BlockPos offsetPos, CallbackInfo ci) {
 		PathNavigationRegion thiz = (PathNavigationRegion) (Object) this;
 
-		thiz.setTransformer(level.getTransformer().onlyServerSide());
+		thiz.setTransformer(level.getTransformer().SSO());
 	}
 }

@@ -23,7 +23,7 @@ public abstract class LivingEntityMixin {
     public void wrapDelta(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         Entity thiz = (Entity) (Object) this;
         Entity enemy = source.getEntity();
-        DimensionTransformer transformer = enemy.level().getTransformer().onlyServerSide();
+        DimensionTransformer transformer = enemy.level().getTransformer().SSO();
         deltaX = transformer.Coord.X.deltaFromBounds(thiz.getX(), enemy.getX());
         deltaZ = transformer.Coord.Z.deltaFromBounds(thiz.getZ(), enemy.getZ());
 

@@ -31,9 +31,9 @@ public class CoordinateTransformers {
 		private final int domainStart = lowerBlockBounds;
 		private final int domainRadius = domainLength / 2;
 
-		public double wrapToBounds(double coord) {
+		public double wrap(double coord) {
 			//Short-circuit
-			if(!isOverBounds(coord)) return coord;
+			if(!isOver(coord)) return coord;
 
 			double wrappedCoord = (coord - domainStart) % domainLength;
 
@@ -45,9 +45,9 @@ public class CoordinateTransformers {
 			return domainStart + wrappedCoord;
 		}
 
-		public int wrapToBounds(int coord) {
+		public int wrap(int coord) {
 			//Short-circuit
-			if(!isOverBounds(coord)) return coord;
+			if(!isOver(coord)) return coord;
 
 			int wrappedCoord = (coord - domainStart) % domainLength;
 
@@ -59,8 +59,8 @@ public class CoordinateTransformers {
 			return domainStart + wrappedCoord;
 		}
 
-		public double unwrapFromBounds(double refCoord, double wrappedCoord) {
-			double unwrappedCoord = refCoord + wrappedCoord - wrapToBounds(refCoord);
+		public double unwrap(double refCoord, double wrappedCoord) {
+			double unwrappedCoord = refCoord + wrappedCoord - wrap(refCoord);
 
 			// Adjust to ensure the unwrapped coordinate is correct
 			if (unwrappedCoord < refCoord - domainRadius) {
@@ -73,8 +73,8 @@ public class CoordinateTransformers {
 			return unwrappedCoord;
 		}
 
-		public int unwrapFromBounds(int refCoord, int wrappedCoord) {
-			int unwrappedCoord = refCoord + wrappedCoord - wrapToBounds(refCoord);
+		public int unwrap(int refCoord, int wrappedCoord) {
+			int unwrappedCoord = refCoord + wrappedCoord - wrap(refCoord);
 
 			// Adjust to ensure the unwrapped coordinate is correct
 			if (unwrappedCoord < refCoord - domainRadius) {
@@ -87,16 +87,16 @@ public class CoordinateTransformers {
 			return unwrappedCoord;
 		}
 
-		public boolean isOverBounds(double coord) {
+		public boolean isOver(double coord) {
 			return coord >= upperBlockBounds || coord < lowerBlockBounds;
 		}
 
-		public boolean isOverBounds(int coord) {
+		public boolean isOver(int coord) {
 			return coord >= upperBlockBounds || coord < lowerBlockBounds;
 		}
 
 		public double deltaFromBounds(double fromCoord, double toCoord) {
-			double toCoordUnwrapped = unwrapFromBounds(fromCoord, toCoord);
+			double toCoordUnwrapped = unwrap(fromCoord, toCoord);
 
 			return toCoordUnwrapped - fromCoord;
 		}
@@ -130,9 +130,9 @@ public class CoordinateTransformers {
 		private final int domainStart = lowerChunkBounds;
 		private final int domainRadius = domainLength / 2;
 
-		public int wrapToBounds(int chunkCoord) {
+		public int wrap(int chunkCoord) {
 			//Short-circuit
-			if(!isOverBounds(chunkCoord)) return chunkCoord;
+			if(!isOver(chunkCoord)) return chunkCoord;
 
 			int wrappedCoord = (chunkCoord - domainStart) % domainLength;
 
@@ -144,8 +144,8 @@ public class CoordinateTransformers {
 			return domainStart + wrappedCoord;
 		}
 
-		public int unwrapFromBounds(int refChunkCoord, int wrappedChunkCoord) {
-			int unwrappedCoord = refChunkCoord + wrappedChunkCoord - wrapToBounds(refChunkCoord);
+		public int unwrap(int refChunkCoord, int wrappedChunkCoord) {
+			int unwrappedCoord = refChunkCoord + wrappedChunkCoord - wrap(refChunkCoord);
 
 			// Adjust to ensure the unwrapped coordinate is correct
 			if (unwrappedCoord < refChunkCoord - domainRadius) {
@@ -158,7 +158,7 @@ public class CoordinateTransformers {
 			return unwrappedCoord;
 		}
 
-		public boolean isOverBounds(int chunkCoord) {
+		public boolean isOver(int chunkCoord) {
 			return chunkCoord >= upperChunkBounds || chunkCoord < lowerChunkBounds;
 		}
 

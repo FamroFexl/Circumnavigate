@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class PistonHeadBlockMixin {
 	@ModifyVariable(method = "playerWillDestroy", at = @At("HEAD"), index = 2, argsOnly = true)
 	public BlockPos modifyBlockPos(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-		return new BlockPosWrapped(blockPos, level.getTransformer().onlyServerSide());
+		return new BlockPosWrapped(blockPos, level.getTransformer().SSO());
 	}
 
 	@ModifyVariable(method = "onRemove", at = @At("HEAD"), index = 3, argsOnly = true)
 	public BlockPos modifyBlockPos2(BlockPos blockPos, @Local(argsOnly = true) Level level) {
-		return new BlockPosWrapped(blockPos, level.getTransformer().onlyServerSide());
+		return new BlockPosWrapped(blockPos, level.getTransformer().SSO());
 	}
 }

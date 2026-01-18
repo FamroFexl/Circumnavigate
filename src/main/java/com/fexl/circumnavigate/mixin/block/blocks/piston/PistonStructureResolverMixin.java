@@ -20,6 +20,6 @@ public class PistonStructureResolverMixin {
 
 	@ModifyVariable(method = "<init>", at = @At("TAIL"), index = 2, argsOnly = true)
 	private BlockPos modifyBlockPos(BlockPos blockPos) {
-		return new BlockPosWrapped(blockPos, level.getTransformer().onlyServerSide());
+		return new BlockPosWrapped(blockPos, level.getTransformer().SSO());
 	}
 }
