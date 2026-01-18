@@ -21,7 +21,7 @@ public class FakeCoordinateTransformers extends CoordinateTransformers {
 		}
 
 		public int wrapToBounds(int coord) {
-			return (int) wrapToBounds((double)coord);
+			return coord;
 		}
 
 		@Override
@@ -30,7 +30,7 @@ public class FakeCoordinateTransformers extends CoordinateTransformers {
 		}
 
 		public int unwrapFromBounds(int refCoord, int wrappedCoord) {
-			return (int) unwrapFromBounds((double) refCoord, wrappedCoord);
+			return wrappedCoord;
 		}
 
 		@Override
@@ -39,13 +39,11 @@ public class FakeCoordinateTransformers extends CoordinateTransformers {
 		}
 
 		public boolean isOverBounds(int coord) {
-			return isOverBounds((double) coord);
+			return false;
 		}
 
 		public double deltaFromBounds(double fromCoord, double toCoord) {
-			double toCoordUnwrapped = unwrapFromBounds(fromCoord, toCoord);
-
-			return toCoordUnwrapped - fromCoord;
+			return toCoord - fromCoord;
 		}
 
 		public double sqrDistToBounds(double dist) {
@@ -53,7 +51,7 @@ public class FakeCoordinateTransformers extends CoordinateTransformers {
 		}
 
 		public int sqrDistToBounds(int dist) {
-			return (int) sqrDistToBounds((double) dist);
+			return dist * dist;
 		}
 	}
 }
