@@ -34,6 +34,16 @@ public class FakeCoordinateTransformers extends CoordinateTransformers {
 		}
 
 		@Override
+		public boolean needsUnwrap(double refCoord, double wrappedCoord) {
+			return false;
+		}
+
+		@Override
+		public boolean needsUnwrap(int refCoord, int wrappedCoord) {
+			return false;
+		}
+
+		@Override
 		public boolean isOver(double coord) {
 			return false;
 		}
