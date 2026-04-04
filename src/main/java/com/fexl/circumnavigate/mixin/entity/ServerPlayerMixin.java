@@ -7,13 +7,11 @@ package com.fexl.circumnavigate.mixin.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Debug(export = true)
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin {
 	ServerPlayer thiz = (ServerPlayer) (Object) this;
