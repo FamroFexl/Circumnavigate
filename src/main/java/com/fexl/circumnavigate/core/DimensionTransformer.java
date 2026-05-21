@@ -48,12 +48,12 @@ public class DimensionTransformer {
 		this.isClientSide = isClientSide;
 
 
-		if(this.wrappingSettings.xChunkBoundMin() == -CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.xChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS)
+		if (this.wrappingSettings.xChunkBoundMin() == -CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.xChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS)
 			this.xTransformer = new FakeCoordinateTransformers();
 		else
 			this.xTransformer = new CoordinateTransformers(wrappingSettings.xChunkBoundMin(), wrappingSettings.xChunkBoundMax());
 
-		if(this.wrappingSettings.zChunkBoundMin() == -CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.zChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS)
+		if (this.wrappingSettings.zChunkBoundMin() == -CoordinateConstants.DISABLING_CHUNK_POS || this.wrappingSettings.zChunkBoundMax() == CoordinateConstants.DISABLING_CHUNK_POS)
 			this.zTransformer = new FakeCoordinateTransformers();
 		else
 			this.zTransformer = new CoordinateTransformers(wrappingSettings.zChunkBoundMin(), wrappingSettings.zChunkBoundMax());
@@ -73,12 +73,16 @@ public class DimensionTransformer {
 		this.BoundingBox = new BoundingBoxMethods();
 	}
 
-	/** Server-side only transformer **/
+	/**
+	 * Server-side only transformer
+	 **/
 	public DimensionTransformer SSO() {
 		return isClientSide ? DISABLED : this;
 	}
 
-	/** Client-Side only transformer **/
+	/**
+	 * Client-Side only transformer
+	 **/
 	public DimensionTransformer CSO() {
 		return isClientSide ? this : DISABLED;
 	}
@@ -225,6 +229,11 @@ public class DimensionTransformer {
 		public boolean isOver(BlockPos blockPos) {
 			return Coord.X.isOver(blockPos.getX()) || Coord.Z.isOver(blockPos.getZ());
 		}
+
+		public BlockPos deltaFromBounds(BlockPos refBlockPos, BlockPos wrappedBlockPos) {
+			return new BlockPos((int) Coord.X.deltaFromBounds(refBlockPos.getX(), wrappedBlockPos.getX()), wrappedBlockPos.getY(), (int) Coord.Z.deltaFromBounds(refBlockPos.getZ(), wrappedBlockPos.getZ())
+			);
+		}
 	}
 
 	/**
@@ -233,10 +242,10 @@ public class DimensionTransformer {
 	public final class AABBMethods extends BasicPositionOperations<AABB> {
 		@Override
 		public AABB unwrap(AABB refAABB, AABB wrappedAABB) {
-			double minX = Coord.X.unwrap(refAABB.minX , wrappedAABB.minX);
-			double maxX = Coord.X.unwrap(refAABB.maxX , wrappedAABB.maxX);
-			double minZ = Coord.Z.unwrap(refAABB.minZ , wrappedAABB.minZ);
-			double maxZ = Coord.Z.unwrap(refAABB.maxZ , wrappedAABB.maxZ);
+			double minX = Coord.X.unwrap(refAABB.minX, wrappedAABB.minX);
+			double maxX = Coord.X.unwrap(refAABB.maxX, wrappedAABB.maxX);
+			double minZ = Coord.Z.unwrap(refAABB.minZ, wrappedAABB.minZ);
+			double maxZ = Coord.Z.unwrap(refAABB.maxZ, wrappedAABB.maxZ);
 
 			return new AABB(minX, wrappedAABB.minY, minZ, maxX, wrappedAABB.maxY, maxZ);
 		}
@@ -256,7 +265,7 @@ public class DimensionTransformer {
 			double maxZ = original.maxZ;
 
 			//Guard clause
-			if(!(Coord.X.isOver(minX) || Coord.X.isOver(maxX) || Coord.X.isOver(minZ) || Coord.X.isOver(maxZ))) return List.of(original);
+			if (!(Coord.X.isOver(minX) || Coord.X.isOver(maxX) || Coord.X.isOver(minZ) || Coord.X.isOver(maxZ))) return List.of(original);
 
 			double minXWrapped = Coord.X.wrap(minX);
 			double maxXWrapped = Coord.X.wrap(maxX);
@@ -268,21 +277,18 @@ public class DimensionTransformer {
 			double minY = original.minY;
 			double maxY = original.maxY;
 
-			if((minX != minXWrapped || maxX != maxXWrapped) && (minZ != minZWrapped || maxZ != maxZWrapped)) {
-				list.add(new AABB(xCoordBoundMin,   minY,   minZWrapped,    maxXWrapped,    maxY,   zCoordBoundMax));
-				list.add(new AABB(xCoordBoundMin,   minY,   zCoordBoundMin, maxXWrapped,    maxY,   maxZWrapped));
-				list.add(new AABB(minXWrapped,      minY,   zCoordBoundMin, xCoordBoundMax, maxY,   maxZWrapped));
-				list.add(new AABB(minXWrapped,      minY,   minZWrapped,    xCoordBoundMax, maxY,   zCoordBoundMax));
-			}
-			else if(minX != minXWrapped || maxX != maxXWrapped) {
-				list.add(new AABB(xCoordBoundMin,   minY,   minZ,           maxXWrapped,    maxY,   maxZ));
-				list.add(new AABB(minXWrapped,      minY,   minZ,           xCoordBoundMax, maxY,   maxZ));
-			}
-			else if(minZ != minZWrapped || maxZ != maxZWrapped) {
-				list.add(new AABB(minX,             minY,   minZWrapped,    maxX,           maxY,   xCoordBoundMax));
-				list.add(new AABB(minX,             minY,   xCoordBoundMin, maxX,           maxY,   maxZWrapped));
-			}
-			else {
+			if ((minX != minXWrapped || maxX != maxXWrapped) && (minZ != minZWrapped || maxZ != maxZWrapped)) {
+				list.add(new AABB(xCoordBoundMin, minY, minZWrapped, maxXWrapped, maxY, zCoordBoundMax));
+				list.add(new AABB(xCoordBoundMin, minY, zCoordBoundMin, maxXWrapped, maxY, maxZWrapped));
+				list.add(new AABB(minXWrapped, minY, zCoordBoundMin, xCoordBoundMax, maxY, maxZWrapped));
+				list.add(new AABB(minXWrapped, minY, minZWrapped, xCoordBoundMax, maxY, zCoordBoundMax));
+			} else if (minX != minXWrapped || maxX != maxXWrapped) {
+				list.add(new AABB(xCoordBoundMin, minY, minZ, maxXWrapped, maxY, maxZ));
+				list.add(new AABB(minXWrapped, minY, minZ, xCoordBoundMax, maxY, maxZ));
+			} else if (minZ != minZWrapped || maxZ != maxZWrapped) {
+				list.add(new AABB(minX, minY, minZWrapped, maxX, maxY, xCoordBoundMax));
+				list.add(new AABB(minX, minY, xCoordBoundMin, maxX, maxY, maxZWrapped));
+			} else {
 				list.add(original);
 			}
 
@@ -299,7 +305,7 @@ public class DimensionTransformer {
 		public BoundingBox unwrap(AABB refAABB, AABB originalAABB) {
 			AABB out = AABoundingBox.unwrap(refAABB, originalAABB);
 
-			return new BoundingBox((int) Math.floor(out.minX), (int) Math.floor(out.minY), (int) Math.floor(out.minZ), (int) Math.floor(out.maxX), (int) Math.floor(out.maxY),(int) Math.floor(out.maxZ));
+			return new BoundingBox((int) Math.floor(out.minX), (int) Math.floor(out.minY), (int) Math.floor(out.minZ), (int) Math.floor(out.maxX), (int) Math.floor(out.maxY), (int) Math.floor(out.maxZ));
 		}
 
 		@Override

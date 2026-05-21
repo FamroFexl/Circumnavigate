@@ -6,10 +6,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // Fix knockback miscalculation
@@ -55,4 +57,10 @@ public abstract class LivingEntityMixin {
 
         original.call(x, z);
     }
+
+	@Redirect(method = "hasLineOfSight", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;distanceTo(Lnet/minecraft/world/phys/Vec3;)D"))
+	public double modifyDistTo(Vec3 instance, Vec3 vec) {
+		LivingEntity thiz = (LivingEntity) (Object) this;
+		return thiz.level().getTransformer().Vector3D.unwrap(vec, instance).distanceTo(vec);
+	}
 }

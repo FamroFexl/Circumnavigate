@@ -90,3 +90,7 @@ accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehic
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleLastGoodY D
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl vehicleLastGoodZ D
 accessible field net/minecraft/server/network/ServerGamePacketListenerImpl clientVehicleIsFloating Z
+
+accessible field net/minecraft/world/entity/ai/navigation/PathNavigation mob Lnet/minecraft/world/entity/Mob;
+accessible field net/minecraft/world/entity/ai/navigation/PathNavigation level Lnet/minecraft/world/level/Level;
+accessible method net/minecraft/world/entity/LivingEntity getHitbox ()Lnet/minecraft/world/phys/AABB;

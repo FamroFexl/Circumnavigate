@@ -87,6 +87,14 @@ public class CoordinateTransformers {
 			return unwrappedCoord;
 		}
 
+		public boolean needsUnwrap(double refCoord, double wrappedCoord) {
+			return wrappedCoord < refCoord - domainRadius || wrappedCoord > refCoord + domainRadius;
+		}
+
+		public boolean needsUnwrap(int refCoord, int wrappedCoord) {
+			return wrappedCoord < refCoord - domainRadius || wrappedCoord > refCoord + domainRadius;
+		}
+
 		public boolean isOver(double coord) {
 			return coord >= upperBlockBounds || coord < lowerBlockBounds;
 		}
